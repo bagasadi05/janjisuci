@@ -5,6 +5,7 @@ import {
   Copy,
   Send,
   Sparkles,
+  ShieldCheck,
   ChevronRight,
   ChevronLeft,
   Eye,
@@ -53,6 +54,14 @@ export const OrderModal: React.FC<OrderModalProps> = ({
     return `INV-JS-${randomNum}`
   }, [isOpen])
 
+  const getDefaultPackageId = (tpl: TemplateItem, pkg?: PricingTier) => {
+    if (pkg) return pkg.id
+    const isEvent = Boolean(tpl.eventType && tpl.eventType !== 'wedding')
+    if (isEvent) return 'paket-syukuran-exclusive'
+    if (tpl.slug === 'royal-midnight') return 'paket-vip'
+    return 'paket-exclusive'
+  }
+
   const [formData, setFormData] = useState<CustomOrderData>(() => {
     try {
       const saved = localStorage.getItem('janjisuci_order_draft')
@@ -60,7 +69,7 @@ export const OrderModal: React.FC<OrderModalProps> = ({
         return {
           ...JSON.parse(saved),
           templateId: initialTemplate.id,
-          packageId: initialPackage?.id || 'paket-exclusive'
+          packageId: initialPackage?.id || getDefaultPackageId(initialTemplate, initialPackage)
         }
       }
     } catch {
@@ -68,7 +77,7 @@ export const OrderModal: React.FC<OrderModalProps> = ({
     }
     return {
       templateId: initialTemplate.id,
-      packageId: initialPackage?.id || 'paket-exclusive',
+      packageId: getDefaultPackageId(initialTemplate, initialPackage),
       buyerName: '',
       buyerPhone: '',
       buyerNotes: '',
@@ -108,7 +117,7 @@ export const OrderModal: React.FC<OrderModalProps> = ({
     setFormData((prev) => ({
       ...prev,
       templateId: initialTemplate.id,
-      packageId: initialPackage?.id || prev.packageId
+      packageId: initialPackage?.id || getDefaultPackageId(initialTemplate, initialPackage)
     }))
   }, [initialTemplate, initialPackage])
 
@@ -132,11 +141,16 @@ export const OrderModal: React.FC<OrderModalProps> = ({
     const tpl = storeConfig.templates.find((t) => t.id === tplId) || storeConfig.templates[0]
     const isNowNonWedding = Boolean(tpl.eventType && tpl.eventType !== 'wedding')
     const targetPackages = isNowNonWedding ? storeConfig.eventPricingTiers : storeConfig.pricingTiers
+    const defaultPackageId = isNowNonWedding
+      ? 'paket-syukuran-exclusive'
+      : tpl.slug === 'royal-midnight'
+      ? 'paket-vip'
+      : 'paket-exclusive'
     const pkgStillValid = targetPackages.some((p) => p.id === formData.packageId)
     setFormData((prev) => ({
       ...prev,
       templateId: tplId,
-      packageId: pkgStillValid ? prev.packageId : targetPackages[0].id
+      packageId: pkgStillValid ? prev.packageId : defaultPackageId
     }))
   }
 
@@ -447,6 +461,31 @@ export const OrderModal: React.FC<OrderModalProps> = ({
                       </div>
                     )
                   })}
+                </div>
+              </div>
+
+              {/* Rincian Harga All-In Transparan */}
+              <div className="p-4 rounded-2xl bg-gradient-to-r from-amber-50 via-amber-100/40 to-amber-50 border border-amber-300 text-stone-800 space-y-2 shadow-sm">
+                <div className="flex items-center gap-2 text-amber-900 font-bold text-xs uppercase tracking-wide">
+                  <Sparkles className="w-3.5 h-3.5 text-amber-700" />
+                  <span>Sistem Harga All-In (100% Transparan Tanpa Biaya Tersembunyi)</span>
+                </div>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs pt-1">
+                  <div className="flex items-center justify-between p-2.5 rounded-xl bg-white border border-amber-200">
+                    <span className="text-stone-500">Desain Template:</span>
+                    <span className="font-serif font-bold text-stone-900">{selectedTemplate.name} <span className="text-emerald-600 font-sans font-bold text-[10px]">(Gratis Termasuk)</span></span>
+                  </div>
+                  <div className="flex items-center justify-between p-2.5 rounded-xl bg-white border border-amber-200">
+                    <span className="text-stone-500">Paket Layanan:</span>
+                    <span className="font-bold text-amber-900">{selectedPackage.name}</span>
+                  </div>
+                </div>
+                <div className="flex items-center justify-between pt-2 border-t border-amber-200">
+                  <div>
+                    <span className="text-xs font-bold text-stone-900 block">Total Tagihan Final:</span>
+                    <span className="text-[11px] text-stone-500">Sudah all-in lisensi template, domain aktif, dan revisi</span>
+                  </div>
+                  <span className="font-serif text-2xl font-extrabold text-amber-900">{formatRupiah(finalPrice)}</span>
                 </div>
               </div>
 
@@ -1245,6 +1284,22 @@ export const OrderModal: React.FC<OrderModalProps> = ({
                     Seluruh data undangan yang sudah Anda isi akan otomatis tertulis rapi di chat WhatsApp Admin <strong>({storeConfig.brand.whatsappDisplay})</strong>.
                   </li>
                 </ol>
+              </div>
+
+              {/* Trust & Guarantee Box */}
+              <div className="p-4 rounded-2xl bg-stone-100 border border-stone-200 text-xs text-stone-600 space-y-1.5">
+                <div className="flex items-center gap-2 font-bold text-stone-800">
+                  <ShieldCheck className="w-4 h-4 text-emerald-600 shrink-0" />
+                  <span>Garansi Resmi & Keamanan JanjiSuci Digital Studio</span>
+                </div>
+                <p className="text-[11px] text-stone-600 leading-relaxed">
+                  Semua transaksi dilindungi <strong>Garansi 100% Uang Kembali</strong> jika pengerjaan tidak selesai sesuai komitmen waktu. Data pribadi dan foto Anda dijamin aman serta tidak akan pernah dibagikan kepada pihak manapun.
+                </p>
+                <div className="pt-1 text-[10px] text-stone-500 flex flex-wrap gap-x-4 gap-y-1 border-t border-stone-200/60">
+                  <span>🏢 Kantor: Jl. Pandanaran No. 88, Semarang</span>
+                  <span>✉️ halo@janjisuci.web.id</span>
+                  <span>👤 Rekening: Bagas Adi (Founder JanjiSuci)</span>
+                </div>
               </div>
             </div>
           )}

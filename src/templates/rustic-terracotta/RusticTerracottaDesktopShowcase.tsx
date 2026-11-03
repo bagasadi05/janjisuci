@@ -21,7 +21,7 @@ export const RusticTerracottaDesktopShowcase: React.FC<RusticTerracottaDesktopSh
 
   useEffect(() => {
     const calculateCountdown = () => {
-      const target = new Date('2026-10-20T08:00:00+07:00').getTime()
+      const target = new Date('2027-10-24T08:00:00+07:00').getTime()
       const now = new Date().getTime()
       const diff = Math.max(0, target - now)
 

@@ -59,7 +59,7 @@ export const JungleSafariTemplate: React.FC<TemplateViewProps> = ({
   const { data: weddingData } = useInvitationData()
   const { showToast } = useToast()
 
-  const targetDateStr = '2026-10-18T10:00:00+07:00'
+  const targetDateStr = '2027-10-18T10:00:00+07:00'
   const [copiedBank, setCopiedBank] = useState<string | null>(null)
   const [copiedAddress, setCopiedAddress] = useState(false)
   const [selectedPhotoIdx, setSelectedPhotoIdx] = useState<number | null>(null)

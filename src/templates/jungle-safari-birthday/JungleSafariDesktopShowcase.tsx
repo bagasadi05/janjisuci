@@ -19,7 +19,7 @@ export const JungleSafariDesktopShowcase: React.FC<JungleSafariDesktopShowcasePr
   isPlayingAudio,
   onToggleAudio,
   activeTrack,
-  targetDate = '2026-10-18T10:00:00+07:00'
+  targetDate = '2027-10-18T10:00:00+07:00'
 }) => {
   const [timeLeft, setTimeLeft] = useState({ days: 0, hours: 0, minutes: 0, seconds: 0 })
 

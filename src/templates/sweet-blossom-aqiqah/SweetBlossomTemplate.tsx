@@ -56,7 +56,7 @@ export const SweetBlossomTemplate: React.FC<TemplateViewProps> = ({
   const { data: weddingData } = useInvitationData()
   const { showToast } = useToast()
 
-  const targetDateStr = '2026-08-08T09:00:00+07:00'
+  const targetDateStr = '2027-08-08T09:00:00+07:00'
   const [copiedBank, setCopiedBank] = useState<string | null>(null)
   const [copiedAddress, setCopiedAddress] = useState(false)
   const [selectedPhotoIdx, setSelectedPhotoIdx] = useState<number | null>(null)

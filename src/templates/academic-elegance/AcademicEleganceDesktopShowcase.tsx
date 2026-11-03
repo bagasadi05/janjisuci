@@ -19,7 +19,7 @@ export const AcademicEleganceDesktopShowcase: React.FC<AcademicEleganceDesktopSh
   isPlayingAudio,
   onToggleAudio,
   activeTrack,
-  targetDate = '2026-09-19T08:00:00+07:00'
+  targetDate = '2027-09-19T08:00:00+07:00'
 }) => {
   const [timeLeft, setTimeLeft] = useState({ days: 0, hours: 0, minutes: 0, seconds: 0 })
 

@@ -22,7 +22,7 @@ export const RoyalJavaDesktopShowcase: React.FC<RoyalJavaDesktopShowcaseProps> =
 
   useEffect(() => {
     const calculateCountdown = () => {
-      const target = new Date('2026-10-20T08:00:00+07:00').getTime()
+      const target = new Date('2027-11-14T08:00:00+07:00').getTime()
       const now = new Date().getTime()
       const diff = Math.max(0, target - now)
 

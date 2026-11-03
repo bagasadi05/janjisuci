@@ -60,7 +60,7 @@ export const RoyalKhitanTemplate: React.FC<TemplateViewProps> = ({
   const { data: weddingData } = useInvitationData()
   const { showToast } = useToast()
 
-  const targetDateStr = '2026-07-12T09:00:00+07:00'
+  const targetDateStr = '2027-07-12T09:00:00+07:00'
   const [timeLeft, setTimeLeft] = useState({ days: 0, hours: 0, minutes: 0, seconds: 0 })
 
   useEffect(() => {

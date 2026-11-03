@@ -124,7 +124,14 @@ export const AppContent: React.FC = () => {
 
   const handleOpenOrderModal = (template: TemplateItem, pkg?: PricingTier) => {
     setSelectedTemplate(template)
-    setSelectedPackage(pkg)
+    const defaultPkg = pkg || (
+      template.eventType && template.eventType !== 'wedding'
+        ? storeConfig.eventPricingTiers.find((p) => p.id === 'paket-syukuran-exclusive') || storeConfig.eventPricingTiers[1]
+        : template.slug === 'royal-midnight'
+          ? storeConfig.pricingTiers.find((p) => p.id === 'paket-vip') || storeConfig.pricingTiers[2]
+          : storeConfig.pricingTiers.find((p) => p.id === 'paket-exclusive') || storeConfig.pricingTiers[1]
+    )
+    setSelectedPackage(defaultPkg)
     setIsOrderModalOpen(true)
   }
 

@@ -19,7 +19,7 @@ export const LittleStarAqiqahDesktopShowcase: React.FC<LittleStarAqiqahDesktopSh
   isPlayingAudio,
   onToggleAudio,
   activeTrack,
-  targetDate = '2026-05-24T09:00:00+07:00'
+  targetDate = '2027-05-24T09:00:00+07:00'
 }) => {
   const [timeLeft, setTimeLeft] = useState({ days: 0, hours: 0, minutes: 0, seconds: 0 })
 

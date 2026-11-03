@@ -19,7 +19,7 @@ export const ExclusiveNavyDesktopShowcase: React.FC<ExclusiveNavyDesktopShowcase
   isPlayingAudio,
   onToggleAudio,
   activeTrack,
-  targetDate = '2025-12-20T09:00:00+07:00'
+  targetDate = '2027-12-19T09:00:00+07:00'
 }) => {
   // Countdown Timer
   const [timeLeft, setTimeLeft] = useState({ days: 0, hours: 0, minutes: 0, seconds: 0 })

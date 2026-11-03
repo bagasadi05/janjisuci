@@ -21,7 +21,7 @@ export const MonochromeGradDesktopShowcase: React.FC<MonochromeGradDesktopShowca
   isPlayingAudio,
   onToggleAudio,
   activeTrack,
-  targetDate = '2026-10-24T08:00:00+07:00'
+  targetDate = '2027-10-23T08:00:00+07:00'
 }) => {
   const [timeLeft, setTimeLeft] = useState({ days: 0, hours: 0, minutes: 0, seconds: 0 })
 

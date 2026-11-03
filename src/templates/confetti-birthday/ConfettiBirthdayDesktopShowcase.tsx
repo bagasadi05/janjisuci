@@ -19,7 +19,7 @@ export const ConfettiBirthdayDesktopShowcase: React.FC<ConfettiBirthdayDesktopSh
   isPlayingAudio,
   onToggleAudio,
   activeTrack,
-  targetDate = '2026-08-15T15:00:00+07:00'
+  targetDate = '2027-08-15T15:00:00+07:00'
 }) => {
   const [timeLeft, setTimeLeft] = useState({ days: 0, hours: 0, minutes: 0, seconds: 0 })
 

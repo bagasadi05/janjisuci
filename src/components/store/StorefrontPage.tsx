@@ -15,7 +15,8 @@ import {
   Star,
   ChevronDown,
   ChevronUp,
-  Quote
+  Quote,
+  X
 } from 'lucide-react'
 import {
   storeConfig,
@@ -37,6 +38,7 @@ export const StorefrontPage: React.FC<StorefrontPageProps> = ({
   const [selectedEvent, setSelectedEvent] = useState<string>('all')
   const [pricingCategory, setPricingCategory] = useState<'wedding' | 'event'>('wedding')
   const [openFaqIndex, setOpenFaqIndex] = useState<number | null>(0)
+  const [activeLegalModal, setActiveLegalModal] = useState<'terms' | 'privacy' | 'refund' | null>(null)
 
   const eventFilters = [
     { id: 'all', label: 'Semua Acara', count: storeConfig.templates.length, icon: '✨' },

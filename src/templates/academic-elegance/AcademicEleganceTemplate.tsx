@@ -66,7 +66,7 @@ export const AcademicEleganceTemplate: React.FC<TemplateViewProps> = ({
   const { data: weddingData } = useInvitationData()
   const { showToast } = useToast()
 
-  const targetDateStr = '2026-09-19T08:00:00+07:00'
+  const targetDateStr = '2027-09-19T08:00:00+07:00'
   const [timeLeft, setTimeLeft] = useState({ days: 0, hours: 0, minutes: 0, seconds: 0 })
 
   useEffect(() => {

@@ -151,30 +151,30 @@ export const weddingData: WeddingConfig = {
     text: "Dan di antara tanda-tanda (kebesaran)-Nya ialah Dia menciptakan pasangan-pasangan untukmu dari jenismu sendiri, agar kamu cenderung dan merasa tenteram kepadanya, dan Dia menjadikan di antaramu rasa kasih dan sayang. Sungguh, pada yang demikian itu benar-benar terdapat tanda-tanda bagi kaum yang berpikir.",
     source: "QS. Ar-Rum: 21"
   },
-  countdownDate: "2026-10-20T08:00:00+07:00",
+  countdownDate: "2027-10-24T08:00:00+07:00",
   events: {
     akad: {
       title: "Akad Nikah",
-      date: "Minggu, 20 Oktober 2026",
+      date: "Minggu, 24 Oktober 2027",
       time: "08:00 - 10:00 WIB",
       venue: "Masjid Agung Jawa Tengah",
       address: "Jl. Gajah Raya, Sambirejo, Kec. Gayamsari, Kota Semarang, Jawa Tengah",
       mapsUrl: "https://maps.google.com/?q=Masjid+Agung+Jawa+Tengah+Semarang",
       calendarDate: {
-        start: "20261020T010000Z",
-        end: "20261020T030000Z"
+        start: "20271024T010000Z",
+        end: "20271024T030000Z"
       }
     },
     resepsi: {
       title: "Resepsi Pernikahan",
-      date: "Minggu, 20 Oktober 2026",
+      date: "Minggu, 24 Oktober 2027",
       time: "11:00 - 14:00 WIB",
       venue: "Grand Ballroom Hotel Ciputra",
       address: "Simpang Lima, Jl. Simpang Lima No. 1, Pekunden, Kec. Semarang Tengah, Kota Semarang",
       mapsUrl: "https://maps.google.com/?q=Hotel+Ciputra+Semarang",
       calendarDate: {
-        start: "20261020T040000Z",
-        end: "20261020T070000Z"
+        start: "20271024T040000Z",
+        end: "20271024T070000Z"
       }
     }
   },
