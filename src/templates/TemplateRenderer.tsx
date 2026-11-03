@@ -13,6 +13,10 @@ import { RoyalKhitanTemplate } from './royal-khitan/RoyalKhitanTemplate'
 import { ConfettiBirthdayTemplate } from './confetti-birthday/ConfettiBirthdayTemplate'
 import { LittleStarAqiqahTemplate } from './little-star-aqiqah/LittleStarAqiqahTemplate'
 import { AcademicEleganceTemplate } from './academic-elegance/AcademicEleganceTemplate'
+import { JungleSafariTemplate } from './jungle-safari-birthday/JungleSafariTemplate'
+import { SweetBlossomTemplate } from './sweet-blossom-aqiqah/SweetBlossomTemplate'
+import { NusantaraKhitanTemplate } from './nusantara-khitan/NusantaraKhitanTemplate'
+import { MonochromeGradTemplate } from './monochrome-grad/MonochromeGradTemplate'
 
 interface TemplateRendererProps extends TemplateViewProps {
   template: TemplateItem
@@ -22,6 +26,18 @@ export const TemplateRenderer: React.FC<TemplateRendererProps> = (props) => {
   const { template } = props
 
   switch (template.slug || template.id) {
+    case 'jungle-safari-birthday':
+      return <JungleSafariTemplate {...props} />
+
+    case 'sweet-blossom-aqiqah':
+      return <SweetBlossomTemplate {...props} />
+
+    case 'nusantara-khitan':
+      return <NusantaraKhitanTemplate {...props} />
+
+    case 'monochrome-grad':
+      return <MonochromeGradTemplate {...props} />
+
     case 'royal-khitan':
       return <RoyalKhitanTemplate {...props} />
 

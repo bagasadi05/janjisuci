@@ -116,13 +116,29 @@ export const OrderModal: React.FC<OrderModalProps> = ({
 
   const selectedTemplate =
     storeConfig.templates.find((t) => t.id === formData.templateId) || storeConfig.templates[0]
+  const isNonWedding = Boolean(selectedTemplate.eventType && selectedTemplate.eventType !== 'wedding')
+  const availablePackages = isNonWedding ? storeConfig.eventPricingTiers : storeConfig.pricingTiers
   const selectedPackage =
-    storeConfig.pricingTiers.find((p) => p.id === formData.packageId) || storeConfig.pricingTiers[1]
+    availablePackages.find((p) => p.id === formData.packageId) ||
+    storeConfig.pricingTiers.find((p) => p.id === formData.packageId) ||
+    availablePackages[0]
   const selectedPayment =
     storeConfig.paymentMethods.find((m) => m.id === formData.paymentMethodId) || storeConfig.paymentMethods[0]
 
-  // Total price uses the chosen package price (or template price if higher, capped in 75k-149k range)
+  // Total price uses the chosen package price
   const finalPrice = selectedPackage.price
+
+  const handleSelectTemplate = (tplId: string) => {
+    const tpl = storeConfig.templates.find((t) => t.id === tplId) || storeConfig.templates[0]
+    const isNowNonWedding = Boolean(tpl.eventType && tpl.eventType !== 'wedding')
+    const targetPackages = isNowNonWedding ? storeConfig.eventPricingTiers : storeConfig.pricingTiers
+    const pkgStillValid = targetPackages.some((p) => p.id === formData.packageId)
+    setFormData((prev) => ({
+      ...prev,
+      templateId: tplId,
+      packageId: pkgStillValid ? prev.packageId : targetPackages[0].id
+    }))
+  }
 
   const updateField = (field: keyof CustomOrderData, value: string) => {
     setFormData((prev) => ({ ...prev, [field]: value }))
@@ -363,7 +379,7 @@ export const OrderModal: React.FC<OrderModalProps> = ({
                       <button
                         key={tpl.id}
                         type="button"
-                        onClick={() => updateField('templateId', tpl.id)}
+                        onClick={() => handleSelectTemplate(tpl.id)}
                         className={`p-2.5 rounded-2xl border text-left transition-all cursor-pointer flex items-center gap-2.5 ${
                           isSelected
                             ? 'border-amber-700 bg-amber-50/70 ring-2 ring-amber-700/20'
@@ -392,11 +408,13 @@ export const OrderModal: React.FC<OrderModalProps> = ({
               {/* Package Tier Choice */}
               <div>
                 <label className="block text-xs font-bold uppercase tracking-wider text-stone-700 mb-2">
-                  Pilih Paket Layanan (Rp 75.000 – Rp 149.000)
+                  {isNonWedding
+                    ? 'Pilih Paket Layanan Syukuran / Acara (Mulai Rp 59.000)'
+                    : 'Pilih Paket Layanan Pernikahan (Rp 75.000 – Rp 149.000)'}
                 </label>
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-                  {storeConfig.pricingTiers.map((pkg) => {
-                    const isSelected = formData.packageId === pkg.id
+                  {availablePackages.map((pkg) => {
+                    const isSelected = selectedPackage.id === pkg.id
                     return (
                       <div
                         key={pkg.id}

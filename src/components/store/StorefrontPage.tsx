@@ -35,6 +35,7 @@ export const StorefrontPage: React.FC<StorefrontPageProps> = ({
   onOrderTemplate
 }) => {
   const [selectedEvent, setSelectedEvent] = useState<string>('all')
+  const [pricingCategory, setPricingCategory] = useState<'wedding' | 'event'>('wedding')
   const [openFaqIndex, setOpenFaqIndex] = useState<number | null>(0)
 
   const eventFilters = [
@@ -382,75 +383,106 @@ export const StorefrontPage: React.FC<StorefrontPageProps> = ({
             <h2 className="font-serif text-3xl sm:text-5xl font-bold text-white">
               Pilihan Paket Undangan Digital
             </h2>
-            <p className="text-stone-400 text-xs sm:text-sm max-w-xl mx-auto mt-2">
+            <p className="text-stone-400 text-xs sm:text-sm max-w-xl mx-auto mt-2 mb-6">
               Bebas pilih desain template mana saja dari katalog kami dan sesuaikan dengan paket fitur yang Anda butuhkan:
             </p>
+
+            {/* Toggle Tab: Paket Pernikahan vs Paket Syukuran/Ultah/Wisuda */}
+            <div className="inline-flex p-1.5 rounded-2xl bg-stone-900 border border-amber-500/30 max-w-lg mx-auto shadow-xl">
+              <button
+                type="button"
+                onClick={() => setPricingCategory('wedding')}
+                className={`px-4 sm:px-6 py-2.5 rounded-xl text-xs sm:text-sm font-bold transition-all cursor-pointer flex items-center gap-2 ${
+                  pricingCategory === 'wedding'
+                    ? 'bg-gradient-to-r from-amber-500 to-amber-600 text-stone-950 shadow-md font-bold'
+                    : 'text-stone-400 hover:text-white'
+                }`}
+              >
+                <span>💍 Paket Pernikahan (Mulai 75k)</span>
+              </button>
+              <button
+                type="button"
+                onClick={() => setPricingCategory('event')}
+                className={`px-4 sm:px-6 py-2.5 rounded-xl text-xs sm:text-sm font-bold transition-all cursor-pointer flex items-center gap-2 ${
+                  pricingCategory === 'event'
+                    ? 'bg-gradient-to-r from-amber-500 to-amber-600 text-stone-950 shadow-md font-bold'
+                    : 'text-stone-400 hover:text-white'
+                }`}
+              >
+                <span>🎉 Khitan, Ultah & Wisuda (Mulai 59k)</span>
+              </button>
+            </div>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 sm:gap-8 items-stretch">
-            {storeConfig.pricingTiers.map((pkg) => (
-              <div
-                key={pkg.id}
-                className={`relative rounded-3xl p-6 sm:p-8 flex flex-col justify-between transition-all ${
-                  pkg.isPopular
-                    ? 'bg-gradient-to-b from-amber-950/60 via-stone-900 to-stone-900 border-2 border-amber-400 shadow-[0_15px_40px_rgba(212,175,55,0.2)] scale-[1.02]'
-                    : 'bg-stone-900 border border-white/10'
-                }`}
-              >
-                <div>
-                  {pkg.badge && (
-                    <span
-                      className={`inline-block px-3 py-1 rounded-full text-xs font-bold mb-4 ${
-                        pkg.isPopular
-                          ? 'bg-amber-400 text-stone-950'
-                          : 'bg-white/10 text-amber-300'
-                      }`}
-                    >
-                      {pkg.badge}
-                    </span>
-                  )}
-
-                  <h3 className="font-serif text-2xl sm:text-3xl font-bold text-white">
-                    {pkg.name}
-                  </h3>
-                  <p className="text-xs text-stone-400 mt-1.5 leading-relaxed">
-                    {pkg.description}
-                  </p>
-
-                  <div className="my-6 pb-6 border-b border-white/10">
-                    <span className="text-xs text-stone-500 line-through block">
-                      Harga Normal {formatRupiah(pkg.originalPrice)}
-                    </span>
-                    <div className="flex items-baseline gap-1.5 mt-1">
-                      <span className="font-serif text-4xl sm:text-5xl font-bold text-amber-300">
-                        {formatRupiah(pkg.price)}
-                      </span>
-                      <span className="text-xs text-stone-400">/ sekali bayar</span>
-                    </div>
-                  </div>
-
-                  <ul className="space-y-3 text-xs sm:text-sm text-stone-300 mb-8">
-                    {pkg.features.map((feat, i) => (
-                      <li key={i} className="flex items-start gap-2.5">
-                        <Check className="w-4 h-4 text-emerald-400 shrink-0 mt-0.5" />
-                        <span>{feat}</span>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-
-                <button
-                  onClick={() => onOrderTemplate(storeConfig.templates[0], pkg)}
-                  className={`w-full py-3.5 px-6 rounded-2xl font-bold text-xs sm:text-sm transition-all cursor-pointer active:scale-95 ${
+            {(pricingCategory === 'event' ? storeConfig.eventPricingTiers : storeConfig.pricingTiers).map((pkg) => {
+              const defaultTemplate = pricingCategory === 'event'
+                ? storeConfig.templates.find((t) => t.eventType && t.eventType !== 'wedding') || storeConfig.templates[0]
+                : storeConfig.templates[0]
+              return (
+                <div
+                  key={pkg.id}
+                  className={`relative rounded-3xl p-6 sm:p-8 flex flex-col justify-between transition-all ${
                     pkg.isPopular
-                      ? 'bg-gradient-to-r from-amber-500 via-amber-400 to-amber-600 text-stone-950 shadow-lg hover:brightness-110'
-                      : 'bg-white/10 hover:bg-white/20 text-white border border-white/15'
+                      ? 'bg-gradient-to-b from-amber-950/60 via-stone-900 to-stone-900 border-2 border-amber-400 shadow-[0_15px_40px_rgba(212,175,55,0.2)] scale-[1.02]'
+                      : 'bg-stone-900 border border-white/10'
                   }`}
                 >
-                  Pilih {pkg.name} ({formatRupiah(pkg.price)})
-                </button>
-              </div>
-            ))}
+                  <div>
+                    {pkg.badge && (
+                      <span
+                        className={`inline-block px-3 py-1 rounded-full text-xs font-bold mb-4 ${
+                          pkg.isPopular
+                            ? 'bg-amber-400 text-stone-950'
+                            : 'bg-white/10 text-amber-300'
+                        }`}
+                      >
+                        {pkg.badge}
+                      </span>
+                    )}
+
+                    <h3 className="font-serif text-2xl sm:text-3xl font-bold text-white">
+                      {pkg.name}
+                    </h3>
+                    <p className="text-xs text-stone-400 mt-1.5 leading-relaxed">
+                      {pkg.description}
+                    </p>
+
+                    <div className="my-6 pb-6 border-b border-white/10">
+                      <span className="text-xs text-stone-500 line-through block">
+                        Harga Normal {formatRupiah(pkg.originalPrice)}
+                      </span>
+                      <div className="flex items-baseline gap-1.5 mt-1">
+                        <span className="font-serif text-4xl sm:text-5xl font-bold text-amber-300">
+                          {formatRupiah(pkg.price)}
+                        </span>
+                        <span className="text-xs text-stone-400">/ sekali bayar</span>
+                      </div>
+                    </div>
+
+                    <ul className="space-y-3 text-xs sm:text-sm text-stone-300 mb-8">
+                      {pkg.features.map((feat, i) => (
+                        <li key={i} className="flex items-start gap-2.5">
+                          <Check className="w-4 h-4 text-emerald-400 shrink-0 mt-0.5" />
+                          <span>{feat}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+
+                  <button
+                    onClick={() => onOrderTemplate(defaultTemplate, pkg)}
+                    className={`w-full py-3.5 px-6 rounded-2xl font-bold text-xs sm:text-sm transition-all cursor-pointer active:scale-95 ${
+                      pkg.isPopular
+                        ? 'bg-gradient-to-r from-amber-500 via-amber-400 to-amber-600 text-stone-950 shadow-lg hover:brightness-110'
+                        : 'bg-white/10 hover:bg-white/20 text-white border border-white/15'
+                    }`}
+                  >
+                    Pilih {pkg.name} ({formatRupiah(pkg.price)})
+                  </button>
+                </div>
+              )
+            })}
           </div>
         </div>
       </section>
