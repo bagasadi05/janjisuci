@@ -1,0 +1,170 @@
+@import "tailwindcss";
+
+@layer base {
+  :root {
+    --font-serif: 'Cormorant Garamond', Georgia, serif;
+    --font-script: 'Great Vibes', cursive;
+    --font-sans: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  }
+
+  html {
+    scroll-behavior: smooth;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  /* Prevent iOS zoom on inputs */
+  input, select, textarea {
+    font-size: 16px;
+  }
+}
+
+.font-serif {
+  font-family: var(--font-serif);
+}
+
+.font-script {
+  font-family: var(--font-script);
+}
+
+.font-pinyon {
+  font-family: 'Pinyon Script', cursive;
+}
+
+.font-eb-garamond {
+  font-family: 'EB Garamond', 'Cormorant Garamond', Georgia, serif;
+}
+
+.font-sans {
+  font-family: var(--font-sans);
+}
+
+/* Glassmorphism helpers */
+.glass-card {
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.7);
+}
+
+.glass-card-dark {
+  background: rgba(24, 20, 18, 0.8);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(212, 175, 55, 0.2);
+}
+
+/* Gold foil metallic borders and effects */
+.border-gold-gradient {
+  border-image: linear-gradient(to bottom right, #fbf0b9, #d4af37, #996515, #f3ede2) 1;
+}
+
+.text-gold-gradient {
+  background: linear-gradient(135deg, #fbf0b9 0%, #d4af37 50%, #aa771c 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+/* Metallic Card Gradient */
+.bg-card-bca {
+  background: linear-gradient(135deg, #0d3b66 0%, #001e3d 60%, #05192d 100%);
+}
+
+.bg-card-mandiri {
+  background: linear-gradient(135deg, #1c3144 0%, #0a1118 60%, #1e3a5f 100%);
+}
+
+/* Smooth spinning vinyl animation */
+@keyframes spin-slow {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.animate-spin-slow {
+  animation: spin-slow 8s linear infinite;
+}
+
+/* Equalizer sound bar animation */
+@keyframes soundwave {
+  0%, 100% {
+    height: 4px;
+  }
+  50% {
+    height: 18px;
+  }
+}
+
+.animate-soundwave-1 {
+  animation: soundwave 0.8s ease-in-out infinite;
+}
+.animate-soundwave-2 {
+  animation: soundwave 1.1s ease-in-out infinite 0.2s;
+}
+.animate-soundwave-3 {
+  animation: soundwave 0.9s ease-in-out infinite 0.4s;
+}
+
+/* Floating animation */
+@keyframes float-gentle {
+  0%, 100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-8px);
+  }
+}
+
+.animate-float {
+  animation: float-gentle 4s ease-in-out infinite;
+}
+
+/* Falling petal animations */
+@keyframes fall {
+  0% {
+    top: -10%;
+    transform: translateX(0) rotate(0deg);
+    opacity: 0.9;
+  }
+  50% {
+    transform: translateX(50px) rotate(180deg);
+    opacity: 0.8;
+  }
+  100% {
+    top: 105%;
+    transform: translateX(-30px) rotate(360deg);
+    opacity: 0.1;
+  }
+}
+
+.petal-fall {
+  animation-name: fall;
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
+}
+
+/* Custom scrollbar for mobile / desktop */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(168, 162, 158, 0.35);
+  border-radius: 9999px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(168, 162, 158, 0.65);
+}
+
+/* Safe area inset for modern mobile phones (iPhone notch/bar) */
+.pb-safe {
+  padding-bottom: max(1rem, env(safe-area-inset-bottom, 1rem));
+}

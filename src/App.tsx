@@ -1,0 +1,208 @@
+import React, { useState, useRef, useEffect } from 'react'
+import { AudioPlayer } from './components/AudioPlayer'
+import { ToastProvider, useToast } from './components/Toast'
+import { weddingData, AudioTrack } from './config/weddingData'
+import {
+  storeConfig,
+  TemplateItem,
+  PricingTier,
+  CustomOrderData
+} from './config/storeConfig'
+import { InvitationProvider } from './context/InvitationContext'
+import { StorefrontPage } from './components/store/StorefrontPage'
+import { PreviewFloatingBar } from './components/store/PreviewFloatingBar'
+import { OrderModal } from './components/store/OrderModal'
+import { TemplateRenderer } from './templates/TemplateRenderer'
+
+export const AppContent: React.FC = () => {
+  // Check URL parameters on initial load (?template=royal-java&to=Nama+Tamu)
+  const urlParams = new URLSearchParams(window.location.search)
+  const initialTemplateParam = urlParams.get('template')
+  const hasGuestParam = Boolean(urlParams.get('to') || urlParams.get('u') || urlParams.get('guest'))
+
+  const matchedInitialTemplate =
+    storeConfig.templates.find(
+      (t) =>
+        t.slug === initialTemplateParam ||
+        t.id === initialTemplateParam ||
+        (t.slug === 'royal-midnight' &&
+          (initialTemplateParam === 'midnight' ||
+            initialTemplateParam === 'midnight-aldian' ||
+            initialTemplateParam === 'luthfiana-hasyim'))
+    ) || storeConfig.templates[0]
+
+  // View Mode: 'storefront' (Catalog Home) or 'preview' (Invitation View)
+  const [viewMode, setViewMode] = useState<'storefront' | 'preview'>(
+    initialTemplateParam || hasGuestParam ? 'preview' : 'storefront'
+  )
+
+  const [selectedTemplate, setSelectedTemplate] = useState<TemplateItem>(matchedInitialTemplate)
+  const [selectedPackage, setSelectedPackage] = useState<PricingTier | undefined>(undefined)
+  const [isOrderModalOpen, setIsOrderModalOpen] = useState(false)
+  const [customPreviewData, setCustomPreviewData] = useState<CustomOrderData | null>(null)
+
+  // Invitation Playback & Cover Gate States
+  const [isOpened, setIsOpened] = useState(false)
+  const [isPlayingAudio, setIsPlayingAudio] = useState(false)
+  const [activeTrack, setActiveTrack] = useState<AudioTrack>(() => {
+    if (matchedInitialTemplate.defaultSongSrc) {
+      return {
+        id: matchedInitialTemplate.id,
+        title: matchedInitialTemplate.defaultSongTitle || 'Payung Teduh - Akad',
+        artist: 'Musik Indonesia Pilihan',
+        src: matchedInitialTemplate.defaultSongSrc
+      }
+    }
+    return weddingData.audio.activeTrack
+  })
+  const audioRef = useRef<HTMLAudioElement | null>(null)
+  const { showToast } = useToast()
+
+  // Update track when template changes
+  useEffect(() => {
+    if (selectedTemplate.defaultSongSrc) {
+      setActiveTrack({
+        id: selectedTemplate.id,
+        title: selectedTemplate.defaultSongTitle || 'Payung Teduh - Akad',
+        artist: 'Musik Indonesia Pilihan',
+        src: selectedTemplate.defaultSongSrc
+      })
+    }
+  }, [selectedTemplate])
+
+  // Pause audio if returning to storefront catalog
+  useEffect(() => {
+    if (viewMode === 'storefront' && audioRef.current) {
+      audioRef.current.pause()
+      setIsPlayingAudio(false)
+    }
+  }, [viewMode])
+
+  // CRITICAL: Trigger audio playback directly during user gesture click
+  const handleOpenInvitationWithAudio = () => {
+    setIsOpened(true)
+    setIsPlayingAudio(true)
+
+    if (audioRef.current) {
+      audioRef.current.volume = 1.0
+      audioRef.current
+        .play()
+        .then(() => {
+          showToast(`Memutar: ${activeTrack.title}`, 'success')
+        })
+        .catch((err) => {
+          console.warn('Autoplay error catch:', err)
+        })
+    }
+  }
+
+  const handleToggleAudio = () => {
+    setIsPlayingAudio((prev) => !prev)
+  }
+
+  const handleTrackChange = (track: AudioTrack) => {
+    setActiveTrack(track)
+    setIsPlayingAudio(true)
+  }
+
+  const handleNextTrack = () => {
+    const currentIndex = weddingData.audio.playlist.findIndex((t) => t.id === activeTrack.id)
+    const nextIndex = (currentIndex + 1) % weddingData.audio.playlist.length
+    const next = weddingData.audio.playlist[nextIndex]
+    setActiveTrack(next)
+    setIsPlayingAudio(true)
+    showToast(`Mengganti lagu: ${next.title}`, 'info')
+  }
+
+  // Storefront Handlers
+  const handlePreviewTemplate = (template: TemplateItem) => {
+    setSelectedTemplate(template)
+    setIsOpened(false) // Show the unique envelope cover screen of that template
+    setViewMode('preview')
+    window.scrollTo({ top: 0, behavior: 'smooth' })
+  }
+
+  const handleOpenOrderModal = (template: TemplateItem, pkg?: PricingTier) => {
+    setSelectedTemplate(template)
+    setSelectedPackage(pkg)
+    setIsOrderModalOpen(true)
+  }
+
+  const handleApplyCustomPreview = (template: TemplateItem, customData: CustomOrderData) => {
+    setSelectedTemplate(template)
+    setCustomPreviewData(customData)
+    setIsOpened(true)
+    setViewMode('preview')
+    window.scrollTo({ top: 0, behavior: 'smooth' })
+  }
+
+  return (
+    <>
+      {/* Order & Data Pengantin Modal (Accessible from both Catalog & Preview) */}
+      <OrderModal
+        isOpen={isOrderModalOpen}
+        onClose={() => setIsOrderModalOpen(false)}
+        initialTemplate={selectedTemplate}
+        initialPackage={selectedPackage}
+        onApplyCustomPreview={handleApplyCustomPreview}
+      />
+
+      {viewMode === 'storefront' ? (
+        <StorefrontPage
+          onPreviewTemplate={handlePreviewTemplate}
+          onOrderTemplate={handleOpenOrderModal}
+        />
+      ) : (
+        <InvitationProvider template={selectedTemplate} customOrder={customPreviewData}>
+          {/* Top Bar for Buyers in Preview Mode */}
+          <PreviewFloatingBar
+            activeTemplate={selectedTemplate}
+            onSelectTemplate={(tpl) => {
+              setSelectedTemplate(tpl)
+              setIsOpened(false) // Let user experience each template's unique opening gate!
+              showToast(`Tema diganti ke: ${tpl.name}`, 'info')
+            }}
+            onBackToCatalog={() => setViewMode('storefront')}
+            onOpenOrderModal={(tpl) => handleOpenOrderModal(tpl)}
+            hasCustomPreviewData={Boolean(customPreviewData)}
+            onResetCustomData={() => {
+              setCustomPreviewData(null)
+              showToast('Dikembalikan ke data contoh template', 'info')
+            }}
+          />
+
+          {/* Master Audio Controller */}
+          <AudioPlayer
+            audioElementRef={audioRef}
+            src={activeTrack.src}
+            activeTrack={activeTrack}
+            isPlaying={isPlayingAudio}
+            onToggle={handleToggleAudio}
+            onTrackChange={handleTrackChange}
+          />
+
+          {/* Dynamic Template Component Renderer */}
+          <TemplateRenderer
+            template={selectedTemplate}
+            isOpened={isOpened}
+            onOpenWithAudio={handleOpenInvitationWithAudio}
+            isPlayingAudio={isPlayingAudio}
+            onToggleAudio={handleToggleAudio}
+            activeTrack={activeTrack}
+            onNextTrack={handleNextTrack}
+          />
+        </InvitationProvider>
+      )}
+    </>
+  )
+}
+
+export const App: React.FC = () => {
+  return (
+    <ToastProvider>
+      <AppContent />
+    </ToastProvider>
+  )
+}
+
+export default App
