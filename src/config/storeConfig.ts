@@ -440,6 +440,47 @@ export const storeConfig = {
       }
     },
     {
+      id: "adat-banjar",
+      name: "Royal Adat Banjar Sasirangan",
+      slug: "adat-banjar",
+      eventType: "wedding",
+      category: "adat",
+      categoryLabel: "Adat Nusantara",
+      price: 99000,
+      originalPrice: 180000,
+      badge: "Adat Kalimantan ⚜️",
+      isPopular: true,
+      thumbnail: "https://undanganwebkami.id/wp-content/uploads/2025/12/RAN_4182--682x1024.jpg",
+      coverImage: "https://undanganwebkami.id/wp-content/uploads/2025/12/Banjar-Background.jpeg",
+      heroImage: "https://undanganwebkami.id/wp-content/uploads/2025/12/RAN_4245-.jpg",
+      description: "Kemewahan adat Banjar Kalimantan Selatan dengan ornamen Rumah Bubungan Tinggi, motif kain Sasirangan, busana Baamar Galung Pancar Matahari beludru marun dan emas berkilau.",
+      features: ["Rumah Bubungan Tinggi", "Motif Sasirangan Emas", "Love Story 4 Babak", "Lagu Bentang Jarak Asmara", "Live Streaming Virtual"],
+      openingType: "banjar-arch",
+      particleType: "gold-dust",
+      defaultSongTitle: "Man Osman ft. Traffic Jam - Bentang Jarak Asmara",
+      defaultSongSrc: "https://undanganwebkami.id/wp-content/uploads/2026/01/Man-Osman-ft.-Traffic-Jam-Bentang-Jarak-Asmara-Official-Lyrics-Video.mp3",
+      sampleCouple: {
+        groomShort: "Syahril",
+        groomFull: "Syahril Rendra Backhtiar, S.Kom.",
+        groomParents: "Bapak Sufian & Ibu Ghendis",
+        groomPhoto: "https://undanganwebkami.id/wp-content/uploads/2025/12/cpp-1-17-1.jpg",
+        brideShort: "Elyana",
+        brideFull: "Elyana Azkiya Nur, S.M.",
+        brideParents: "Bapak Nasrudin & Ibu Muna",
+        bridePhoto: "https://undanganwebkami.id/wp-content/uploads/2025/12/cpw-1-17-1.jpg",
+        dateText: "Minggu, 31 Desember 2027",
+        venueText: "Gedung Mahligai Pancasila, Banjarmasin, Kalimantan Selatan"
+      },
+      themeColors: {
+        primaryBg: "#1F0A0A",
+        cardBg: "rgba(255, 252, 243, 0.95)",
+        accentHex: "#D7BB83",
+        secondaryHex: "#722C2C",
+        textDark: "#2B1810",
+        badgeBg: "#FDF4DF"
+      }
+    },
+    {
       id: "luxury-champagne",
       name: "Modern Luxury Champagne",
       slug: "luxury-champagne",

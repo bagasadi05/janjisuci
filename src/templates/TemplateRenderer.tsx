@@ -18,6 +18,7 @@ import { JungleSafariTemplate } from './jungle-safari-birthday/JungleSafariTempl
 import { SweetBlossomTemplate } from './sweet-blossom-aqiqah/SweetBlossomTemplate'
 import { NusantaraKhitanTemplate } from './nusantara-khitan/NusantaraKhitanTemplate'
 import { MonochromeGradTemplate } from './monochrome-grad/MonochromeGradTemplate'
+import { AdatBanjarTemplate } from './adat-banjar/AdatBanjarTemplate'
 
 interface TemplateRendererProps extends TemplateViewProps {
   template: TemplateItem
@@ -32,6 +33,9 @@ export const TemplateRenderer: React.FC<TemplateRendererProps> = (props) => {
 
   const renderTemplateContent = () => {
     switch (template.slug || template.id) {
+      case 'adat-banjar':
+        return <AdatBanjarTemplate {...props} />
+
       case 'jungle-safari-birthday':
         return <JungleSafariTemplate {...props} />
 
