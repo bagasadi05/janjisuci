@@ -1,6 +1,7 @@
-import React from 'react'
+import React, { useRef } from 'react'
 import { TemplateItem } from '../config/storeConfig'
 import { AudioTrack } from '../config/weddingData'
+import { useAutoScrollReveal3D } from '../components/common/Reveal3D'
 import { BotanicalSageTemplate, TemplateViewProps } from './botanical-sage/BotanicalSageTemplate'
 import { RoyalJavaTemplate } from './royal-java/RoyalJavaTemplate'
 import { LuxuryChampagneTemplate } from './luxury-champagne/LuxuryChampagneTemplate'
@@ -24,57 +25,69 @@ interface TemplateRendererProps extends TemplateViewProps {
 
 export const TemplateRenderer: React.FC<TemplateRendererProps> = (props) => {
   const { template } = props
+  const containerRef = useRef<HTMLDivElement>(null)
 
-  switch (template.slug || template.id) {
-    case 'jungle-safari-birthday':
-      return <JungleSafariTemplate {...props} />
+  // Activates 60fps 3D scroll reveal and card tilt across every template
+  useAutoScrollReveal3D(containerRef)
 
-    case 'sweet-blossom-aqiqah':
-      return <SweetBlossomTemplate {...props} />
+  const renderTemplateContent = () => {
+    switch (template.slug || template.id) {
+      case 'jungle-safari-birthday':
+        return <JungleSafariTemplate {...props} />
 
-    case 'nusantara-khitan':
-      return <NusantaraKhitanTemplate {...props} />
+      case 'sweet-blossom-aqiqah':
+        return <SweetBlossomTemplate {...props} />
 
-    case 'monochrome-grad':
-      return <MonochromeGradTemplate {...props} />
+      case 'nusantara-khitan':
+        return <NusantaraKhitanTemplate {...props} />
 
-    case 'royal-khitan':
-      return <RoyalKhitanTemplate {...props} />
+      case 'monochrome-grad':
+        return <MonochromeGradTemplate {...props} />
 
-    case 'confetti-birthday':
-      return <ConfettiBirthdayTemplate {...props} />
+      case 'royal-khitan':
+        return <RoyalKhitanTemplate {...props} />
 
-    case 'little-star-aqiqah':
-      return <LittleStarAqiqahTemplate {...props} />
+      case 'confetti-birthday':
+        return <ConfettiBirthdayTemplate {...props} />
 
-    case 'academic-elegance':
-      return <AcademicEleganceTemplate {...props} />
+      case 'little-star-aqiqah':
+        return <LittleStarAqiqahTemplate {...props} />
 
-    case 'exclusive-navy':
-      return <ExclusiveNavyTemplate {...props} />
+      case 'academic-elegance':
+        return <AcademicEleganceTemplate {...props} />
 
-    case 'royal-midnight':
-    case 'midnight-aldian':
-    case 'luthfiana-hasyim':
-      return <RoyalMidnightTemplate {...props} />
+      case 'exclusive-navy':
+        return <ExclusiveNavyTemplate {...props} />
 
-    case 'royal-java':
-      return <RoyalJavaTemplate {...props} />
+      case 'royal-midnight':
+      case 'midnight-aldian':
+      case 'luthfiana-hasyim':
+        return <RoyalMidnightTemplate {...props} />
 
-    case 'luxury-champagne':
-      return <LuxuryChampagneTemplate {...props} />
+      case 'royal-java':
+        return <RoyalJavaTemplate {...props} />
 
-    case 'celestial-night':
-      return <CelestialNightTemplate {...props} />
+      case 'luxury-champagne':
+        return <LuxuryChampagneTemplate {...props} />
 
-    case 'rustic-terracotta':
-      return <RusticTerracottaTemplate {...props} />
+      case 'celestial-night':
+        return <CelestialNightTemplate {...props} />
 
-    case 'blush-peony':
-      return <BlushPeonyTemplate {...props} />
+      case 'rustic-terracotta':
+        return <RusticTerracottaTemplate {...props} />
 
-    case 'botanical-sage':
-    default:
-      return <BotanicalSageTemplate {...props} />
+      case 'blush-peony':
+        return <BlushPeonyTemplate {...props} />
+
+      case 'botanical-sage':
+      default:
+        return <BotanicalSageTemplate {...props} />
+    }
   }
+
+  return (
+    <div ref={containerRef} className="perspective-1000 w-full min-h-screen">
+      {renderTemplateContent()}
+    </div>
+  )
 }

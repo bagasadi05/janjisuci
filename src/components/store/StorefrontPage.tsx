@@ -141,12 +141,16 @@ export const StorefrontPage: React.FC<StorefrontPageProps> = ({
             <span>Promo Spesial Hari Ini • Harga Mulai Rp 75.000 Saja!</span>
           </div>
 
-          <h1 className="font-serif text-3xl sm:text-5xl lg:text-7xl font-bold text-white tracking-tight leading-[1.3] sm:leading-[1.2] max-w-4xl mx-auto">
-            Sebarkan Kabar Bahagia dengan{' '}
-            <span className="inline-block text-gold-gradient italic font-script text-5xl sm:text-7xl lg:text-8xl pl-1 pr-6 sm:pr-8 py-1 -my-2 align-middle">
-              Undangan Digital
-            </span>{' '}
-            Paling Berkelas
+          <h1 className="font-serif text-2xl sm:text-4xl lg:text-6xl font-bold text-white tracking-tight leading-tight max-w-4xl mx-auto">
+            <span className="block text-stone-200">Sebarkan Kabar Bahagia dengan</span>
+            <span className="block my-2 sm:my-3">
+              <span className="inline-block text-gold-gradient italic font-script text-5xl sm:text-7xl lg:text-8xl px-6 py-2 -my-2 align-middle drop-shadow-sm">
+                Undangan Digital
+              </span>
+            </span>
+            <span className="block text-amber-200/90 font-serif font-bold tracking-tight">
+              Paling Berkelas
+            </span>
           </h1>
 
           <p className="text-stone-300 text-sm sm:text-base max-w-2xl mx-auto mt-6 leading-relaxed">

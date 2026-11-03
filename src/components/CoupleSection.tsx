@@ -2,6 +2,7 @@ import React from 'react'
 import { Heart, Sparkles } from 'lucide-react'
 import { useInvitationData } from '../context/InvitationContext'
 import { FloralDivider, BotanicalCorner } from './Ornament'
+import { Reveal3D } from './common/Reveal3D'
 
 const InstagramIcon: React.FC<{ className?: string }> = ({ className = "w-3.5 h-3.5" }) => (
   <svg className={className} viewBox="0 0 24 24" fill="currentColor">
@@ -33,7 +34,7 @@ export const CoupleSection: React.FC = () => {
         <div className="relative grid grid-cols-1 md:grid-cols-2 gap-8 lg:gap-10 items-stretch">
           
           {/* Groom Card */}
-          <div className="relative p-6 sm:p-9 rounded-3xl bg-white/90 backdrop-blur-md border border-amber-800/15 shadow-xl transition-all duration-300 hover:shadow-2xl flex flex-col items-center">
+          <Reveal3D delay={100} interactive className="relative p-6 sm:p-9 rounded-3xl bg-white/90 backdrop-blur-md border border-amber-800/15 shadow-xl transition-all duration-300 hover:shadow-2xl flex flex-col items-center">
             <BotanicalCorner position="top-left" />
             
             {/* Double Arch Frame with Gold Rim */}
@@ -77,7 +78,7 @@ export const CoupleSection: React.FC = () => {
                 <span>@{groom.instagram}</span>
               </a>
             </div>
-          </div>
+          </Reveal3D>
 
           {/* Desktop/Tablet Central Heart Connector Badge */}
           <div className="hidden md:flex absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-20 items-center justify-center pointer-events-none">
@@ -87,7 +88,7 @@ export const CoupleSection: React.FC = () => {
           </div>
 
           {/* Bride Card */}
-          <div className="relative p-6 sm:p-9 rounded-3xl bg-white/90 backdrop-blur-md border border-amber-800/15 shadow-xl transition-all duration-300 hover:shadow-2xl flex flex-col items-center">
+          <Reveal3D delay={200} interactive className="relative p-6 sm:p-9 rounded-3xl bg-white/90 backdrop-blur-md border border-amber-800/15 shadow-xl transition-all duration-300 hover:shadow-2xl flex flex-col items-center">
             <BotanicalCorner position="top-right" />
             
             {/* Double Arch Frame with Gold Rim */}
@@ -131,7 +132,7 @@ export const CoupleSection: React.FC = () => {
                 <span>@{bride.instagram}</span>
               </a>
             </div>
-          </div>
+          </Reveal3D>
 
         </div>
       </div>

@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react'
 import { Calendar, Clock, MapPin, Navigation, CalendarPlus } from 'lucide-react'
 import { useInvitationData } from '../context/InvitationContext'
 import { FloralDivider, BotanicalCorner } from './Ornament'
+import { Reveal3D } from './common/Reveal3D'
 
 interface TimeLeft {
   days: number
@@ -52,7 +53,7 @@ export const EventSection: React.FC = () => {
         </p>
 
         {/* Live Countdown Timer Widget */}
-        <div className="relative p-6 sm:p-8 rounded-3xl bg-gradient-to-br from-stone-900 via-stone-900 to-amber-950 text-amber-100 shadow-2xl mb-10 overflow-hidden border border-amber-500/30 max-w-2xl mx-auto">
+        <Reveal3D delay={100} interactive className="relative p-6 sm:p-8 rounded-3xl bg-gradient-to-br from-stone-900 via-stone-900 to-amber-950 text-amber-100 shadow-2xl mb-10 overflow-hidden border border-amber-500/30 max-w-2xl mx-auto">
           <p className="text-[11px] sm:text-xs uppercase tracking-[0.25em] text-amber-300 font-sans mb-5 font-semibold">
             Menghitung Hari Bahagia
           </p>
@@ -81,13 +82,13 @@ export const EventSection: React.FC = () => {
           <p className="text-xs sm:text-sm text-amber-200/80 italic mt-5 font-serif">
             {weddingData.events.akad.date}
           </p>
-        </div>
+        </Reveal3D>
 
         {/* Event Cards Grid: Single column on mobile, 2 columns on tablet/desktop */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 sm:gap-8 items-stretch">
           
           {/* Akad Nikah Card */}
-          <div className="relative p-6 sm:p-8 rounded-3xl bg-white/90 backdrop-blur-md border border-amber-800/15 shadow-xl text-center overflow-hidden flex flex-col justify-between transition-all hover:shadow-2xl">
+          <Reveal3D delay={100} interactive className="relative p-6 sm:p-8 rounded-3xl bg-white/90 backdrop-blur-md border border-amber-800/15 shadow-xl text-center overflow-hidden flex flex-col justify-between transition-all hover:shadow-2xl">
             <BotanicalCorner position="top-right" />
             <BotanicalCorner position="bottom-left" />
 
@@ -148,10 +149,10 @@ export const EventSection: React.FC = () => {
                 <span>Simpan Kalender</span>
               </a>
             </div>
-          </div>
+          </Reveal3D>
 
           {/* Resepsi Pernikahan Card */}
-          <div className="relative p-6 sm:p-8 rounded-3xl bg-white/90 backdrop-blur-md border border-amber-800/15 shadow-xl text-center overflow-hidden flex flex-col justify-between transition-all hover:shadow-2xl">
+          <Reveal3D delay={200} interactive className="relative p-6 sm:p-8 rounded-3xl bg-white/90 backdrop-blur-md border border-amber-800/15 shadow-xl text-center overflow-hidden flex flex-col justify-between transition-all hover:shadow-2xl">
             <BotanicalCorner position="top-left" />
             <BotanicalCorner position="bottom-right" />
 
@@ -212,7 +213,7 @@ export const EventSection: React.FC = () => {
                 <span>Simpan Kalender</span>
               </a>
             </div>
-          </div>
+          </Reveal3D>
 
         </div>
       </div>

@@ -3,6 +3,7 @@ import { Copy, Check, CreditCard, QrCode, Package, Wifi } from 'lucide-react'
 import { weddingData } from '../config/weddingData'
 import { FloralDivider, BotanicalCorner } from './Ornament'
 import { useToast } from './Toast'
+import { Reveal3D } from './common/Reveal3D'
 
 export const GiftSection: React.FC = () => {
   const [copiedBank, setCopiedBank] = useState<string | null>(null)
@@ -42,9 +43,11 @@ export const GiftSection: React.FC = () => {
             const isCopied = copiedBank === acc.bank
             const isBca = acc.logoText.toLowerCase().includes('bca')
             return (
-              <div
+              <Reveal3D
                 key={idx}
-                className={`relative p-6 sm:p-7 rounded-3xl text-white shadow-2xl overflow-hidden border border-white/15 text-left transition-transform duration-300 hover:scale-[1.02] ${
+                delay={idx === 0 ? 100 : 200}
+                interactive
+                className={`relative p-6 sm:p-7 rounded-3xl text-white shadow-2xl overflow-hidden border border-white/15 text-left transition-all ${
                   isBca ? 'bg-card-bca' : 'bg-card-mandiri'
                 }`}
               >
@@ -101,7 +104,7 @@ export const GiftSection: React.FC = () => {
                     )}
                   </button>
                 </div>
-              </div>
+              </Reveal3D>
             )
           })}
         </div>

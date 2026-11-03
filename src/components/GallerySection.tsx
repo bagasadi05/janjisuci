@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react'
 import { X, ChevronLeft, ChevronRight, ZoomIn, Sparkles, Heart } from 'lucide-react'
 import { weddingData } from '../config/weddingData'
 import { FloralDivider } from './Ornament'
+import { Reveal3D } from './common/Reveal3D'
 
 export const GallerySection: React.FC = () => {
   const [selectedItemIndex, setSelectedItemIndex] = useState<number | null>(null)
@@ -100,8 +101,10 @@ export const GallerySection: React.FC = () => {
         {/* Responsive Masonry Grid: 2 columns on mobile, 3 columns on tablet/desktop */}
         <div className="grid grid-cols-2 md:grid-cols-3 gap-3.5 sm:gap-5">
           {filteredGallery.map((item, idx) => (
-            <div
+            <Reveal3D
               key={item.id}
+              delay={((idx % 3) * 100) as any}
+              interactive
               onClick={() => openLightbox(idx)}
               className={`group relative overflow-hidden rounded-3xl bg-stone-200 cursor-pointer shadow-lg hover:shadow-2xl transition-all duration-300 ${
                 item.aspect === 'landscape' && idx === 0 ? 'col-span-2 md:col-span-2 h-56 sm:h-72' : 'h-52 sm:h-72'
@@ -122,7 +125,7 @@ export const GallerySection: React.FC = () => {
                   "{item.caption}"
                 </p>
               </div>
-            </div>
+            </Reveal3D>
           ))}
         </div>
       </div>
