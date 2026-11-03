@@ -86,7 +86,7 @@ export const TemplateRenderer: React.FC<TemplateRendererProps> = (props) => {
   }
 
   return (
-    <div ref={containerRef} className="perspective-1000 w-full min-h-screen">
+    <div ref={containerRef} className="w-full min-h-screen">
       {renderTemplateContent()}
     </div>
   )

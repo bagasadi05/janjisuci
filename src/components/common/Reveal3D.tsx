@@ -96,10 +96,17 @@ export function useAutoScrollReveal3D(containerRef?: React.RefObject<HTMLElement
       )
 
       cardElements.forEach((el) => {
-        // Skip floating buttons, modals, absolute decorative glows, and navbars
+        // Skip floating buttons, modals, absolute decorative glows, navbars, and cover screens
         const isAbsolute = window.getComputedStyle(el).position === 'absolute'
         const isFixed = window.getComputedStyle(el).position === 'fixed'
-        const isExcluded = el.closest('nav') || el.closest('#bottom-nav') || el.closest('[role="dialog"]') || el.classList.contains('no-3d')
+        const isExcluded =
+          isFixed ||
+          isAbsolute ||
+          el.closest('nav') ||
+          el.closest('#bottom-nav') ||
+          el.closest('[role="dialog"]') ||
+          el.closest('.fixed') ||
+          el.classList.contains('no-3d')
 
         if (!isAbsolute && !isFixed && !isExcluded) {
           if (!el.classList.contains('reveal-3d')) {
