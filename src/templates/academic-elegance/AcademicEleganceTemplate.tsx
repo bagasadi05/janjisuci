@@ -166,15 +166,14 @@ export const AcademicEleganceTemplate: React.FC<TemplateViewProps> = ({
 
   return (
     <div className="min-h-screen bg-[#070D1E] text-slate-100 flex flex-col lg:flex-row relative selection:bg-amber-400 selection:text-slate-900 font-sans">
-      {!isOpened && (
-        <AcademicEleganceCoverScreen
-          onOpen={onOpenWithAudio}
-          guestName={guestName}
-          institutionName="Universitas Indonesia"
-          ceremonyTitle="Wisuda Sarjana & Magister Gasal 2026"
-          dateText="Sabtu, 19 September 2026"
-        />
-      )}
+      <AcademicEleganceCoverScreen
+        isOpen={isOpened}
+        onOpenWithAudio={onOpenWithAudio}
+        guestName={guestName}
+        institutionName="Universitas Indonesia"
+        ceremonyTitle="Wisuda Sarjana & Magister Gasal 2026"
+        dateText="Sabtu, 19 September 2026"
+      />
 
       <AcademicEleganceDesktopShowcase
         institutionName="Universitas Indonesia"

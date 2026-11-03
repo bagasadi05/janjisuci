@@ -159,15 +159,14 @@ export const ConfettiBirthdayTemplate: React.FC<TemplateViewProps> = ({
 
   return (
     <div className="min-h-screen bg-[#0B132B] text-slate-100 flex flex-col lg:flex-row relative selection:bg-pink-500 selection:text-white font-sans">
-      {!isOpened && (
-        <ConfettiBirthdayCoverScreen
-          onOpen={onOpenWithAudio}
-          guestName={guestName}
-          celebrantName="Hayden Arvy"
-          ageText="Turning 5th Birthday!"
-          dateText="Sabtu, 15 Agustus 2026"
-        />
-      )}
+      <ConfettiBirthdayCoverScreen
+        isOpen={isOpened}
+        onOpenWithAudio={onOpenWithAudio}
+        guestName={guestName}
+        celebrantName="Hayden Arvy"
+        ageText="Turning 5th Birthday!"
+        dateText="Sabtu, 15 Agustus 2026"
+      />
 
       <ConfettiBirthdayDesktopShowcase
         celebrantName="Hayden Arvy"

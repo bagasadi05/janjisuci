@@ -30,26 +30,26 @@ export const CoverScreen: React.FC<CoverScreenProps> = ({ isOpen, onOpenWithAudi
 
     setIsAnimating(true)
 
-    // Trigger rich multi-directional confetti blast
+    // Trigger rich multi-directional botanical sage & gold confetti blast
     try {
       confetti({
-        particleCount: 90,
-        spread: 70,
+        particleCount: 110,
+        spread: 75,
         origin: { y: 0.62 },
-        colors: ['#D4AF37', '#849688', '#FAF7F2', '#B86B5A', '#FFFFFF']
+        colors: ['#D4AF37', '#849688', '#FAF7F2', '#2D4A3E', '#F9E79F']
       })
       setTimeout(() => {
         confetti({
-          particleCount: 60,
+          particleCount: 65,
           angle: 60,
-          spread: 60,
+          spread: 65,
           origin: { x: 0 },
           colors: ['#D4AF37', '#849688', '#FAF7F2']
         })
         confetti({
-          particleCount: 60,
+          particleCount: 65,
           angle: 120,
-          spread: 60,
+          spread: 65,
           origin: { x: 1 },
           colors: ['#D4AF37', '#849688', '#FAF7F2']
         })
@@ -63,22 +63,50 @@ export const CoverScreen: React.FC<CoverScreenProps> = ({ isOpen, onOpenWithAudi
 
   return (
     <div
-      className={`fixed inset-0 z-50 flex items-center justify-center bg-stone-950 transition-all duration-700 ease-in-out px-4 min-h-[100dvh] overflow-hidden ${
-        isAnimating ? '-translate-y-full opacity-0 pointer-events-none' : 'translate-y-0 opacity-100'
+      className={`fixed inset-0 z-50 flex items-center justify-center bg-stone-950 transition-all duration-1000 ease-in-out px-4 min-h-[100dvh] overflow-hidden ${
+        isAnimating ? 'opacity-0 pointer-events-none' : 'opacity-100'
       }`}
     >
-      {/* Background Image with Dark Vignette */}
+      {/* Background Image with Dark Botanical Vignette */}
       <div className="absolute inset-0 z-0">
         <img
           src={activeTemplate.coverImage}
           alt="Wedding Cover Background"
-          className="w-full h-full object-cover object-center filter brightness-[0.32] scale-105"
+          className="w-full h-full object-cover object-center filter brightness-[0.28] scale-105"
         />
-        <div className="absolute inset-0 bg-gradient-to-t from-stone-950 via-stone-950/65 to-stone-950/80" />
+        <div className="absolute inset-0 bg-gradient-to-t from-stone-950 via-stone-950/75 to-stone-950/85" />
+      </div>
+
+      {/* LUXURY LEFT BOTANICAL SAGE SLIDING GATE */}
+      <div
+        className={`absolute top-0 bottom-0 left-0 w-1/2 z-10 pointer-events-none transition-transform duration-1000 ease-in-out border-r border-amber-400/40 bg-gradient-to-r from-stone-950 via-[#1E2B25]/95 to-[#24362E]/90 backdrop-blur-md ${
+          isAnimating ? '-translate-x-full -rotate-2' : 'translate-x-0 rotate-0'
+        }`}
+      >
+        <div className="absolute inset-y-8 right-3 w-[1px] bg-gradient-to-b from-transparent via-amber-400/60 to-transparent" />
+        <div className="absolute top-1/2 -translate-y-1/2 right-2 text-amber-300/30 font-serif text-6xl select-none rotate-90">
+          ✤
+        </div>
+      </div>
+
+      {/* LUXURY RIGHT BOTANICAL SAGE SLIDING GATE */}
+      <div
+        className={`absolute top-0 bottom-0 right-0 w-1/2 z-10 pointer-events-none transition-transform duration-1000 ease-in-out border-l border-amber-400/40 bg-gradient-to-l from-stone-950 via-[#1E2B25]/95 to-[#24362E]/90 backdrop-blur-md ${
+          isAnimating ? 'translate-x-full rotate-2' : 'translate-x-0 rotate-0'
+        }`}
+      >
+        <div className="absolute inset-y-8 left-3 w-[1px] bg-gradient-to-b from-transparent via-amber-400/60 to-transparent" />
+        <div className="absolute top-1/2 -translate-y-1/2 left-2 text-amber-300/30 font-serif text-6xl select-none -rotate-90">
+          ✤
+        </div>
       </div>
 
       {/* Royal Luxury Envelope Card Container */}
-      <div className="relative z-10 w-full max-w-sm sm:max-w-md mx-auto p-6 sm:p-9 rounded-3xl bg-stone-900/60 backdrop-blur-xl border border-amber-400/40 shadow-[0_25px_60px_rgba(0,0,0,0.8)] text-center text-white overflow-hidden">
+      <div
+        className={`relative z-20 w-full max-w-sm sm:max-w-md mx-auto p-6 sm:p-9 rounded-3xl bg-stone-900/80 backdrop-blur-2xl border border-amber-400/50 shadow-[0_30px_70px_rgba(0,0,0,0.85)] text-center text-white overflow-hidden transition-all duration-700 ${
+          isAnimating ? 'scale-105 opacity-0' : 'scale-100 opacity-100'
+        }`}
+      >
         <BotanicalCorner position="top-left" />
         <BotanicalCorner position="top-right" />
         <BotanicalCorner position="bottom-left" />
@@ -112,7 +140,7 @@ export const CoverScreen: React.FC<CoverScreenProps> = ({ isOpen, onOpenWithAudi
         </div>
 
         {/* Personalized Guest Card */}
-        <div className="my-5 py-4 px-4 sm:px-6 rounded-2xl bg-black/45 border border-amber-500/25 shadow-inner">
+        <div className="my-5 py-4 px-4 sm:px-6 rounded-2xl bg-black/55 border border-amber-500/30 shadow-inner">
           <p className="text-[10px] sm:text-xs text-stone-300 uppercase tracking-widest font-sans mb-1">
             Kepada Yth. Bapak/Ibu/Saudara/i:
           </p>
@@ -126,18 +154,18 @@ export const CoverScreen: React.FC<CoverScreenProps> = ({ isOpen, onOpenWithAudi
 
         {/* Open Button with Pulsing Gold Glow */}
         <div className="relative inline-block mt-1">
-          <span className="absolute -inset-1 rounded-full bg-gradient-to-r from-amber-400 to-amber-600 opacity-70 blur-md animate-pulse" />
+          <span className="absolute -inset-1 rounded-full bg-gradient-to-r from-amber-400 via-amber-300 to-amber-600 opacity-75 blur-md animate-pulse" />
           <button
             onClick={handleOpenInvitation}
-            className="group relative inline-flex items-center justify-center gap-2.5 px-7 sm:px-9 py-3 sm:py-3.5 rounded-full bg-gradient-to-r from-amber-500 via-amber-400 to-amber-600 text-stone-950 font-sans font-bold text-xs sm:text-sm tracking-wide shadow-xl hover:brightness-110 active:scale-95 transition-all duration-300 cursor-pointer"
+            className="group relative inline-flex items-center justify-center gap-2.5 px-8 sm:px-10 py-3.5 sm:py-4 rounded-full bg-gradient-to-r from-amber-500 via-amber-300 to-amber-600 text-stone-950 font-sans font-bold text-xs sm:text-sm tracking-wide shadow-2xl hover:brightness-110 active:scale-95 transition-all duration-300 cursor-pointer"
           >
             <MailOpen className="w-4 h-4 text-stone-900 transition-transform group-hover:-translate-y-0.5" />
-            <span>Buka Undangan</span>
+            <span className="tracking-wider uppercase font-semibold">Buka Undangan</span>
           </button>
         </div>
 
         <p className="text-[10px] sm:text-[11px] text-stone-400 mt-4 sm:mt-5 font-sans leading-relaxed">
-          *Ketuk segel atau tombol untuk membuka undangan & menyalakan lagu
+          *Ketuk tombol atau segel untuk membuka gerbang & menyalakan musik
         </p>
       </div>
     </div>

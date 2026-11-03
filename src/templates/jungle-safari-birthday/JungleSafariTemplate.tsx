@@ -136,15 +136,14 @@ export const JungleSafariTemplate: React.FC<TemplateViewProps> = ({
 
   return (
     <div className="min-h-screen bg-[#132317] text-stone-100 flex flex-col lg:flex-row relative selection:bg-amber-400 selection:text-stone-900 font-sans">
-      {!isOpened && (
-        <JungleSafariCoverScreen
-          onOpen={onOpenWithAudio}
-          guestName={guestName}
-          celebrantName="Kenzo Dirgantara"
-          ageText="Turning 3rd Birthday!"
-          dateText="Minggu, 18 Oktober 2026"
-        />
-      )}
+      <JungleSafariCoverScreen
+        isOpen={isOpened}
+        onOpenWithAudio={onOpenWithAudio}
+        guestName={guestName}
+        celebrantName="Kenzo Dirgantara"
+        ageText="Turning 3rd Birthday!"
+        dateText="Minggu, 18 Oktober 2026"
+      />
 
       <JungleSafariDesktopShowcase
         celebrantName="Kenzo Dirgantara"

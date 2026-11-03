@@ -196,14 +196,13 @@ export const ExclusiveNavyTemplate: React.FC<TemplateViewProps> = ({
   return (
     <div className="min-h-screen bg-[#07101E] text-slate-100 flex flex-col lg:flex-row relative selection:bg-amber-400 selection:text-slate-900 font-sans">
       {/* 1. Cover Gate if not opened */}
-      {!isOpened && (
-        <ExclusiveNavyCoverScreen
-          onOpen={onOpenWithAudio}
-          guestName={guestName}
-          coupleNames="Nabilah & Yoga"
-          dateText="20 . 12 . 2025"
-        />
-      )}
+      <ExclusiveNavyCoverScreen
+        isOpen={isOpened}
+        onOpenWithAudio={onOpenWithAudio}
+        guestName={guestName}
+        coupleNames="Nabilah & Yoga"
+        dateText="20 . 12 . 2025"
+      />
 
       {/* Floating Particles Ambiance */}
       <NavyParticlesAmbiance />

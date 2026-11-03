@@ -153,14 +153,13 @@ export const RoyalKhitanTemplate: React.FC<TemplateViewProps> = ({
 
   return (
     <div className="min-h-screen bg-[#021812] text-slate-100 flex flex-col lg:flex-row relative selection:bg-amber-400 selection:text-slate-900 font-sans">
-      {!isOpened && (
-        <RoyalKhitanCoverScreen
-          onOpen={onOpenWithAudio}
-          guestName={guestName}
-          childName="Muhammad Rizky Pratama"
-          dateText="Minggu, 12 Juli 2026"
-        />
-      )}
+      <RoyalKhitanCoverScreen
+        isOpen={isOpened}
+        onOpenWithAudio={onOpenWithAudio}
+        guestName={guestName}
+        childName="Muhammad Rizky Pratama"
+        dateText="Minggu, 12 Juli 2026"
+      />
 
       <RoyalKhitanDesktopShowcase
         childName="Muhammad Rizky Pratama"

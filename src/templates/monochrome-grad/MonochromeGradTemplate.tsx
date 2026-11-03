@@ -136,15 +136,14 @@ export const MonochromeGradTemplate: React.FC<TemplateViewProps> = ({
 
   return (
     <div className="min-h-screen bg-[#09090B] text-zinc-100 flex flex-col lg:flex-row relative selection:bg-white selection:text-black font-sans">
-      {!isOpened && (
-        <MonochromeGradCoverScreen
-          onOpen={onOpenWithAudio}
-          guestName={guestName}
-          graduateName="Nadine Aulia, S.Ds."
-          institutionName="Institut Teknologi Bandung (ITB)"
-          dateText="Sabtu, 24 Oktober 2026"
-        />
-      )}
+      <MonochromeGradCoverScreen
+        isOpen={isOpened}
+        onOpenWithAudio={onOpenWithAudio}
+        guestName={guestName}
+        graduateName="Nadine Aulia, S.Ds."
+        institutionName="Institut Teknologi Bandung (ITB)"
+        dateText="Sabtu, 24 Oktober 2026"
+      />
 
       <MonochromeGradDesktopShowcase
         graduateName="Nadine Aulia, S.Ds."

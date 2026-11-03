@@ -129,14 +129,13 @@ export const NusantaraKhitanTemplate: React.FC<TemplateViewProps> = ({
 
   return (
     <div className="min-h-screen bg-[#17120E] text-stone-100 flex flex-col lg:flex-row relative selection:bg-amber-500 selection:text-stone-900 font-sans">
-      {!isOpened && (
-        <NusantaraKhitanCoverScreen
-          onOpen={onOpenWithAudio}
-          guestName={guestName}
-          childName="Raden Arya Danendra"
-          dateText="Minggu, 06 September 2026"
-        />
-      )}
+      <NusantaraKhitanCoverScreen
+        isOpen={isOpened}
+        onOpenWithAudio={onOpenWithAudio}
+        guestName={guestName}
+        childName="Raden Arya Danendra"
+        dateText="Minggu, 06 September 2026"
+      />
 
       <NusantaraKhitanDesktopShowcase
         childName="Raden Arya Danendra"

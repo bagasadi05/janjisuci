@@ -146,14 +146,13 @@ export const LittleStarAqiqahTemplate: React.FC<TemplateViewProps> = ({
 
   return (
     <div className="min-h-screen bg-[#F8FAFC] text-slate-800 flex flex-col lg:flex-row relative selection:bg-sky-500 selection:text-white font-sans">
-      {!isOpened && (
-        <LittleStarAqiqahCoverScreen
-          onOpen={onOpenWithAudio}
-          guestName={guestName}
-          babyName="Kinan Althafunnisa"
-          dateText="Minggu, 24 Mei 2026"
-        />
-      )}
+      <LittleStarAqiqahCoverScreen
+        isOpen={isOpened}
+        onOpenWithAudio={onOpenWithAudio}
+        guestName={guestName}
+        babyName="Kinan Althafunnisa"
+        dateText="Minggu, 24 Mei 2026"
+      />
 
       <LittleStarAqiqahDesktopShowcase
         babyName="Kinan Althafunnisa"

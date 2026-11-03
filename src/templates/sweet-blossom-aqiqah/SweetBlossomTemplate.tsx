@@ -129,14 +129,13 @@ export const SweetBlossomTemplate: React.FC<TemplateViewProps> = ({
 
   return (
     <div className="min-h-screen bg-[#2B0E14] text-stone-100 flex flex-col lg:flex-row relative selection:bg-rose-400 selection:text-stone-900 font-sans">
-      {!isOpened && (
-        <SweetBlossomCoverScreen
-          onOpen={onOpenWithAudio}
-          guestName={guestName}
-          babyName="Shafiyyah Almahyra"
-          dateText="Sabtu, 08 Agustus 2026"
-        />
-      )}
+      <SweetBlossomCoverScreen
+        isOpen={isOpened}
+        onOpenWithAudio={onOpenWithAudio}
+        guestName={guestName}
+        babyName="Shafiyyah Almahyra"
+        dateText="Sabtu, 08 Agustus 2026"
+      />
 
       <SweetBlossomDesktopShowcase
         babyName="Shafiyyah Almahyra"
