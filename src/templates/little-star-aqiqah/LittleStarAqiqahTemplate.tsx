@@ -24,23 +24,23 @@ import { useToast } from '../../components/Toast'
 const AQIQAH_PHOTOS = [
   {
     id: 1,
-    src: 'https://images.unsplash.com/photo-1519689680058-324335c77eba?auto=format&fit=crop&w=1200&q=85',
-    caption: 'Malaikat Kecil Kami yang Menggemaskan'
+    src: 'https://images.unsplash.com/photo-1656633702381-939966720da4?auto=format&fit=crop&w=1200&q=85',
+    caption: 'Malaikat Kecil Penyejuk Hati Ayah & Bunda'
   },
   {
     id: 2,
-    src: 'https://images.unsplash.com/photo-1555252333-9f8e92e65df9?auto=format&fit=crop&w=1200&q=85',
-    caption: 'Kehangatan Kasih Sayang Ayah & Bunda'
+    src: 'https://images.unsplash.com/photo-1641222113497-f1904803f654?auto=format&fit=crop&w=1200&q=85',
+    caption: 'Tidur Lelap Penuh Ketenangan & Rahmat'
   },
   {
     id: 3,
-    src: 'https://images.unsplash.com/photo-1522771739844-6a9f6d5f14af?auto=format&fit=crop&w=1200&q=85',
-    caption: 'Momen Damai Dalam Dekapan'
+    src: 'https://images.unsplash.com/photo-1555252333-9f8e92e65df9?auto=format&fit=crop&w=1200&q=85',
+    caption: 'Kelembutan Selimut & Hangat Kasih Sayang'
   },
   {
     id: 4,
-    src: 'https://images.unsplash.com/photo-1544126592-807ade215a0f?auto=format&fit=crop&w=1200&q=85',
-    caption: 'Sentuhan Lembut & Penuh Harapan'
+    src: 'https://images.unsplash.com/photo-1585036156171-384164a8c675?auto=format&fit=crop&w=1200&q=85',
+    caption: 'Doa Keberkahan & Keshalihan Ananda'
   }
 ]
 
@@ -197,7 +197,7 @@ export const LittleStarAqiqahTemplate: React.FC<TemplateViewProps> = ({
           <div className="relative my-8">
             <div className="w-52 sm:w-60 h-64 sm:h-76 rounded-3xl overflow-hidden p-1.5 bg-gradient-to-tr from-sky-300 via-amber-200 to-sky-200 shadow-xl">
               <img
-                src="https://images.unsplash.com/photo-1519689680058-324335c77eba?auto=format&fit=crop&w=800&q=85"
+                src={template?.heroImage || "https://images.unsplash.com/photo-1656633702381-939966720da4?auto=format&fit=crop&w=800&q=85"}
                 alt="Baby Kinan"
                 className="w-full h-full object-cover object-center"
               />

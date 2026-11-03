@@ -76,7 +76,7 @@ export const AcademicEleganceDesktopShowcase: React.FC<AcademicEleganceDesktopSh
         <div className="w-52 xl:w-60 h-64 xl:h-72 rounded-3xl overflow-hidden p-1.5 bg-gradient-to-b from-amber-400/40 via-blue-500/20 to-blue-950/50 shadow-2xl shadow-black/80">
           <div className="w-full h-full rounded-2xl overflow-hidden relative">
             <img
-              src="https://images.unsplash.com/photo-1523050854058-8df90110c9f1?auto=format&fit=crop&w=800&q=85"
+              src="https://images.unsplash.com/photo-1495995424756-6a5a3f9e7543?auto=format&fit=crop&w=800&q=85"
               alt="Wisuda"
               className="w-full h-full object-cover object-center filter brightness-95 transition-transform duration-700 hover:scale-105"
             />

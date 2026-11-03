@@ -77,7 +77,7 @@ export const ExclusiveNavyDesktopShowcase: React.FC<ExclusiveNavyDesktopShowcase
         <div className="w-52 xl:w-60 h-72 xl:h-80 rounded-t-full rounded-b-2xl overflow-hidden p-1.5 bg-gradient-to-b from-amber-400/40 via-amber-300/20 to-blue-900/40 shadow-2xl shadow-black/80">
           <div className="w-full h-full rounded-t-full rounded-b-xl overflow-hidden relative">
             <img
-              src="https://images.unsplash.com/photo-1519741497674-611481863552?auto=format&fit=crop&w=900&q=85"
+              src="https://images.unsplash.com/photo-1583939003579-730e3918a45a?auto=format&fit=crop&w=900&q=85"
               alt="Mempelai"
               className="w-full h-full object-cover object-top filter brightness-95 contrast-105 transition-transform duration-700 hover:scale-105"
             />

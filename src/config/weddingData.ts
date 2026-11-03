@@ -132,7 +132,7 @@ export const weddingData: WeddingConfig = {
       motherName: "Ibu Siti Rahmawati",
       childOrder: "Putra pertama dari",
       instagram: "rian.mahendra",
-      photo: "https://images.unsplash.com/photo-1507679799987-c73779587ccf?auto=format&fit=crop&w=800&q=80",
+      photo: "https://images.unsplash.com/photo-1766104798125-314e9659cf5a?auto=format&fit=crop&w=800&q=80",
       quote: "Di antara miliaran jiwa di dunia, hatiku memilihmu untuk menjadi pelengkap imanku dan teman seumur hidupku."
     },
     bride: {
@@ -142,7 +142,7 @@ export const weddingData: WeddingConfig = {
       motherName: "Ibu Hj. Fatimah Zahra",
       childOrder: "Putri kedua dari",
       instagram: "sarah.azzahra",
-      photo: "https://images.unsplash.com/photo-1594552072238-b8a33785b261?auto=format&fit=crop&w=800&q=80",
+      photo: "https://images.unsplash.com/photo-1693074445833-0fdce5f1f29f?auto=format&fit=crop&w=800&q=80",
       quote: "Menemukanmu adalah anugerah terindah. Bersamamu, aku siap melangkah merajut masa depan penuh cinta dan berkah."
     }
   },

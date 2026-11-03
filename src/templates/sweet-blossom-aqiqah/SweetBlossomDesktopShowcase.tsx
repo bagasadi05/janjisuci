@@ -76,7 +76,7 @@ export const SweetBlossomDesktopShowcase: React.FC<SweetBlossomDesktopShowcasePr
         <div className="w-52 xl:w-60 h-64 xl:h-72 rounded-3xl overflow-hidden p-1.5 bg-gradient-to-b from-rose-400/40 via-pink-400/20 to-rose-950/50 shadow-2xl shadow-black/80">
           <div className="w-full h-full rounded-2xl overflow-hidden relative">
             <img
-              src="https://images.unsplash.com/photo-1544126592-807ade215a0b?auto=format&fit=crop&w=800&q=85"
+              src="https://images.unsplash.com/photo-1564172420073-e553c280b6f7?auto=format&fit=crop&w=800&q=85"
               alt="Shafiyyah Aqiqah"
               className="w-full h-full object-cover object-center filter brightness-95 transition-transform duration-700 hover:scale-105"
             />

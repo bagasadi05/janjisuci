@@ -76,7 +76,7 @@ export const RoyalKhitanDesktopShowcase: React.FC<RoyalKhitanDesktopShowcaseProp
         <div className="w-52 xl:w-60 h-72 xl:h-80 rounded-t-full rounded-b-2xl overflow-hidden p-1.5 bg-gradient-to-b from-amber-400/40 via-emerald-400/20 to-emerald-900/40 shadow-2xl shadow-black/80">
           <div className="w-full h-full rounded-t-full rounded-b-xl overflow-hidden relative">
             <img
-              src="https://images.unsplash.com/photo-1584281729288-89826acac5b0?auto=format&fit=crop&w=800&q=85"
+              src="https://images.unsplash.com/photo-1720238281687-dcc6d8a6e7d4?auto=format&fit=crop&crop=top,right&w=800&h=800&q=85"
               alt="Khitan"
               className="w-full h-full object-cover object-center filter brightness-95 transition-transform duration-700 hover:scale-105"
             />

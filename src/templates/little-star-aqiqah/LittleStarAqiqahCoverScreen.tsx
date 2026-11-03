@@ -47,7 +47,7 @@ export const LittleStarAqiqahCoverScreen: React.FC<LittleStarAqiqahCoverScreenPr
           <div className="w-44 h-56 sm:w-48 sm:h-60 rounded-3xl overflow-hidden p-1.5 bg-gradient-to-tr from-sky-300 via-amber-200 to-sky-200 shadow-xl">
             <div className="w-full h-full rounded-2xl overflow-hidden relative">
               <img
-                src="https://images.unsplash.com/photo-1519689680058-324335c77eba?auto=format&fit=crop&w=800&q=85"
+                src="https://images.unsplash.com/photo-1656633702381-939966720da4?auto=format&fit=crop&w=800&q=85"
                 alt="Bayi Aqiqah"
                 className="w-full h-full object-cover object-center"
               />

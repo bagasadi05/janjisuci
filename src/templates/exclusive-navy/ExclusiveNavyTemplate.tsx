@@ -29,13 +29,13 @@ import { useToast } from '../../components/Toast'
 
 // Real authentic wedding photography curated collection
 const WEDDING_PHOTOS = {
-  cover: 'https://images.unsplash.com/photo-1519741497674-611481863552?auto=format&fit=crop&w=1200&q=85',
-  bride: 'https://images.unsplash.com/photo-1594552072238-b8a33785b261?auto=format&fit=crop&w=800&q=85', // Bride in wedding dress with bridal bouquet
-  groom: 'https://images.unsplash.com/photo-1507679799987-c73779587ccf?auto=format&fit=crop&w=800&q=85', // Groom in formal wedding tuxedo & tie
+  cover: 'https://images.unsplash.com/photo-1583939003579-730e3918a45a?auto=format&fit=crop&w=1200&q=85',
+  bride: 'https://images.unsplash.com/photo-1693074445833-0fdce5f1f29f?auto=format&fit=crop&w=800&q=85', // Authentic smiling bride in wedding veil
+  groom: 'https://images.unsplash.com/photo-1766104798125-314e9659cf5a?auto=format&fit=crop&w=800&q=85', // Authentic smiling groom in formal suit
   gallery: [
     {
       id: 1,
-      src: 'https://images.unsplash.com/photo-1519741497674-611481863552?auto=format&fit=crop&w=1200&q=85',
+      src: 'https://images.unsplash.com/photo-1583939003579-730e3918a45a?auto=format&fit=crop&w=1200&q=85',
       caption: 'The Wedding Ceremony - Ikrar Suci di Pelaminan'
     },
     {
@@ -55,8 +55,8 @@ const WEDDING_PHOTOS = {
     },
     {
       id: 5,
-      src: 'https://images.unsplash.com/photo-1532712938310-34cb3982ef74?auto=format&fit=crop&w=1200&q=85',
-      caption: 'Buket Bunga Pengantin & Cincin Emas'
+      src: 'https://images.unsplash.com/photo-1511795409834-ef04bbd61622?auto=format&fit=crop&w=1200&q=85',
+      caption: 'Suasana Resepsi & Pelaminan Megah Penuh Bunga'
     },
     {
       id: 6,
@@ -259,7 +259,7 @@ export const ExclusiveNavyTemplate: React.FC<TemplateViewProps> = ({
             <div className="w-56 sm:w-64 h-80 sm:h-92 rounded-t-full rounded-b-2xl overflow-hidden p-1.5 bg-gradient-to-b from-amber-300/40 via-amber-400/20 to-transparent shadow-2xl shadow-black/80">
               <div className="w-full h-full rounded-t-full rounded-b-xl overflow-hidden relative">
                 <img
-                  src={WEDDING_PHOTOS.cover}
+                  src={template?.coverImage || WEDDING_PHOTOS.cover}
                   alt="Wedding Couple Nabilah & Yoga"
                   className="w-full h-full object-cover object-top filter brightness-95 contrast-105"
                 />

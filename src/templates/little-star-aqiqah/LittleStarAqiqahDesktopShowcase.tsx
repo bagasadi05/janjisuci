@@ -76,7 +76,7 @@ export const LittleStarAqiqahDesktopShowcase: React.FC<LittleStarAqiqahDesktopSh
         <div className="w-52 xl:w-60 h-64 xl:h-72 rounded-3xl overflow-hidden p-1.5 bg-gradient-to-tr from-sky-300 via-amber-200 to-sky-200 shadow-xl">
           <div className="w-full h-full rounded-2xl overflow-hidden relative">
             <img
-              src="https://images.unsplash.com/photo-1519689680058-324335c77eba?auto=format&fit=crop&w=800&q=85"
+              src="https://images.unsplash.com/photo-1656633702381-939966720da4?auto=format&fit=crop&w=800&q=85"
               alt="Bayi"
               className="w-full h-full object-cover object-center transition-transform duration-700 hover:scale-105"
             />

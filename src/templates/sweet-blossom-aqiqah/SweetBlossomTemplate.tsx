@@ -30,7 +30,7 @@ const AQIQAH_PHOTOS = [
   },
   {
     id: 2,
-    src: 'https://images.unsplash.com/photo-1519689680058-324335c77eba?auto=format&fit=crop&w=1200&q=85',
+    src: 'https://images.unsplash.com/photo-1564172420073-e553c280b6f7?auto=format&fit=crop&w=1200&q=85',
     caption: 'Tidur Pulas Dalam Dekapan Hangat Ibunda'
   },
   {
@@ -183,7 +183,7 @@ export const SweetBlossomTemplate: React.FC<TemplateViewProps> = ({
           <div className="relative my-8">
             <div className="w-52 sm:w-60 h-72 sm:h-84 rounded-3xl overflow-hidden p-1.5 bg-gradient-to-b from-rose-400/40 via-pink-400/20 to-transparent shadow-2xl">
               <img
-                src="https://images.unsplash.com/photo-1544126592-807ade215a0b?auto=format&fit=crop&w=800&q=85"
+                src={template?.heroImage || "https://images.unsplash.com/photo-1564172420073-e553c280b6f7?auto=format&fit=crop&w=800&q=85"}
                 alt="Shafiyyah Almahyra"
                 className="w-full h-full object-cover object-center filter brightness-95"
               />

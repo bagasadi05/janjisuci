@@ -27,23 +27,23 @@ import { useToast } from '../../components/Toast'
 const BIRTHDAY_PHOTOS = [
   {
     id: 1,
-    src: 'https://images.unsplash.com/photo-1513151233558-d860c5398176?auto=format&fit=crop&w=1200&q=85',
-    caption: 'Keceriaan Pesta Penuh Warna'
+    src: 'https://images.unsplash.com/photo-1544155891-969f15a055d3?auto=format&fit=crop&w=1200&q=85',
+    caption: 'Momen Penuh Senyum & Doa Ulang Tahun'
   },
   {
     id: 2,
-    src: 'https://images.unsplash.com/photo-1530103862676-de8c9debad1d?auto=format&fit=crop&w=1200&q=85',
-    caption: 'Balon & Dekorasi Pesta Ulang Tahun'
+    src: 'https://images.unsplash.com/photo-1535254973040-607b474cb50d?auto=format&fit=crop&w=1200&q=85',
+    caption: 'Kue Ulang Tahun Mewah Penuh Harapan'
   },
   {
     id: 3,
-    src: 'https://images.unsplash.com/photo-1535254973040-607b474cb50d?auto=format&fit=crop&w=1200&q=85',
-    caption: 'Kue Ulang Tahun Manis Penuh Lilin Harapan'
+    src: 'https://images.unsplash.com/photo-1513151233558-d860c5398176?auto=format&fit=crop&w=1200&q=85',
+    caption: 'Hujan Confetti & Warna-Warni Pesta'
   },
   {
     id: 4,
-    src: 'https://images.unsplash.com/photo-1527529482837-4698179dc6ce?auto=format&fit=crop&w=1200&q=85',
-    caption: 'Tawa Riang Bersama Teman Sebaya'
+    src: 'https://images.unsplash.com/photo-1530103862676-de8c9debad1d?auto=format&fit=crop&w=1200&q=85',
+    caption: 'Balon Ceria Bersama Teman & Keluarga'
   }
 ]
 
@@ -214,8 +214,8 @@ export const ConfettiBirthdayTemplate: React.FC<TemplateViewProps> = ({
           <div className="relative my-8">
             <div className="w-56 sm:w-64 h-64 sm:h-76 rounded-3xl overflow-hidden p-1.5 bg-gradient-to-tr from-pink-500 via-amber-400 to-sky-400 shadow-2xl">
               <img
-                src="https://images.unsplash.com/photo-1513151233558-d860c5398176?auto=format&fit=crop&w=800&q=85"
-                alt="Birthday Hayden"
+                src={template?.heroImage || "https://images.unsplash.com/photo-1544155891-969f15a055d3?auto=format&fit=crop&w=800&q=85"}
+                alt="Birthday Celebrant"
                 className="w-full h-full object-cover object-center filter brightness-95"
               />
             </div>

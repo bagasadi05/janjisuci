@@ -35,12 +35,12 @@ import { useToast } from '../../components/Toast'
 const GRADUATION_PHOTOS = [
   {
     id: 1,
-    src: 'https://images.unsplash.com/photo-1523050854058-8df90110c9f1?auto=format&fit=crop&w=1200&q=85',
+    src: 'https://images.unsplash.com/photo-1541339907198-e08756dedf3f?auto=format&fit=crop&w=1200&q=85',
     caption: 'Momen Bersejarah Sidang Terbuka Senat'
   },
   {
     id: 2,
-    src: 'https://images.unsplash.com/photo-1541339907198-e08756dedf3f?auto=format&fit=crop&w=1200&q=85',
+    src: 'https://images.unsplash.com/photo-1495995424756-6a5a3f9e7543?auto=format&fit=crop&w=1200&q=85',
     caption: 'Langkah Awal Menapaki Babak Pengabdian Baru'
   },
   {
@@ -50,7 +50,7 @@ const GRADUATION_PHOTOS = [
   },
   {
     id: 4,
-    src: 'https://images.unsplash.com/photo-1534447677768-be436bb09401?auto=format&fit=crop&w=1200&q=85',
+    src: 'https://images.unsplash.com/photo-1627556704290-2b1f5853ff78?auto=format&fit=crop&w=1200&q=85',
     caption: 'Persembahan Terbaik untuk Kedua Orang Tua'
   }
 ]
@@ -222,7 +222,7 @@ export const AcademicEleganceTemplate: React.FC<TemplateViewProps> = ({
           <div className="relative my-8">
             <div className="w-52 sm:w-60 h-72 sm:h-84 rounded-3xl overflow-hidden p-1.5 bg-gradient-to-b from-amber-400/40 via-blue-500/20 to-transparent shadow-2xl">
               <img
-                src="https://images.unsplash.com/photo-1523050854058-8df90110c9f1?auto=format&fit=crop&w=800&q=85"
+                src={template?.heroImage || "https://images.unsplash.com/photo-1495995424756-6a5a3f9e7543?auto=format&fit=crop&w=800&q=85"}
                 alt="Wisuda Faris Alamsyah"
                 className="w-full h-full object-cover object-center filter brightness-95"
               />
@@ -261,7 +261,7 @@ export const AcademicEleganceTemplate: React.FC<TemplateViewProps> = ({
           <div className="max-w-lg mx-auto text-center space-y-4">
             <div className="w-36 h-36 rounded-full overflow-hidden mx-auto border-2 border-amber-400/40 p-1 shadow-lg bg-blue-950/60">
               <img
-                src="https://images.unsplash.com/photo-1541339907198-e08756dedf3f?auto=format&fit=crop&w=600&q=80"
+                src="https://images.unsplash.com/photo-1495995424756-6a5a3f9e7543?auto=format&fit=crop&w=600&q=80"
                 alt="Faris Alamsyah"
                 className="w-full h-full object-cover rounded-full"
               />

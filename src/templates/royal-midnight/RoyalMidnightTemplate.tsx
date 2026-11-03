@@ -143,9 +143,9 @@ export const RoyalMidnightTemplate: React.FC<TemplateViewProps> = ({
     'https://images.unsplash.com/photo-1606800052052-a08af7148866?auto=format&fit=crop&w=1000&q=85'
   ]
 
-  const heroPhoto = activeTemplate.heroImage || weddingData.couple.groom.photo || 'https://images.unsplash.com/photo-1519741497674-611481863552?auto=format&fit=crop&w=1200&q=85'
-  const bridePhoto = weddingData.couple.bride.photo || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=800&q=80'
-  const groomPhoto = weddingData.couple.groom.photo || 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=800&q=80'
+  const heroPhoto = activeTemplate.heroImage || weddingData.couple.groom.photo || 'https://images.unsplash.com/photo-1583939003579-730e3918a45a?auto=format&fit=crop&w=1200&q=85'
+  const bridePhoto = weddingData.couple.bride.photo || 'https://images.unsplash.com/photo-1693074445833-0fdce5f1f29f?auto=format&fit=crop&w=800&q=85'
+  const groomPhoto = weddingData.couple.groom.photo || 'https://images.unsplash.com/photo-1766104798125-314e9659cf5a?auto=format&fit=crop&w=800&q=85'
 
   const akadVenue = weddingData.events.akad.venue || 'Masjid Agung Sunda Kelapa'
   const akadAddress = weddingData.events.akad.address || 'Jl. Taman Sunda Kelapa No. 16, Menteng, Jakarta Pusat 10310'

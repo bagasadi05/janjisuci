@@ -28,23 +28,23 @@ import { useToast } from '../../components/Toast'
 const SAFARI_PHOTOS = [
   {
     id: 1,
-    src: 'https://images.unsplash.com/photo-1508214751196-bcfd4ca60f91?auto=format&fit=crop&w=1200&q=85',
-    caption: 'Momen Ceria Kenzo Menginjak Usia 3 Tahun'
+    src: 'https://images.unsplash.com/photo-1772724317403-63337bf58fff?auto=format&fit=crop&w=1200&q=85',
+    caption: 'Momen Tiup Lilin Ulang Tahun Kenzo'
   },
   {
     id: 2,
-    src: 'https://images.unsplash.com/photo-1513151233558-d860c5398176?auto=format&fit=crop&w=1200&q=85',
-    caption: 'Penuh Warna dan Tawa Bersama Keluarga'
+    src: 'https://images.unsplash.com/photo-1472162072942-cd5147eb3902?auto=format&fit=crop&w=1200&q=85',
+    caption: 'Tawa Ceria Sang Petualang Cilik'
   },
   {
     id: 3,
     src: 'https://images.unsplash.com/photo-1530103862676-de8c9debad1d?auto=format&fit=crop&w=1200&q=85',
-    caption: 'Petualang Kecil yang Penuh Rasa Ingin Tahu'
+    caption: 'Pesta Balon Safari Warna-Warni'
   },
   {
     id: 4,
-    src: 'https://images.unsplash.com/photo-1472162072942-cd5147eb3902?auto=format&fit=crop&w=1200&q=85',
-    caption: 'Senyum Bahagia Buah Hati Tercinta'
+    src: 'https://images.unsplash.com/photo-1513151233558-d860c5398176?auto=format&fit=crop&w=1200&q=85',
+    caption: 'Keceriaan Hari Spesial Kenzo'
   }
 ]
 
@@ -191,7 +191,7 @@ export const JungleSafariTemplate: React.FC<TemplateViewProps> = ({
           <div className="relative my-8">
             <div className="w-52 sm:w-60 h-72 sm:h-84 rounded-3xl overflow-hidden p-1.5 bg-gradient-to-b from-amber-400/40 via-lime-400/20 to-emerald-950 shadow-2xl">
               <img
-                src="https://images.unsplash.com/photo-1508214751196-bcfd4ca60f91?auto=format&fit=crop&w=800&q=85"
+                src={weddingData.couple.groom.photo || "https://images.unsplash.com/photo-1772724317403-63337bf58fff?auto=format&fit=crop&w=800&q=85"}
                 alt="Kenzo Dirgantara"
                 className="w-full h-full object-cover object-center filter brightness-95"
               />

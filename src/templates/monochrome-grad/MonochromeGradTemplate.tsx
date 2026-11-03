@@ -32,7 +32,7 @@ import { useToast } from '../../components/Toast'
 const GRAD_PHOTOS = [
   {
     id: 1,
-    src: 'https://images.unsplash.com/photo-1534447677768-be436bb09401?auto=format&fit=crop&w=1200&q=85',
+    src: 'https://images.unsplash.com/photo-1672839415384-95cdbcba77ee?auto=format&fit=crop&w=1200&q=85',
     caption: 'Momen Kelulusan Studio FSRD ITB'
   },
   {
@@ -42,12 +42,12 @@ const GRAD_PHOTOS = [
   },
   {
     id: 3,
-    src: 'https://images.unsplash.com/photo-1523050854058-8df90110c9f1?auto=format&fit=crop&w=1200&q=85',
+    src: 'https://images.unsplash.com/photo-1495995424756-6a5a3f9e7543?auto=format&fit=crop&w=1200&q=85',
     caption: 'Melangkah Mantap Menuju Babak Pengabdian'
   },
   {
     id: 4,
-    src: 'https://images.unsplash.com/photo-1523240795612-9a054b0db644?auto=format&fit=crop&w=1200&q=85',
+    src: 'https://images.unsplash.com/photo-1627556704290-2b1f5853ff78?auto=format&fit=crop&w=1200&q=85',
     caption: 'Bersama Sahabat Seperjuangan Kampus Ganesha'
   }
 ]
@@ -192,7 +192,7 @@ export const MonochromeGradTemplate: React.FC<TemplateViewProps> = ({
           <div className="relative my-8">
             <div className="w-52 sm:w-60 h-72 sm:h-84 rounded-2xl overflow-hidden p-1 bg-gradient-to-b from-white/30 via-zinc-600/20 to-transparent shadow-2xl">
               <img
-                src="https://images.unsplash.com/photo-1534447677768-be436bb09401?auto=format&fit=crop&w=800&q=85"
+                src={template?.heroImage || "https://images.unsplash.com/photo-1672839415384-95cdbcba77ee?auto=format&fit=crop&w=800&q=85"}
                 alt="Nadine Aulia"
                 className="w-full h-full object-cover object-center filter grayscale contrast-110"
               />

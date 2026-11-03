@@ -55,7 +55,7 @@ export const JungleSafariCoverScreen: React.FC<JungleSafariCoverScreenProps> = (
           <div className="w-44 h-56 sm:w-48 sm:h-60 rounded-3xl overflow-hidden p-1.5 bg-gradient-to-b from-amber-400/50 via-lime-400/30 to-emerald-900 shadow-2xl shadow-black/80">
             <div className="w-full h-full rounded-2xl overflow-hidden relative">
               <img
-                src="https://images.unsplash.com/photo-1508214751196-bcfd4ca60f91?auto=format&fit=crop&w=800&q=85"
+                src="https://images.unsplash.com/photo-1772724317403-63337bf58fff?auto=format&fit=crop&w=800&q=85"
                 alt="Kenzo Birthday"
                 className="w-full h-full object-cover object-center filter brightness-95"
               />

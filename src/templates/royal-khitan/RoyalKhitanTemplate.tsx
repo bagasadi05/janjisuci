@@ -29,23 +29,23 @@ import { useToast } from '../../components/Toast'
 const KHITAN_PHOTOS = [
   {
     id: 1,
-    src: 'https://images.unsplash.com/photo-1584281729288-89826acac5b0?auto=format&fit=crop&w=1200&q=85',
-    caption: 'Ornamen Kemegahan Kubah Islami'
+    src: 'https://images.unsplash.com/photo-1585036156171-384164a8c675?auto=format&fit=crop&w=1200&q=85',
+    caption: 'Lantunan Doa & Ayat Suci Al-Qur\'an'
   },
   {
     id: 2,
     src: 'https://images.unsplash.com/photo-1519817650390-64a93db51149?auto=format&fit=crop&w=1200&q=85',
-    caption: 'Keluarga Bahagia Penuh Syukur'
+    caption: 'Kemegahan Masjid Agung Walimah'
   },
   {
     id: 3,
-    src: 'https://images.unsplash.com/photo-1508214751196-bcfd4ca60f91?auto=format&fit=crop&w=1200&q=85',
-    caption: 'Senyum Ceria Buah Hati Tercinta'
+    src: 'https://images.unsplash.com/photo-1720238281687-dcc6d8a6e7d4?auto=format&fit=crop&crop=top,right&w=1200&h=1200&q=85',
+    caption: 'Senyum Bahagia Buah Hati Sholeh'
   },
   {
     id: 4,
-    src: 'https://images.unsplash.com/photo-1542838132-92c53300491e?auto=format&fit=crop&w=1200&q=85',
-    caption: 'Lantunan Doa Bersama Keluarga'
+    src: 'https://images.unsplash.com/photo-1564769625905-50e93615e769?auto=format&fit=crop&w=1200&q=85',
+    caption: 'Keberkahan & Rahmat Ilahi'
   }
 ]
 
@@ -205,7 +205,7 @@ export const RoyalKhitanTemplate: React.FC<TemplateViewProps> = ({
           <div className="relative my-8">
             <div className="w-52 sm:w-60 h-72 sm:h-84 rounded-t-full rounded-b-2xl overflow-hidden p-1.5 bg-gradient-to-b from-amber-400/40 via-emerald-400/20 to-transparent shadow-2xl">
               <img
-                src="https://images.unsplash.com/photo-1584281729288-89826acac5b0?auto=format&fit=crop&w=800&q=85"
+                src={weddingData.couple.groom.photo || "https://images.unsplash.com/photo-1720238281687-dcc6d8a6e7d4?auto=format&fit=crop&crop=top,right&w=800&h=800&q=85"}
                 alt="Khitanan"
                 className="w-full h-full object-cover object-center filter brightness-95"
               />
@@ -244,7 +244,7 @@ export const RoyalKhitanTemplate: React.FC<TemplateViewProps> = ({
           <div className="max-w-lg mx-auto text-center space-y-4">
             <div className="w-36 h-36 rounded-full overflow-hidden mx-auto border-2 border-amber-400/40 p-1 shadow-lg bg-emerald-950/60">
               <img
-                src="https://images.unsplash.com/photo-1508214751196-bcfd4ca60f91?auto=format&fit=crop&w=600&q=80"
+                src={weddingData.couple.groom.photo || "https://images.unsplash.com/photo-1720238281687-dcc6d8a6e7d4?auto=format&fit=crop&crop=top,right&w=600&h=600&q=85"}
                 alt="Muhammad Rizky Pratama"
                 className="w-full h-full object-cover rounded-full"
               />

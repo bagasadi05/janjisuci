@@ -56,7 +56,7 @@ export const ExclusiveNavyCoverScreen: React.FC<ExclusiveNavyCoverScreenProps> =
           <div className="w-44 h-60 sm:w-48 sm:h-64 rounded-t-full rounded-b-xl overflow-hidden p-1 bg-gradient-to-b from-amber-300/40 via-amber-400/20 to-transparent shadow-2xl shadow-black/80">
             <div className="w-full h-full rounded-t-full rounded-b-lg overflow-hidden relative">
               <img
-                src="https://images.unsplash.com/photo-1519741497674-611481863552?auto=format&fit=crop&w=800&q=85"
+                src="https://images.unsplash.com/photo-1583939003579-730e3918a45a?auto=format&fit=crop&w=800&q=85"
                 alt="Pengantin Nabilah & Yoga"
                 className="w-full h-full object-cover object-top filter brightness-95 contrast-105"
               />

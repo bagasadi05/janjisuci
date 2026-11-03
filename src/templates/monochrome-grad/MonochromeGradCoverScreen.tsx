@@ -52,7 +52,7 @@ export const MonochromeGradCoverScreen: React.FC<MonochromeGradCoverScreenProps>
           <div className="w-44 h-56 sm:w-48 sm:h-60 rounded-2xl overflow-hidden p-1 bg-gradient-to-b from-white/30 via-zinc-600/20 to-transparent shadow-2xl shadow-black/90">
             <div className="w-full h-full rounded-xl overflow-hidden relative">
               <img
-                src="https://images.unsplash.com/photo-1534447677768-be436bb09401?auto=format&fit=crop&w=800&q=85"
+                src="https://images.unsplash.com/photo-1672839415384-95cdbcba77ee?auto=format&fit=crop&w=800&q=85"
                 alt="Nadine Aulia Wisuda"
                 className="w-full h-full object-cover object-center filter grayscale contrast-110"
               />

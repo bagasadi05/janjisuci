@@ -50,7 +50,7 @@ export const SweetBlossomCoverScreen: React.FC<SweetBlossomCoverScreenProps> = (
           <div className="w-44 h-56 sm:w-48 sm:h-60 rounded-3xl overflow-hidden p-1.5 bg-gradient-to-b from-rose-400/50 via-pink-400/25 to-transparent shadow-2xl shadow-black/80">
             <div className="w-full h-full rounded-2xl overflow-hidden relative">
               <img
-                src="https://images.unsplash.com/photo-1544126592-807ade215a0b?auto=format&fit=crop&w=800&q=85"
+                src="https://images.unsplash.com/photo-1564172420073-e553c280b6f7?auto=format&fit=crop&w=800&q=85"
                 alt="Shafiyyah Aqiqah"
                 className="w-full h-full object-cover object-center filter brightness-95"
               />

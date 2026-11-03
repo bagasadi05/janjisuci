@@ -55,7 +55,7 @@ export const RoyalKhitanCoverScreen: React.FC<RoyalKhitanCoverScreenProps> = ({
           <div className="w-44 h-60 sm:w-48 sm:h-64 rounded-t-full rounded-b-2xl overflow-hidden p-1.5 bg-gradient-to-b from-amber-400/40 via-emerald-500/20 to-transparent shadow-2xl shadow-black/80">
             <div className="w-full h-full rounded-t-full rounded-b-xl overflow-hidden relative">
               <img
-                src="https://images.unsplash.com/photo-1584281729288-89826acac5b0?auto=format&fit=crop&w=800&q=85"
+                src="https://images.unsplash.com/photo-1720238281687-dcc6d8a6e7d4?auto=format&fit=crop&crop=top,right&w=800&h=800&q=85"
                 alt="Khitanan"
                 className="w-full h-full object-cover object-center filter brightness-95"
               />

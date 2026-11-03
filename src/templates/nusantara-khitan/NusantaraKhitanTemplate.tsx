@@ -25,23 +25,23 @@ import { useToast } from '../../components/Toast'
 const KHITAN_PHOTOS = [
   {
     id: 1,
-    src: 'https://images.unsplash.com/photo-1508214751196-bcfd4ca60f91?auto=format&fit=crop&w=1200&q=85',
+    src: 'https://images.unsplash.com/photo-1720238281687-dcc6d8a6e7d4?auto=format&fit=crop&crop=top,right&w=1200&h=1200&q=85',
     caption: 'Senyum Ceria Raden Arya Danendra'
   },
   {
     id: 2,
-    src: 'https://images.unsplash.com/photo-1511285560929-80b456fea0bc?auto=format&fit=crop&w=1200&q=85',
-    caption: 'Nuansa Sakral Tradisi Keraton Nusantara'
+    src: 'https://images.unsplash.com/photo-1566559532224-6d65e9fc0f37?auto=format&fit=crop&w=1200&q=85',
+    caption: 'Nuansa Sakral Keagungan Borobudur'
   },
   {
     id: 3,
-    src: 'https://images.unsplash.com/photo-1584281729288-89826acac5b0?auto=format&fit=crop&w=1200&q=85',
-    caption: 'Kehangatan Kasih Sayang Rama lan Biyung'
+    src: 'https://images.unsplash.com/photo-1576233475048-55f08b53a8bd?auto=format&fit=crop&w=1200&q=85',
+    caption: 'Warisan Luhur Budaya Candi Prambanan'
   },
   {
     id: 4,
-    src: 'https://images.unsplash.com/photo-1519741497674-611481863552?auto=format&fit=crop&w=1200&q=85',
-    caption: 'Momen Bersejarah Langkah Kedewasaan Ananda'
+    src: 'https://images.unsplash.com/photo-1585036156171-384164a8c675?auto=format&fit=crop&w=1200&q=85',
+    caption: 'Momen Bersejarah Doa & Syukur Walimah'
   }
 ]
 
@@ -183,7 +183,7 @@ export const NusantaraKhitanTemplate: React.FC<TemplateViewProps> = ({
           <div className="relative my-8">
             <div className="w-52 sm:w-60 h-72 sm:h-84 rounded-3xl overflow-hidden p-1.5 bg-gradient-to-b from-amber-400/50 via-yellow-600/30 to-amber-950 shadow-2xl">
               <img
-                src="https://images.unsplash.com/photo-1508214751196-bcfd4ca60f91?auto=format&fit=crop&w=800&q=85"
+                src={weddingData.couple.groom.photo || "https://images.unsplash.com/photo-1720238281687-dcc6d8a6e7d4?auto=format&fit=crop&crop=top,right&w=800&h=800&q=85"}
                 alt="Raden Arya Danendra"
                 className="w-full h-full object-cover object-center filter brightness-95"
               />

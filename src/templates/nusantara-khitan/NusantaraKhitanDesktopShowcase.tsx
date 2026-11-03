@@ -76,7 +76,7 @@ export const NusantaraKhitanDesktopShowcase: React.FC<NusantaraKhitanDesktopShow
         <div className="w-52 xl:w-60 h-64 xl:h-72 rounded-3xl overflow-hidden p-1.5 bg-gradient-to-b from-amber-400/40 via-yellow-600/20 to-amber-950/50 shadow-2xl shadow-black/80">
           <div className="w-full h-full rounded-2xl overflow-hidden relative">
             <img
-              src="https://images.unsplash.com/photo-1508214751196-bcfd4ca60f91?auto=format&fit=crop&w=800&q=85"
+              src="https://images.unsplash.com/photo-1720238281687-dcc6d8a6e7d4?auto=format&fit=crop&crop=top,right&w=800&h=800&q=85"
               alt="Raden Arya Danendra"
               className="w-full h-full object-cover object-center filter brightness-95 transition-transform duration-700 hover:scale-105"
             />
