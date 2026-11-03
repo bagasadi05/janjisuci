@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from 'react'
-import { MailOpen, Calendar, Sparkles } from 'lucide-react'
+import React, { useEffect, useState, useRef } from 'react'
+import { MailOpen, Sparkles } from 'lucide-react'
 import confetti from 'canvas-confetti'
 import { useInvitationData } from '../../context/InvitationContext'
 
@@ -12,9 +12,10 @@ export const AdatBanjarCoverScreen: React.FC<AdatBanjarCoverScreenProps> = ({
   isOpen,
   onOpenWithAudio
 }) => {
-  const { data: weddingData, activeTemplate } = useInvitationData()
+  const { data: weddingData } = useInvitationData()
   const [guestName, setGuestName] = useState<string>('Tamu Undangan')
   const [isAnimating, setIsAnimating] = useState(false)
+  const videoRef = useRef<HTMLVideoElement | null>(null)
 
   useEffect(() => {
     const urlParams = new URLSearchParams(window.location.search)
@@ -30,23 +31,23 @@ export const AdatBanjarCoverScreen: React.FC<AdatBanjarCoverScreenProps> = ({
 
     try {
       confetti({
-        particleCount: 100,
-        spread: 75,
+        particleCount: 110,
+        spread: 80,
         origin: { y: 0.65 },
         colors: ['#D7BB83', '#722C2C', '#FFFFFF', '#E5C058']
       })
       setTimeout(() => {
         confetti({
-          particleCount: 60,
+          particleCount: 70,
           angle: 60,
-          spread: 60,
+          spread: 65,
           origin: { x: 0 },
           colors: ['#D7BB83', '#FFFCF3', '#722C2C']
         })
         confetti({
-          particleCount: 60,
+          particleCount: 70,
           angle: 120,
-          spread: 60,
+          spread: 65,
           origin: { x: 1 },
           colors: ['#D7BB83', '#FFFCF3', '#722C2C']
         })
@@ -60,35 +61,48 @@ export const AdatBanjarCoverScreen: React.FC<AdatBanjarCoverScreenProps> = ({
 
   return (
     <div
-      className={`fixed inset-0 z-50 flex items-center justify-center transition-all duration-700 ease-in-out px-4 min-h-[100dvh] overflow-hidden ${
+      className={`fixed inset-0 z-50 flex items-center justify-center transition-all duration-1000 ease-in-out px-4 min-h-[100dvh] overflow-hidden ${
         isAnimating ? '-translate-y-full opacity-0 pointer-events-none' : 'translate-y-0 opacity-100'
       }`}
-      style={{
-        backgroundColor: '#1E0B0B',
-        backgroundImage: `url("https://undanganwebkami.id/wp-content/uploads/2025/12/Banjar-Seamless-Pattern.png")`,
-        backgroundRepeat: 'repeat',
-        backgroundSize: '240px'
-      }}
+      style={{ backgroundColor: '#140505' }}
     >
-      {/* Background Dimming & Dark Vignette */}
-      <div className="absolute inset-0 bg-gradient-to-b from-[#140505]/90 via-[#260C0C]/80 to-[#140505]/95 pointer-events-none" />
+      {/* 1. CINEMATIC MOTION VIDEO BACKGROUND (Identical to undanganwebkami.id/adat-banjar) */}
+      <div className="absolute inset-0 z-0 overflow-hidden">
+        <video
+          ref={videoRef}
+          autoPlay
+          loop
+          muted
+          playsInline
+          poster="https://undanganwebkami.id/wp-content/uploads/2025/12/Banjar-Background.jpeg"
+          className="w-full h-full object-cover object-center filter brightness-[0.38] scale-105 transition-opacity duration-1000"
+        >
+          <source
+            src="https://undanganwebkami.id/wp-content/uploads/2025/12/Motion-Banjar-Compress.mp4"
+            type="video/mp4"
+          />
+        </video>
+
+        {/* Traditional Sasirangan Vignette & Ambient Glow */}
+        <div className="absolute inset-0 bg-gradient-to-t from-[#140505] via-[#140505]/45 to-[#140505]/85 pointer-events-none" />
+      </div>
 
       {/* Traditional Banjar Top Arch Motif */}
       <img
         src="https://undanganwebkami.id/wp-content/uploads/2025/12/Banjar-Motif-Atas.png"
         alt="Ornamen Banjar Atas"
-        className="absolute top-0 inset-x-0 w-full max-w-lg mx-auto pointer-events-none opacity-80 z-0"
+        className="absolute top-0 inset-x-0 w-full max-w-lg mx-auto pointer-events-none opacity-85 z-10"
       />
 
       {/* Traditional Banjar Bottom Arch Motif */}
       <img
         src="https://undanganwebkami.id/wp-content/uploads/2025/12/Banjar-Motif-Bawah.png"
         alt="Ornamen Banjar Bawah"
-        className="absolute bottom-0 inset-x-0 w-full max-w-lg mx-auto pointer-events-none opacity-80 z-0"
+        className="absolute bottom-0 inset-x-0 w-full max-w-lg mx-auto pointer-events-none opacity-85 z-10"
       />
 
       {/* Royal Cover Envelope Card */}
-      <div className="relative z-10 w-full max-w-sm sm:max-w-md mx-auto p-6 sm:p-8 rounded-3xl bg-[#FFFDF7]/95 text-stone-900 border-2 border-[#D7BB83] shadow-[0_25px_60px_rgba(0,0,0,0.7)] text-center overflow-hidden">
+      <div className="relative z-20 w-full max-w-sm sm:max-w-md mx-auto p-6 sm:p-8 rounded-3xl bg-[#FFFDF7]/95 text-stone-900 border-2 border-[#D7BB83] shadow-[0_25px_60px_rgba(0,0,0,0.8)] text-center overflow-hidden backdrop-blur-md">
         {/* Subtle Sasirangan Watermark inside Card */}
         <div
           className="absolute inset-0 opacity-5 pointer-events-none"
@@ -115,7 +129,7 @@ export const AdatBanjarCoverScreen: React.FC<AdatBanjarCoverScreenProps> = ({
 
         {/* Couple Names */}
         <div className="my-2 sm:my-3">
-          <h1 className="font-script text-4xl sm:text-5xl text-[#722C2C] leading-tight">
+          <h1 className="font-script text-4xl sm:text-5xl text-[#722C2C] leading-tight drop-shadow-sm">
             {weddingData.couple.groom.shortName} &amp; {weddingData.couple.bride.shortName}
           </h1>
           <p className="font-serif italic text-xs sm:text-sm text-stone-600 mt-1">
@@ -124,7 +138,7 @@ export const AdatBanjarCoverScreen: React.FC<AdatBanjarCoverScreenProps> = ({
         </div>
 
         {/* Couple Banjar Traditional Outfit Illustrations */}
-        <div className="flex items-center justify-center gap-4 my-4">
+        <div className="flex items-center justify-center gap-4 my-3.5">
           <img
             src="https://undanganwebkami.id/wp-content/uploads/2025/12/Banjar-Couple-Depan-1.png"
             alt="Pengantin Pria Banjar"

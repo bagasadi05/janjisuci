@@ -176,34 +176,52 @@ export const AdatBanjarTemplate: React.FC<TemplateViewProps> = ({
 
           <main className="relative z-10 w-full max-w-4xl mx-auto px-4 sm:px-8 py-8 sm:py-12 space-y-16">
             
-            {/* 1. HERO SECTION */}
-            <section id="home" className="text-center pt-4 pb-8">
-              <div className="relative max-w-md mx-auto">
+            {/* 1. HERO SECTION WITH CINEMATIC MOTION BACKGROUND */}
+            <section id="home" className="relative text-center pt-8 pb-12 overflow-hidden rounded-3xl border border-[#D7BB83]/50 shadow-2xl bg-[#1A0A0A] text-[#FFFCF3]">
+              {/* Cinematic Motion Video Backdrop (from undanganwebkami.id) */}
+              <div className="absolute inset-0 z-0 opacity-45 pointer-events-none">
+                <video
+                  autoPlay
+                  loop
+                  muted
+                  playsInline
+                  poster="https://undanganwebkami.id/wp-content/uploads/2025/12/Banjar-Background.jpeg"
+                  className="w-full h-full object-cover object-center"
+                >
+                  <source
+                    src="https://undanganwebkami.id/wp-content/uploads/2025/12/Motion-Banjar-Compress.mp4"
+                    type="video/mp4"
+                  />
+                </video>
+                <div className="absolute inset-0 bg-gradient-to-t from-[#1F0A0A] via-[#1F0A0A]/40 to-[#1F0A0A]/85" />
+              </div>
+
+              <div className="relative z-10 max-w-md mx-auto px-4">
                 <img
                   src="https://undanganwebkami.id/wp-content/uploads/2025/12/Banjar-Motif-Atas.png"
                   alt="Motif Banjar"
-                  className="w-48 mx-auto mb-4 opacity-80"
+                  className="w-48 mx-auto mb-4 opacity-90 drop-shadow-md"
                 />
 
-                <p className="font-serif text-xs uppercase tracking-[0.3em] text-[#722C2C] font-semibold mb-2">
+                <p className="font-serif text-xs uppercase tracking-[0.3em] text-[#D7BB83] font-semibold mb-2">
                   Walimatul 'Ursy
                 </p>
-                <h1 className="font-serif text-3xl sm:text-4xl font-bold text-[#1F0A0A] tracking-tight">
+                <h1 className="font-serif text-3xl sm:text-4xl font-bold text-[#FFFCF3] tracking-tight">
                   The Wedding of
                 </h1>
 
                 {/* Couple Names */}
                 <div className="my-5 space-y-1">
-                  <div className="font-script text-5xl sm:text-6xl text-[#722C2C] drop-shadow-sm">
+                  <div className="font-script text-5xl sm:text-6xl text-[#D7BB83] drop-shadow-md">
                     {groom.shortName}
                   </div>
-                  <div className="font-script text-3xl text-[#D7BB83]">&amp;</div>
-                  <div className="font-script text-5xl sm:text-6xl text-[#722C2C] drop-shadow-sm">
+                  <div className="font-script text-3xl text-amber-200">&amp;</div>
+                  <div className="font-script text-5xl sm:text-6xl text-[#D7BB83] drop-shadow-md">
                     {bride.shortName}
                   </div>
                 </div>
 
-                <p className="font-serif text-sm tracking-widest text-stone-600 uppercase mb-8">
+                <p className="font-serif text-sm tracking-widest text-stone-300 uppercase mb-8">
                   {akad.date}
                 </p>
 
