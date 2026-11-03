@@ -34,21 +34,22 @@ export const StorefrontPage: React.FC<StorefrontPageProps> = ({
   onPreviewTemplate,
   onOrderTemplate
 }) => {
-  const [selectedCategory, setSelectedCategory] = useState<string>('all')
+  const [selectedEvent, setSelectedEvent] = useState<string>('all')
   const [openFaqIndex, setOpenFaqIndex] = useState<number | null>(0)
 
-  const categories = [
-    { id: 'all', label: `Semua Tema (${storeConfig.templates.length})` },
-    { id: 'floral', label: 'Bunga & Rustic' },
-    { id: 'adat', label: 'Adat Nusantara' },
-    { id: 'luxury', label: 'Kemewahan Modern' },
-    { id: 'dark', label: 'Malam Elegan' },
-    { id: 'pastel', label: 'Pastel Romantis' }
+  const eventFilters = [
+    { id: 'all', label: 'Semua Acara', count: storeConfig.templates.length, icon: '✨' },
+    { id: 'wedding', label: 'Pernikahan', count: storeConfig.templates.filter((t) => !t.eventType || t.eventType === 'wedding').length, icon: '💍' },
+    { id: 'khitan', label: 'Khitanan', count: storeConfig.templates.filter((t) => t.eventType === 'khitan').length, icon: '✂️' },
+    { id: 'birthday', label: 'Ulang Tahun', count: storeConfig.templates.filter((t) => t.eventType === 'birthday').length, icon: '🎂' },
+    { id: 'aqiqah', label: 'Aqiqah', count: storeConfig.templates.filter((t) => t.eventType === 'aqiqah').length, icon: '👶' },
+    { id: 'graduation', label: 'Wisuda', count: storeConfig.templates.filter((t) => t.eventType === 'graduation').length, icon: '🎓' }
   ]
 
   const filteredTemplates = storeConfig.templates.filter((t) => {
-    if (selectedCategory === 'all') return true
-    return t.category === selectedCategory
+    if (selectedEvent === 'all') return true
+    if (selectedEvent === 'wedding') return !t.eventType || t.eventType === 'wedding'
+    return t.eventType === selectedEvent
   })
 
   const scrollTo = (id: string) => {
@@ -207,22 +208,28 @@ export const StorefrontPage: React.FC<StorefrontPageProps> = ({
               Pilih Template Undangan Impianmu
             </h2>
             <p className="text-stone-400 text-xs sm:text-sm max-w-xl mx-auto mt-2">
-              Klik tombol <strong>"Lihat Demo"</strong> untuk mencoba langsung tampilan dan musik masing-masing template, atau klik <strong>"Pilih & Pesan"</strong> untuk mengisi data pernikahanmu.
+              Klik tombol <strong>"Lihat Demo"</strong> untuk mencoba langsung tampilan dan musik masing-masing template, atau klik <strong>"Pilih &amp; Pesan"</strong> untuk mengisi data acaramu.
             </p>
 
-            {/* Category Filter Tabs */}
+            {/* Event Category Filter Tabs */}
             <div className="flex items-center justify-center gap-2 flex-wrap mt-7">
-              {categories.map((cat) => (
+              {eventFilters.map((cat) => (
                 <button
                   key={cat.id}
-                  onClick={() => setSelectedCategory(cat.id)}
-                  className={`px-4 py-2 rounded-full text-xs font-semibold transition-all cursor-pointer ${
-                    selectedCategory === cat.id
-                      ? 'bg-amber-500 text-stone-950 shadow-md'
+                  onClick={() => setSelectedEvent(cat.id)}
+                  className={`inline-flex items-center gap-1.5 px-4 py-2 rounded-full text-xs font-semibold transition-all cursor-pointer ${
+                    selectedEvent === cat.id
+                      ? 'bg-amber-500 text-stone-950 shadow-md scale-105'
                       : 'bg-stone-800 text-stone-300 hover:bg-stone-700'
                   }`}
                 >
-                  {cat.label}
+                  <span>{cat.icon}</span>
+                  <span>{cat.label}</span>
+                  <span className={`text-[10px] px-1.5 py-0.2 rounded-full ${
+                    selectedEvent === cat.id ? 'bg-stone-950/20 text-stone-950' : 'bg-white/10 text-stone-400'
+                  }`}>
+                    {cat.count}
+                  </span>
                 </button>
               ))}
             </div>
@@ -264,20 +271,33 @@ export const StorefrontPage: React.FC<StorefrontPageProps> = ({
                         )}
                       </div>
 
-                      {/* Sample Couple Overlay */}
+                      {/* Sample Overlay */}
                       <div className="absolute bottom-3 left-3.5 right-3.5 flex items-end justify-between z-10">
                         <div>
-                          <p className="text-[10px] uppercase tracking-widest text-amber-300">
-                            Demo Pasangan:
+                          <p className="text-[10px] uppercase tracking-widest text-amber-300 font-mono">
+                            {tpl.eventType === 'khitan'
+                              ? 'Demo Khitan:'
+                              : tpl.eventType === 'birthday'
+                              ? 'Demo Birthday:'
+                              : tpl.eventType === 'aqiqah'
+                              ? 'Demo Aqiqah:'
+                              : tpl.eventType === 'graduation'
+                              ? 'Demo Wisuda:'
+                              : 'Demo Pasangan:'}
                           </p>
-                          <p className="font-script text-2xl sm:text-3xl text-white drop-shadow">
-                            {tpl.sampleCouple.groomShort} & {tpl.sampleCouple.brideShort}
+                          <p className="font-serif text-lg sm:text-xl font-bold text-white drop-shadow line-clamp-1">
+                            {tpl.eventMeta?.primaryTitle || `${tpl.sampleCouple?.groomShort} & ${tpl.sampleCouple?.brideShort}`}
                           </p>
+                          {tpl.eventMeta?.secondaryTitle && (
+                            <p className="text-[10px] text-amber-200/90 font-sans italic truncate max-w-[170px]">
+                              {tpl.eventMeta.secondaryTitle}
+                            </p>
+                          )}
                         </div>
 
                         <button
                           onClick={() => onPreviewTemplate(tpl)}
-                          className="px-3 py-1.5 rounded-full bg-white/20 hover:bg-white/30 backdrop-blur-md border border-white/30 text-white text-xs font-semibold flex items-center gap-1.5 transition-all cursor-pointer"
+                          className="px-3 py-1.5 rounded-full bg-white/20 hover:bg-white/30 backdrop-blur-md border border-white/30 text-white text-xs font-semibold flex items-center gap-1.5 transition-all cursor-pointer shrink-0 ml-2"
                         >
                           <Eye className="w-3.5 h-3.5" />
                           <span>Lihat Demo</span>

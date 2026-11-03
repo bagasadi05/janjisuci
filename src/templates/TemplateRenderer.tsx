@@ -9,6 +9,10 @@ import { RusticTerracottaTemplate } from './rustic-terracotta/RusticTerracottaTe
 import { BlushPeonyTemplate } from './blush-peony/BlushPeonyTemplate'
 import { RoyalMidnightTemplate } from './royal-midnight/RoyalMidnightTemplate'
 import { ExclusiveNavyTemplate } from './exclusive-navy/ExclusiveNavyTemplate'
+import { RoyalKhitanTemplate } from './royal-khitan/RoyalKhitanTemplate'
+import { ConfettiBirthdayTemplate } from './confetti-birthday/ConfettiBirthdayTemplate'
+import { LittleStarAqiqahTemplate } from './little-star-aqiqah/LittleStarAqiqahTemplate'
+import { AcademicEleganceTemplate } from './academic-elegance/AcademicEleganceTemplate'
 
 interface TemplateRendererProps extends TemplateViewProps {
   template: TemplateItem
@@ -18,6 +22,18 @@ export const TemplateRenderer: React.FC<TemplateRendererProps> = (props) => {
   const { template } = props
 
   switch (template.slug || template.id) {
+    case 'royal-khitan':
+      return <RoyalKhitanTemplate {...props} />
+
+    case 'confetti-birthday':
+      return <ConfettiBirthdayTemplate {...props} />
+
+    case 'little-star-aqiqah':
+      return <LittleStarAqiqahTemplate {...props} />
+
+    case 'academic-elegance':
+      return <AcademicEleganceTemplate {...props} />
+
     case 'exclusive-navy':
       return <ExclusiveNavyTemplate {...props} />
 

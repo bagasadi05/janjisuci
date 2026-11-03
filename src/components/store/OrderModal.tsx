@@ -13,7 +13,11 @@ import {
   Heart,
   Calendar,
   Music,
-  CheckCircle2
+  CheckCircle2,
+  GraduationCap,
+  Cake,
+  Baby,
+  Scissors
 } from 'lucide-react'
 import {
   storeConfig,
@@ -144,8 +148,15 @@ export const OrderModal: React.FC<OrderModalProps> = ({
       return
     }
 
+    const eventType = selectedTemplate.eventType || 'wedding'
+    let eventTitle = 'Undangan Pernikahan Digital! 💍'
+    if (eventType === 'khitan') eventTitle = 'Undangan Digital Tasyakuran Khitan! ✂️'
+    else if (eventType === 'birthday') eventTitle = 'Undangan Digital Ulang Tahun! 🎂'
+    else if (eventType === 'aqiqah') eventTitle = 'Undangan Digital Tasyakuran Aqiqah! 👶'
+    else if (eventType === 'graduation') eventTitle = 'Undangan Digital Wisuda / Kelulusan! 🎓'
+
     const lines = [
-      `Halo Admin *${storeConfig.brand.name}*, saya ingin memesan Undangan Pernikahan Digital! 💍`,
+      `Halo Admin *${storeConfig.brand.name}*, saya ingin memesan ${eventTitle}`,
       ``,
       `🧾 *DETAIL PEMESANAN & PEMBAYARAN*`,
       `• No. Invoice: *#${invoiceCode}*`,
@@ -161,33 +172,110 @@ export const OrderModal: React.FC<OrderModalProps> = ({
 
     if (dataMode === 'later') {
       lines.push(
-        `📌 *STATUS DATA ACARA & PENGANTIN:*`,
-        `Saya memilih *Booking Slot Promo Terlebih Dahulu*. Data lengkap mempelai, jadwal acara, rekening gift, dan foto prewedding akan segera saya kirimkan menyusul di ruang chat WhatsApp ini.`,
+        `📌 *STATUS DATA ACARA:*`,
+        `Saya memilih *Booking Slot Promo Terlebih Dahulu*. Seluruh data lengkap acara, jadwal, rekening tanda kasih, dan foto akan segera saya kirimkan menyusul di ruang chat WhatsApp ini.`,
         ``
       )
     } else {
-      lines.push(
-        `🤵👰 *DATA MEMPELAI PENGANTIN*`,
-        `• Mempelai Pria: ${formData.groomFullName || '(Menyusul)'} (${formData.groomShortName || '-'})`,
-        `  Ortu Pria: ${formData.groomParents || '-'} | IG: ${formData.groomIg || '-'}`,
-        `• Mempelai Wanita: ${formData.brideFullName || '(Menyusul)'} (${formData.brideShortName || '-'})`,
-        `  Ortu Wanita: ${formData.brideParents || '-'} | IG: ${formData.brideIg || '-'}`,
-        ``,
-        `📅 *JADWAL & LOKASI ACARA*`,
-        `• Akad Nikah: ${formData.akadDate || '-'} | ${formData.akadTime || '-'}`,
-        `  Tempat Akad: ${formData.akadVenue || '-'}`,
-        `• Resepsi: ${formData.resepsiDate || formData.akadDate || '-'} | ${formData.resepsiTime || '-'}`,
-        `  Tempat Resepsi: ${formData.resepsiVenue || '-'}`,
-        `• Alamat Lengkap: ${formData.mapsAddress || '-'}`,
-        `• Link Google Maps: ${formData.mapsLink || '-'}`,
-        ``,
-        `🎵 *MUSIK, AMPLOP & GALERI FOTO*`,
-        `• Lagu Backsound: ${formData.musicChoice || 'Payung Teduh - Akad'}`,
-        `• Rekening Amplop Digital: ${formData.giftBankInfo || '-'}`,
-        `• Link Foto Prewedding: ${formData.photoDriveLink || 'Kirim menyusul via chat WA'}`,
-        `• Catatan Tambahan: ${formData.buyerNotes || '-'}`,
-        ``
-      )
+      if (eventType === 'khitan') {
+        lines.push(
+          `✂️ *DATA ANAK & KELUARGA (KHITAN)*`,
+          `• Nama Lengkap Anak: ${formData.celebrantName || formData.groomFullName || '(Menyusul)'} (${formData.celebrantNickname || formData.groomShortName || '-'})`,
+          `• Orang Tua: ${formData.parentsName || formData.groomParents || '-'}`,
+          ``,
+          `📅 *JADWAL & LOKASI TASYAKURAN*`,
+          `• Hari & Tanggal: ${formData.eventDate || formData.akadDate || '-'} | Jam: ${formData.eventTime || formData.akadTime || '-'}`,
+          `• Tempat Acara: ${formData.eventVenue || formData.akadVenue || '-'}`,
+          `• Alamat Lengkap: ${formData.mapsAddress || '-'}`,
+          `• Link Google Maps: ${formData.mapsLink || '-'}`,
+          ``,
+          `🎁 *TABUNGAN/KADO ANAK & FOTO*`,
+          `• Rekening Kado: ${formData.giftBankInfo || '-'}`,
+          `• Link Foto: ${formData.photoDriveLink || 'Kirim menyusul via WA'}`,
+          `• Catatan Tambahan: ${formData.buyerNotes || '-'}`,
+          ``
+        )
+      } else if (eventType === 'birthday') {
+        lines.push(
+          `🎂 *DATA ULANG TAHUN (BIRTHDAY)*`,
+          `• Nama yang Berulang Tahun: ${formData.celebrantName || formData.groomFullName || '(Menyusul)'} (${formData.celebrantNickname || formData.groomShortName || '-'})`,
+          `• Ulang Tahun Ke-: ${formData.celebrantAge || '-'} Tahun`,
+          `• Orang Tua / Penyelenggara: ${formData.parentsName || formData.groomParents || '-'}`,
+          ``,
+          `📅 *WAKTU & TEMPAT PESTA*`,
+          `• Hari & Tanggal: ${formData.eventDate || formData.akadDate || '-'} | Jam: ${formData.eventTime || formData.akadTime || '-'}`,
+          `• Lokasi Pesta: ${formData.eventVenue || formData.akadVenue || '-'}`,
+          `• Alamat: ${formData.mapsAddress || '-'}`,
+          `• Link Google Maps: ${formData.mapsLink || '-'}`,
+          ``,
+          `🎁 *KADO, HADIAH & FOTO*`,
+          `• Rekening / Wishlist Hadiah: ${formData.giftBankInfo || '-'}`,
+          `• Link Foto: ${formData.photoDriveLink || 'Kirim menyusul via WA'}`,
+          `• Catatan: ${formData.buyerNotes || '-'}`,
+          ``
+        )
+      } else if (eventType === 'aqiqah') {
+        lines.push(
+          `👶 *DATA BAYI & TASYAKURAN AQIQAH*`,
+          `• Nama Bayi: ${formData.celebrantName || formData.groomFullName || '(Menyusul)'} (${formData.celebrantNickname || formData.groomShortName || '-'})`,
+          `• Orang Tua: ${formData.parentsName || formData.groomParents || '-'}`,
+          ``,
+          `📅 *JADWAL ACARA AQIQAH*`,
+          `• Hari & Tanggal: ${formData.eventDate || formData.akadDate || '-'} | Jam: ${formData.eventTime || formData.akadTime || '-'}`,
+          `• Tempat Acara: ${formData.eventVenue || formData.akadVenue || '-'}`,
+          `• Alamat: ${formData.mapsAddress || '-'}`,
+          `• Link Google Maps: ${formData.mapsLink || '-'}`,
+          ``,
+          `🎁 *TANDA KASIH & FOTO BAYI*`,
+          `• Rekening Hadiah: ${formData.giftBankInfo || '-'}`,
+          `• Link Foto: ${formData.photoDriveLink || 'Kirim menyusul via WA'}`,
+          `• Catatan: ${formData.buyerNotes || '-'}`,
+          ``
+        )
+      } else if (eventType === 'graduation') {
+        lines.push(
+          `🎓 *DATA WISUDAWAN & KELULUSAN*`,
+          `• Nama Wisudawan: ${formData.celebrantName || formData.groomFullName || '(Menyusul)'}`,
+          `• Gelar & Fakultas: ${formData.degreeTitle || '-'}`,
+          `• Universitas / Kampus: ${formData.institutionName || '-'}`,
+          `• Orang Tua: ${formData.parentsName || formData.groomParents || '-'}`,
+          ``,
+          `📅 *JADWAL SIDANG TERBUKA SENAT*`,
+          `• Hari & Tanggal: ${formData.eventDate || formData.akadDate || '-'} | Jam: ${formData.eventTime || formData.akadTime || '-'}`,
+          `• Balairung / Gedung: ${formData.eventVenue || formData.akadVenue || '-'}`,
+          `• Alamat: ${formData.mapsAddress || '-'}`,
+          `• Link Google Maps: ${formData.mapsLink || '-'}`,
+          ``,
+          `🎁 *KADO WISUDA & FOTO*`,
+          `• Rekening Kado Wisuda: ${formData.giftBankInfo || '-'}`,
+          `• Link Foto: ${formData.photoDriveLink || 'Kirim menyusul via WA'}`,
+          `• Catatan: ${formData.buyerNotes || '-'}`,
+          ``
+        )
+      } else {
+        lines.push(
+          `🤵👰 *DATA MEMPELAI PENGANTIN*`,
+          `• Mempelai Pria: ${formData.groomFullName || '(Menyusul)'} (${formData.groomShortName || '-'})`,
+          `  Ortu Pria: ${formData.groomParents || '-'} | IG: ${formData.groomIg || '-'}`,
+          `• Mempelai Wanita: ${formData.brideFullName || '(Menyusul)'} (${formData.brideShortName || '-'})`,
+          `  Ortu Wanita: ${formData.brideParents || '-'} | IG: ${formData.brideIg || '-'}`,
+          ``,
+          `📅 *JADWAL & LOKASI ACARA*`,
+          `• Akad Nikah: ${formData.akadDate || '-'} | ${formData.akadTime || '-'}`,
+          `  Tempat Akad: ${formData.akadVenue || '-'}`,
+          `• Resepsi: ${formData.resepsiDate || formData.akadDate || '-'} | ${formData.resepsiTime || '-'}`,
+          `  Tempat Resepsi: ${formData.resepsiVenue || '-'}`,
+          `• Alamat Lengkap: ${formData.mapsAddress || '-'}`,
+          `• Link Google Maps: ${formData.mapsLink || '-'}`,
+          ``,
+          `🎵 *MUSIK, AMPLOP & GALERI FOTO*`,
+          `• Lagu Backsound: ${formData.musicChoice || 'Payung Teduh - Akad'}`,
+          `• Rekening Amplop Digital: ${formData.giftBankInfo || '-'}`,
+          `• Link Foto Prewedding: ${formData.photoDriveLink || 'Kirim menyusul via chat WA'}`,
+          `• Catatan Tambahan: ${formData.buyerNotes || '-'}`,
+          ``
+        )
+      }
     }
 
     lines.push(
@@ -455,283 +543,567 @@ export const OrderModal: React.FC<OrderModalProps> = ({
                     </button>
                   </div>
 
-                  {/* Data Mempelai Pria & Wanita */}
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    {/* Mempelai Pria */}
-                    <div className="p-4 rounded-2xl bg-stone-50 border border-stone-200 space-y-3">
-                      <div className="flex items-center gap-1.5 font-serif font-bold text-stone-800 text-sm border-b border-stone-200 pb-2">
-                        <Heart className="w-4 h-4 text-amber-700" />
-                        <span>Data Mempelai Pria</span>
-                      </div>
-                      <div>
-                        <label className="block text-[11px] font-semibold text-stone-600 mb-1">
-                          Nama Panggilan Pria
-                        </label>
-                        <input
-                          type="text"
-                          value={formData.groomShortName}
-                          onChange={(e) => updateField('groomShortName', e.target.value)}
-                          placeholder="Contoh: Rian"
-                          className="w-full px-3 py-2 rounded-xl border border-stone-300 bg-white text-sm"
-                        />
-                      </div>
-                      <div>
-                        <label className="block text-[11px] font-semibold text-stone-600 mb-1">
-                          Nama Lengkap & Gelar
-                        </label>
-                        <input
-                          type="text"
-                          value={formData.groomFullName}
-                          onChange={(e) => updateField('groomFullName', e.target.value)}
-                          placeholder="Contoh: M. Arrian Mahendra, S.T."
-                          className="w-full px-3 py-2 rounded-xl border border-stone-300 bg-white text-sm"
-                        />
-                      </div>
-                      <div>
-                        <label className="block text-[11px] font-semibold text-stone-600 mb-1">
-                          Nama Kedua Orang Tua Pria
-                        </label>
-                        <input
-                          type="text"
-                          value={formData.groomParents}
-                          onChange={(e) => updateField('groomParents', e.target.value)}
-                          placeholder="Bpk. Hendra & Ibu Siti"
-                          className="w-full px-3 py-2 rounded-xl border border-stone-300 bg-white text-sm"
-                        />
-                      </div>
-                      <div>
-                        <label className="block text-[11px] font-semibold text-stone-600 mb-1">
-                          Username Instagram (Opsional)
-                        </label>
-                        <input
-                          type="text"
-                          value={formData.groomIg}
-                          onChange={(e) => updateField('groomIg', e.target.value)}
-                          placeholder="@rian.mahendra"
-                          className="w-full px-3 py-2 rounded-xl border border-stone-300 bg-white text-sm"
-                        />
-                      </div>
-                    </div>
+                  {/* Dynamic Form: Multi-Event vs Wedding */}
+                  {selectedTemplate.eventType && selectedTemplate.eventType !== 'wedding' ? (
+                    <div className="space-y-4">
+                      {/* Section 1: Profil Tokoh Utama & Keluarga */}
+                      <div className="p-4 rounded-2xl bg-stone-50 border border-stone-200 space-y-3">
+                        <div className="flex items-center gap-1.5 font-serif font-bold text-stone-800 text-sm border-b border-stone-200 pb-2">
+                          {selectedTemplate.eventType === 'khitan' && <Scissors className="w-4 h-4 text-emerald-600" />}
+                          {selectedTemplate.eventType === 'birthday' && <Cake className="w-4 h-4 text-pink-600" />}
+                          {selectedTemplate.eventType === 'aqiqah' && <Baby className="w-4 h-4 text-sky-600" />}
+                          {selectedTemplate.eventType === 'graduation' && <GraduationCap className="w-4 h-4 text-amber-600" />}
+                          <span>
+                            {selectedTemplate.eventType === 'khitan' && 'Data Anak & Orang Tua'}
+                            {selectedTemplate.eventType === 'birthday' && 'Data Yang Berulang Tahun'}
+                            {selectedTemplate.eventType === 'aqiqah' && 'Data Bayi & Orang Tua'}
+                            {selectedTemplate.eventType === 'graduation' && 'Data Wisudawan & Institusi'}
+                          </span>
+                        </div>
 
-                    {/* Mempelai Wanita */}
-                    <div className="p-4 rounded-2xl bg-stone-50 border border-stone-200 space-y-3">
-                      <div className="flex items-center gap-1.5 font-serif font-bold text-stone-800 text-sm border-b border-stone-200 pb-2">
-                        <Heart className="w-4 h-4 text-rose-600" />
-                        <span>Data Mempelai Wanita</span>
-                      </div>
-                      <div>
-                        <label className="block text-[11px] font-semibold text-stone-600 mb-1">
-                          Nama Panggilan Wanita
-                        </label>
-                        <input
-                          type="text"
-                          value={formData.brideShortName}
-                          onChange={(e) => updateField('brideShortName', e.target.value)}
-                          placeholder="Contoh: Sarah"
-                          className="w-full px-3 py-2 rounded-xl border border-stone-300 bg-white text-sm"
-                        />
-                      </div>
-                      <div>
-                        <label className="block text-[11px] font-semibold text-stone-600 mb-1">
-                          Nama Lengkap & Gelar
-                        </label>
-                        <input
-                          type="text"
-                          value={formData.brideFullName}
-                          onChange={(e) => updateField('brideFullName', e.target.value)}
-                          placeholder="Contoh: Sarah Az-Zahra, S.Psi."
-                          className="w-full px-3 py-2 rounded-xl border border-stone-300 bg-white text-sm"
-                        />
-                      </div>
-                      <div>
-                        <label className="block text-[11px] font-semibold text-stone-600 mb-1">
-                          Nama Kedua Orang Tua Wanita
-                        </label>
-                        <input
-                          type="text"
-                          value={formData.brideParents}
-                          onChange={(e) => updateField('brideParents', e.target.value)}
-                          placeholder="Bpk. Ahmad & Ibu Fatimah"
-                          className="w-full px-3 py-2 rounded-xl border border-stone-300 bg-white text-sm"
-                        />
-                      </div>
-                      <div>
-                        <label className="block text-[11px] font-semibold text-stone-600 mb-1">
-                          Username Instagram (Opsional)
-                        </label>
-                        <input
-                          type="text"
-                          value={formData.brideIg}
-                          onChange={(e) => updateField('brideIg', e.target.value)}
-                          placeholder="@sarah.azzahra"
-                          className="w-full px-3 py-2 rounded-xl border border-stone-300 bg-white text-sm"
-                        />
-                      </div>
-                    </div>
-                  </div>
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                          <div>
+                            <label className="block text-[11px] font-semibold text-stone-600 mb-1">
+                              {selectedTemplate.eventType === 'khitan' && 'Nama Lengkap Anak'}
+                              {selectedTemplate.eventType === 'birthday' && 'Nama Lengkap Yang Berulang Tahun'}
+                              {selectedTemplate.eventType === 'aqiqah' && 'Nama Lengkap Bayi'}
+                              {selectedTemplate.eventType === 'graduation' && 'Nama Lengkap Wisudawan & Gelar'}
+                            </label>
+                            <input
+                              type="text"
+                              value={formData.celebrantName || formData.groomFullName}
+                              onChange={(e) => {
+                                updateField('celebrantName', e.target.value)
+                                updateField('groomFullName', e.target.value)
+                              }}
+                              placeholder={
+                                selectedTemplate.eventType === 'khitan'
+                                  ? 'Contoh: Muhammad Rizky Pratama'
+                                  : selectedTemplate.eventType === 'birthday'
+                                  ? 'Contoh: Clarissa Aurelia Putri'
+                                  : selectedTemplate.eventType === 'aqiqah'
+                                  ? 'Contoh: Arkan Malik Al-Fatih'
+                                  : 'Contoh: Faris Alamsyah, S.Kom., M.T.'
+                              }
+                              className="w-full px-3 py-2 rounded-xl border border-stone-300 bg-white text-sm"
+                            />
+                          </div>
 
-                  {/* Detail Waktu & Lokasi Acara */}
-                  <div className="p-4 rounded-2xl bg-stone-50 border border-stone-200 space-y-3">
-                    <div className="flex items-center gap-1.5 font-serif font-bold text-stone-800 text-sm border-b border-stone-200 pb-2">
-                      <Calendar className="w-4 h-4 text-amber-800" />
-                      <span>Jadwal & Lokasi Acara</span>
-                    </div>
-                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-                      <div>
-                        <label className="block text-[11px] font-semibold text-stone-600 mb-1">
-                          Hari & Tanggal Akad
-                        </label>
-                        <input
-                          type="text"
-                          value={formData.akadDate}
-                          onChange={(e) => updateField('akadDate', e.target.value)}
-                          placeholder="Minggu, 20 Oktober 2026"
-                          className="w-full px-3 py-2 rounded-xl border border-stone-300 bg-white text-sm"
-                        />
-                      </div>
-                      <div>
-                        <label className="block text-[11px] font-semibold text-stone-600 mb-1">
-                          Jam Akad Nikah
-                        </label>
-                        <input
-                          type="text"
-                          value={formData.akadTime}
-                          onChange={(e) => updateField('akadTime', e.target.value)}
-                          placeholder="08:00 - 10:00 WIB"
-                          className="w-full px-3 py-2 rounded-xl border border-stone-300 bg-white text-sm"
-                        />
-                      </div>
-                      <div>
-                        <label className="block text-[11px] font-semibold text-stone-600 mb-1">
-                          Tempat / Gedung Akad
-                        </label>
-                        <input
-                          type="text"
-                          value={formData.akadVenue}
-                          onChange={(e) => updateField('akadVenue', e.target.value)}
-                          placeholder="Masjid Agung / Kediaman"
-                          className="w-full px-3 py-2 rounded-xl border border-stone-300 bg-white text-sm"
-                        />
-                      </div>
-                    </div>
+                          <div>
+                            <label className="block text-[11px] font-semibold text-stone-600 mb-1">
+                              {selectedTemplate.eventType === 'graduation'
+                                ? 'Fakultas / Program Studi'
+                                : selectedTemplate.eventType === 'birthday'
+                                ? 'Ulang Tahun Ke- (Usia)'
+                                : 'Nama Panggilan'}
+                            </label>
+                            <input
+                              type="text"
+                              value={
+                                selectedTemplate.eventType === 'graduation'
+                                  ? formData.degreeTitle || ''
+                                  : selectedTemplate.eventType === 'birthday'
+                                  ? formData.celebrantAge || ''
+                                  : formData.celebrantNickname || formData.groomShortName || ''
+                              }
+                              onChange={(e) => {
+                                if (selectedTemplate.eventType === 'graduation') {
+                                  updateField('degreeTitle', e.target.value)
+                                } else if (selectedTemplate.eventType === 'birthday') {
+                                  updateField('celebrantAge', e.target.value)
+                                } else {
+                                  updateField('celebrantNickname', e.target.value)
+                                  updateField('groomShortName', e.target.value)
+                                }
+                              }}
+                              placeholder={
+                                selectedTemplate.eventType === 'graduation'
+                                  ? 'Contoh: Magister Ilmu Komputer (FASILKOM)'
+                                  : selectedTemplate.eventType === 'birthday'
+                                  ? 'Contoh: 17 Tahun (Sweet Seventeen)'
+                                  : 'Contoh: Kiki / Malik'
+                              }
+                              className="w-full px-3 py-2 rounded-xl border border-stone-300 bg-white text-sm"
+                            />
+                          </div>
+                        </div>
 
-                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-2">
-                      <div>
-                        <label className="block text-[11px] font-semibold text-stone-600 mb-1">
-                          Hari & Tanggal Resepsi
-                        </label>
-                        <input
-                          type="text"
-                          value={formData.resepsiDate}
-                          onChange={(e) => updateField('resepsiDate', e.target.value)}
-                          placeholder="Minggu, 20 Oktober 2026"
-                          className="w-full px-3 py-2 rounded-xl border border-stone-300 bg-white text-sm"
-                        />
-                      </div>
-                      <div>
-                        <label className="block text-[11px] font-semibold text-stone-600 mb-1">
-                          Jam Resepsi
-                        </label>
-                        <input
-                          type="text"
-                          value={formData.resepsiTime}
-                          onChange={(e) => updateField('resepsiTime', e.target.value)}
-                          placeholder="11:00 - 14:00 WIB"
-                          className="w-full px-3 py-2 rounded-xl border border-stone-300 bg-white text-sm"
-                        />
-                      </div>
-                      <div>
-                        <label className="block text-[11px] font-semibold text-stone-600 mb-1">
-                          Tempat / Gedung Resepsi
-                        </label>
-                        <input
-                          type="text"
-                          value={formData.resepsiVenue}
-                          onChange={(e) => updateField('resepsiVenue', e.target.value)}
-                          placeholder="Ballroom Hotel Ciputra"
-                          className="w-full px-3 py-2 rounded-xl border border-stone-300 bg-white text-sm"
-                        />
-                      </div>
-                    </div>
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1">
+                          <div>
+                            <label className="block text-[11px] font-semibold text-stone-600 mb-1">
+                              {selectedTemplate.eventType === 'graduation'
+                                ? 'Nama Universitas / Institut'
+                                : 'Nama Orang Tua / Penyelenggara'}
+                            </label>
+                            <input
+                              type="text"
+                              value={
+                                selectedTemplate.eventType === 'graduation'
+                                  ? formData.institutionName || ''
+                                  : formData.parentsName || formData.groomParents || ''
+                              }
+                              onChange={(e) => {
+                                if (selectedTemplate.eventType === 'graduation') {
+                                  updateField('institutionName', e.target.value)
+                                } else {
+                                  updateField('parentsName', e.target.value)
+                                  updateField('groomParents', e.target.value)
+                                }
+                              }}
+                              placeholder={
+                                selectedTemplate.eventType === 'graduation'
+                                  ? 'Contoh: Universitas Indonesia (UI Depok)'
+                                  : 'Contoh: Bpk. Ir. Hendra & Ibu Hj. Ratna'
+                              }
+                              className="w-full px-3 py-2 rounded-xl border border-stone-300 bg-white text-sm"
+                            />
+                          </div>
 
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2">
-                      <div>
-                        <label className="block text-[11px] font-semibold text-stone-600 mb-1">
-                          Alamat Lengkap Lokasi
-                        </label>
-                        <input
-                          type="text"
-                          value={formData.mapsAddress}
-                          onChange={(e) => updateField('mapsAddress', e.target.value)}
-                          placeholder="Jl. Simpang Lima No. 1, Kota Semarang"
-                          className="w-full px-3 py-2 rounded-xl border border-stone-300 bg-white text-sm"
-                        />
+                          <div>
+                            <label className="block text-[11px] font-semibold text-stone-600 mb-1">
+                              {selectedTemplate.eventType === 'graduation'
+                                ? 'Nama Kedua Orang Tua'
+                                : selectedTemplate.eventType === 'aqiqah'
+                                ? 'Tanggal & Jam Lahir (atau BB/PB)'
+                                : 'Instagram / Panggilan Keluarga (Opsional)'}
+                            </label>
+                            <input
+                              type="text"
+                              value={
+                                selectedTemplate.eventType === 'graduation'
+                                  ? formData.parentsName || formData.groomParents || ''
+                                  : formData.groomIg || ''
+                              }
+                              onChange={(e) => {
+                                if (selectedTemplate.eventType === 'graduation') {
+                                  updateField('parentsName', e.target.value)
+                                  updateField('groomParents', e.target.value)
+                                } else {
+                                  updateField('groomIg', e.target.value)
+                                }
+                              }}
+                              placeholder={
+                                selectedTemplate.eventType === 'graduation'
+                                  ? 'Contoh: Bpk. Ir. Hendra & Ibu Hj. Ratna'
+                                  : selectedTemplate.eventType === 'aqiqah'
+                                  ? 'Contoh: 14 Mei 2026, BB: 3.4 kg, PB: 50 cm'
+                                  : 'Contoh: @clarissa.putri'
+                              }
+                              className="w-full px-3 py-2 rounded-xl border border-stone-300 bg-white text-sm"
+                            />
+                          </div>
+                        </div>
                       </div>
-                      <div>
-                        <label className="block text-[11px] font-semibold text-stone-600 mb-1">
-                          Link Titik Google Maps (Opsional)
-                        </label>
-                        <input
-                          type="text"
-                          value={formData.mapsLink}
-                          onChange={(e) => updateField('mapsLink', e.target.value)}
-                          placeholder="https://maps.app.goo.gl/..."
-                          className="w-full px-3 py-2 rounded-xl border border-stone-300 bg-white text-sm"
-                        />
-                      </div>
-                    </div>
-                  </div>
 
-                  {/* Musik, Amplop Digital & Foto */}
-                  <div className="p-4 rounded-2xl bg-stone-50 border border-stone-200 space-y-3">
-                    <div className="flex items-center gap-1.5 font-serif font-bold text-stone-800 text-sm border-b border-stone-200 pb-2">
-                      <Music className="w-4 h-4 text-amber-800" />
-                      <span>Lagu Backsound, Amplop Digital & Foto</span>
-                    </div>
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                      <div>
-                        <label className="block text-[11px] font-semibold text-stone-600 mb-1">
-                          Pilihan Lagu Latar Indonesia
-                        </label>
-                        <select
-                          value={formData.musicChoice}
-                          onChange={(e) => updateField('musicChoice', e.target.value)}
-                          className="w-full px-3 py-2 rounded-xl border border-stone-300 bg-white text-sm"
-                        >
-                          <option value="Payung Teduh - Akad">Payung Teduh - Akad</option>
-                          <option value="Payung Teduh - Berdua Saja">Payung Teduh - Berdua Saja</option>
-                          <option value="Tulus - Teman Hidup">Tulus - Teman Hidup (Request)</option>
-                          <option value="Yovie & Nuno - Janji Suci">Yovie & Nuno - Janji Suci (Request)</option>
-                          <option value="Tiara Andini & Arsy - Lagu Pernikahan Kita">Lagu Pernikahan Kita (Request)</option>
-                          <option value="Gending Jawa Keraton Klasik">Gending Jawa Keraton Klasik</option>
-                        </select>
+                      {/* Section 2: Waktu & Lokasi Acara */}
+                      <div className="p-4 rounded-2xl bg-stone-50 border border-stone-200 space-y-3">
+                        <div className="flex items-center gap-1.5 font-serif font-bold text-stone-800 text-sm border-b border-stone-200 pb-2">
+                          <Calendar className="w-4 h-4 text-amber-800" />
+                          <span>Jadwal & Lokasi Acara</span>
+                        </div>
+                        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                          <div>
+                            <label className="block text-[11px] font-semibold text-stone-600 mb-1">
+                              Hari & Tanggal Acara
+                            </label>
+                            <input
+                              type="text"
+                              value={formData.eventDate || formData.akadDate || ''}
+                              onChange={(e) => {
+                                updateField('eventDate', e.target.value)
+                                updateField('akadDate', e.target.value)
+                              }}
+                              placeholder="Contoh: Sabtu, 19 September 2026"
+                              className="w-full px-3 py-2 rounded-xl border border-stone-300 bg-white text-sm"
+                            />
+                          </div>
+                          <div>
+                            <label className="block text-[11px] font-semibold text-stone-600 mb-1">
+                              Jam Pelaksanaan
+                            </label>
+                            <input
+                              type="text"
+                              value={formData.eventTime || formData.akadTime || ''}
+                              onChange={(e) => {
+                                updateField('eventTime', e.target.value)
+                                updateField('akadTime', e.target.value)
+                              }}
+                              placeholder="Contoh: 09:00 - 13:00 WIB"
+                              className="w-full px-3 py-2 rounded-xl border border-stone-300 bg-white text-sm"
+                            />
+                          </div>
+                          <div>
+                            <label className="block text-[11px] font-semibold text-stone-600 mb-1">
+                              Nama Tempat / Gedung
+                            </label>
+                            <input
+                              type="text"
+                              value={formData.eventVenue || formData.akadVenue || ''}
+                              onChange={(e) => {
+                                updateField('eventVenue', e.target.value)
+                                updateField('akadVenue', e.target.value)
+                              }}
+                              placeholder="Contoh: Balairung UI / Gedung Pertemuan"
+                              className="w-full px-3 py-2 rounded-xl border border-stone-300 bg-white text-sm"
+                            />
+                          </div>
+                        </div>
+
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1">
+                          <div>
+                            <label className="block text-[11px] font-semibold text-stone-600 mb-1">
+                              Alamat Lengkap Lokasi
+                            </label>
+                            <input
+                              type="text"
+                              value={formData.mapsAddress}
+                              onChange={(e) => updateField('mapsAddress', e.target.value)}
+                              placeholder="Jl. Raya Utama No. 123..."
+                              className="w-full px-3 py-2 rounded-xl border border-stone-300 bg-white text-sm"
+                            />
+                          </div>
+                          <div>
+                            <label className="block text-[11px] font-semibold text-stone-600 mb-1">
+                              Link Titik Google Maps (Opsional)
+                            </label>
+                            <input
+                              type="text"
+                              value={formData.mapsLink}
+                              onChange={(e) => updateField('mapsLink', e.target.value)}
+                              placeholder="https://maps.app.goo.gl/..."
+                              className="w-full px-3 py-2 rounded-xl border border-stone-300 bg-white text-sm"
+                            />
+                          </div>
+                        </div>
                       </div>
-                      <div>
-                        <label className="block text-[11px] font-semibold text-stone-600 mb-1">
-                          No. Rekening Amplop Digital Pengantin
-                        </label>
-                        <input
-                          type="text"
-                          value={formData.giftBankInfo}
-                          onChange={(e) => updateField('giftBankInfo', e.target.value)}
-                          placeholder="Contoh: BCA 84650192 a.n Rian"
-                          className="w-full px-3 py-2 rounded-xl border border-stone-300 bg-white text-sm"
-                        />
+
+                      {/* Section 3: Rekening Hadiah / Kado & Foto */}
+                      <div className="p-4 rounded-2xl bg-stone-50 border border-stone-200 space-y-3">
+                        <div className="flex items-center gap-1.5 font-serif font-bold text-stone-800 text-sm border-b border-stone-200 pb-2">
+                          <Music className="w-4 h-4 text-amber-800" />
+                          <span>Tanda Kasih, Kado & Foto</span>
+                        </div>
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                          <div>
+                            <label className="block text-[11px] font-semibold text-stone-600 mb-1">
+                              No. Rekening Kado / Amplop Digital
+                            </label>
+                            <input
+                              type="text"
+                              value={formData.giftBankInfo}
+                              onChange={(e) => updateField('giftBankInfo', e.target.value)}
+                              placeholder="Contoh: BCA 12345678 a.n Nama Rekening"
+                              className="w-full px-3 py-2 rounded-xl border border-stone-300 bg-white text-sm"
+                            />
+                          </div>
+                          <div>
+                            <label className="block text-[11px] font-semibold text-stone-600 mb-1">
+                              Link Google Drive Foto / Portofolio (Atau Kirim di WA)
+                            </label>
+                            <input
+                              type="text"
+                              value={formData.photoDriveLink}
+                              onChange={(e) => updateField('photoDriveLink', e.target.value)}
+                              placeholder="Contoh: https://drive.google.com/... atau 'Kirim di WA'"
+                              className="w-full px-3 py-2 rounded-xl border border-stone-300 bg-white text-sm"
+                            />
+                          </div>
+                        </div>
+                        <div>
+                          <label className="block text-[11px] font-semibold text-stone-600 mb-1">
+                            Catatan Tambahan (Dress Code, Protokol, dll)
+                          </label>
+                          <input
+                            type="text"
+                            value={formData.buyerNotes}
+                            onChange={(e) => updateField('buyerNotes', e.target.value)}
+                            placeholder="Contoh: Dress Code Pastel / Maksimal 2 Pendamping"
+                            className="w-full px-3 py-2 rounded-xl border border-stone-300 bg-white text-sm"
+                          />
+                        </div>
                       </div>
                     </div>
-                    <div>
-                      <label className="block text-[11px] font-semibold text-stone-600 mb-1">
-                        Link Google Drive Foto Prewedding / Catatan Tambahan (Atau Kirim langsung di WA)
-                      </label>
-                      <input
-                        type="text"
-                        value={formData.photoDriveLink}
-                        onChange={(e) => updateField('photoDriveLink', e.target.value)}
-                        placeholder="Contoh: https://drive.google.com/... atau 'Foto saya kirim menyusul di chat WA'"
-                        className="w-full px-3 py-2 rounded-xl border border-stone-300 bg-white text-sm"
-                      />
-                    </div>
-                  </div>
+                  ) : (
+                    <>
+                      {/* Data Mempelai Pria & Wanita */}
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        {/* Mempelai Pria */}
+                        <div className="p-4 rounded-2xl bg-stone-50 border border-stone-200 space-y-3">
+                          <div className="flex items-center gap-1.5 font-serif font-bold text-stone-800 text-sm border-b border-stone-200 pb-2">
+                            <Heart className="w-4 h-4 text-amber-700" />
+                            <span>Data Mempelai Pria</span>
+                          </div>
+                          <div>
+                            <label className="block text-[11px] font-semibold text-stone-600 mb-1">
+                              Nama Panggilan Pria
+                            </label>
+                            <input
+                              type="text"
+                              value={formData.groomShortName}
+                              onChange={(e) => updateField('groomShortName', e.target.value)}
+                              placeholder="Contoh: Rian"
+                              className="w-full px-3 py-2 rounded-xl border border-stone-300 bg-white text-sm"
+                            />
+                          </div>
+                          <div>
+                            <label className="block text-[11px] font-semibold text-stone-600 mb-1">
+                              Nama Lengkap & Gelar
+                            </label>
+                            <input
+                              type="text"
+                              value={formData.groomFullName}
+                              onChange={(e) => updateField('groomFullName', e.target.value)}
+                              placeholder="Contoh: M. Arrian Mahendra, S.T."
+                              className="w-full px-3 py-2 rounded-xl border border-stone-300 bg-white text-sm"
+                            />
+                          </div>
+                          <div>
+                            <label className="block text-[11px] font-semibold text-stone-600 mb-1">
+                              Nama Kedua Orang Tua Pria
+                            </label>
+                            <input
+                              type="text"
+                              value={formData.groomParents}
+                              onChange={(e) => updateField('groomParents', e.target.value)}
+                              placeholder="Bpk. Hendra & Ibu Siti"
+                              className="w-full px-3 py-2 rounded-xl border border-stone-300 bg-white text-sm"
+                            />
+                          </div>
+                          <div>
+                            <label className="block text-[11px] font-semibold text-stone-600 mb-1">
+                              Username Instagram (Opsional)
+                            </label>
+                            <input
+                              type="text"
+                              value={formData.groomIg}
+                              onChange={(e) => updateField('groomIg', e.target.value)}
+                              placeholder="@rian.mahendra"
+                              className="w-full px-3 py-2 rounded-xl border border-stone-300 bg-white text-sm"
+                            />
+                          </div>
+                        </div>
+
+                        {/* Mempelai Wanita */}
+                        <div className="p-4 rounded-2xl bg-stone-50 border border-stone-200 space-y-3">
+                          <div className="flex items-center gap-1.5 font-serif font-bold text-stone-800 text-sm border-b border-stone-200 pb-2">
+                            <Heart className="w-4 h-4 text-rose-600" />
+                            <span>Data Mempelai Wanita</span>
+                          </div>
+                          <div>
+                            <label className="block text-[11px] font-semibold text-stone-600 mb-1">
+                              Nama Panggilan Wanita
+                            </label>
+                            <input
+                              type="text"
+                              value={formData.brideShortName}
+                              onChange={(e) => updateField('brideShortName', e.target.value)}
+                              placeholder="Contoh: Sarah"
+                              className="w-full px-3 py-2 rounded-xl border border-stone-300 bg-white text-sm"
+                            />
+                          </div>
+                          <div>
+                            <label className="block text-[11px] font-semibold text-stone-600 mb-1">
+                              Nama Lengkap & Gelar
+                            </label>
+                            <input
+                              type="text"
+                              value={formData.brideFullName}
+                              onChange={(e) => updateField('brideFullName', e.target.value)}
+                              placeholder="Contoh: Sarah Az-Zahra, S.Psi."
+                              className="w-full px-3 py-2 rounded-xl border border-stone-300 bg-white text-sm"
+                            />
+                          </div>
+                          <div>
+                            <label className="block text-[11px] font-semibold text-stone-600 mb-1">
+                              Nama Kedua Orang Tua Wanita
+                            </label>
+                            <input
+                              type="text"
+                              value={formData.brideParents}
+                              onChange={(e) => updateField('brideParents', e.target.value)}
+                              placeholder="Bpk. Ahmad & Ibu Fatimah"
+                              className="w-full px-3 py-2 rounded-xl border border-stone-300 bg-white text-sm"
+                            />
+                          </div>
+                          <div>
+                            <label className="block text-[11px] font-semibold text-stone-600 mb-1">
+                              Username Instagram (Opsional)
+                            </label>
+                            <input
+                              type="text"
+                              value={formData.brideIg}
+                              onChange={(e) => updateField('brideIg', e.target.value)}
+                              placeholder="@sarah.azzahra"
+                              className="w-full px-3 py-2 rounded-xl border border-stone-300 bg-white text-sm"
+                            />
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Detail Waktu & Lokasi Acara */}
+                      <div className="p-4 rounded-2xl bg-stone-50 border border-stone-200 space-y-3">
+                        <div className="flex items-center gap-1.5 font-serif font-bold text-stone-800 text-sm border-b border-stone-200 pb-2">
+                          <Calendar className="w-4 h-4 text-amber-800" />
+                          <span>Jadwal & Lokasi Acara</span>
+                        </div>
+                        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                          <div>
+                            <label className="block text-[11px] font-semibold text-stone-600 mb-1">
+                              Hari & Tanggal Akad
+                            </label>
+                            <input
+                              type="text"
+                              value={formData.akadDate}
+                              onChange={(e) => updateField('akadDate', e.target.value)}
+                              placeholder="Minggu, 20 Oktober 2026"
+                              className="w-full px-3 py-2 rounded-xl border border-stone-300 bg-white text-sm"
+                            />
+                          </div>
+                          <div>
+                            <label className="block text-[11px] font-semibold text-stone-600 mb-1">
+                              Jam Akad Nikah
+                            </label>
+                            <input
+                              type="text"
+                              value={formData.akadTime}
+                              onChange={(e) => updateField('akadTime', e.target.value)}
+                              placeholder="08:00 - 10:00 WIB"
+                              className="w-full px-3 py-2 rounded-xl border border-stone-300 bg-white text-sm"
+                            />
+                          </div>
+                          <div>
+                            <label className="block text-[11px] font-semibold text-stone-600 mb-1">
+                              Tempat / Gedung Akad
+                            </label>
+                            <input
+                              type="text"
+                              value={formData.akadVenue}
+                              onChange={(e) => updateField('akadVenue', e.target.value)}
+                              placeholder="Masjid Agung / Kediaman"
+                              className="w-full px-3 py-2 rounded-xl border border-stone-300 bg-white text-sm"
+                            />
+                          </div>
+                        </div>
+
+                        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-2">
+                          <div>
+                            <label className="block text-[11px] font-semibold text-stone-600 mb-1">
+                              Hari & Tanggal Resepsi
+                            </label>
+                            <input
+                              type="text"
+                              value={formData.resepsiDate}
+                              onChange={(e) => updateField('resepsiDate', e.target.value)}
+                              placeholder="Minggu, 20 Oktober 2026"
+                              className="w-full px-3 py-2 rounded-xl border border-stone-300 bg-white text-sm"
+                            />
+                          </div>
+                          <div>
+                            <label className="block text-[11px] font-semibold text-stone-600 mb-1">
+                              Jam Resepsi
+                            </label>
+                            <input
+                              type="text"
+                              value={formData.resepsiTime}
+                              onChange={(e) => updateField('resepsiTime', e.target.value)}
+                              placeholder="11:00 - 14:00 WIB"
+                              className="w-full px-3 py-2 rounded-xl border border-stone-300 bg-white text-sm"
+                            />
+                          </div>
+                          <div>
+                            <label className="block text-[11px] font-semibold text-stone-600 mb-1">
+                              Tempat / Gedung Resepsi
+                            </label>
+                            <input
+                              type="text"
+                              value={formData.resepsiVenue}
+                              onChange={(e) => updateField('resepsiVenue', e.target.value)}
+                              placeholder="Ballroom Hotel Ciputra"
+                              className="w-full px-3 py-2 rounded-xl border border-stone-300 bg-white text-sm"
+                            />
+                          </div>
+                        </div>
+
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2">
+                          <div>
+                            <label className="block text-[11px] font-semibold text-stone-600 mb-1">
+                              Alamat Lengkap Lokasi
+                            </label>
+                            <input
+                              type="text"
+                              value={formData.mapsAddress}
+                              onChange={(e) => updateField('mapsAddress', e.target.value)}
+                              placeholder="Jl. Simpang Lima No. 1, Kota Semarang"
+                              className="w-full px-3 py-2 rounded-xl border border-stone-300 bg-white text-sm"
+                            />
+                          </div>
+                          <div>
+                            <label className="block text-[11px] font-semibold text-stone-600 mb-1">
+                              Link Titik Google Maps (Opsional)
+                            </label>
+                            <input
+                              type="text"
+                              value={formData.mapsLink}
+                              onChange={(e) => updateField('mapsLink', e.target.value)}
+                              placeholder="https://maps.app.goo.gl/..."
+                              className="w-full px-3 py-2 rounded-xl border border-stone-300 bg-white text-sm"
+                            />
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Musik, Amplop Digital & Foto */}
+                      <div className="p-4 rounded-2xl bg-stone-50 border border-stone-200 space-y-3">
+                        <div className="flex items-center gap-1.5 font-serif font-bold text-stone-800 text-sm border-b border-stone-200 pb-2">
+                          <Music className="w-4 h-4 text-amber-800" />
+                          <span>Lagu Backsound, Amplop Digital & Foto</span>
+                        </div>
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                          <div>
+                            <label className="block text-[11px] font-semibold text-stone-600 mb-1">
+                              Pilihan Lagu Latar Indonesia
+                            </label>
+                            <select
+                              value={formData.musicChoice}
+                              onChange={(e) => updateField('musicChoice', e.target.value)}
+                              className="w-full px-3 py-2 rounded-xl border border-stone-300 bg-white text-sm"
+                            >
+                              <option value="Payung Teduh - Akad">Payung Teduh - Akad</option>
+                              <option value="Payung Teduh - Berdua Saja">Payung Teduh - Berdua Saja</option>
+                              <option value="Tulus - Teman Hidup">Tulus - Teman Hidup (Request)</option>
+                              <option value="Yovie & Nuno - Janji Suci">Yovie & Nuno - Janji Suci (Request)</option>
+                              <option value="Tiara Andini & Arsy - Lagu Pernikahan Kita">Lagu Pernikahan Kita (Request)</option>
+                              <option value="Gending Jawa Keraton Klasik">Gending Jawa Keraton Klasik</option>
+                            </select>
+                          </div>
+                          <div>
+                            <label className="block text-[11px] font-semibold text-stone-600 mb-1">
+                              No. Rekening Amplop Digital Pengantin
+                            </label>
+                            <input
+                              type="text"
+                              value={formData.giftBankInfo}
+                              onChange={(e) => updateField('giftBankInfo', e.target.value)}
+                              placeholder="Contoh: BCA 84650192 a.n Rian"
+                              className="w-full px-3 py-2 rounded-xl border border-stone-300 bg-white text-sm"
+                            />
+                          </div>
+                        </div>
+                        <div>
+                          <label className="block text-[11px] font-semibold text-stone-600 mb-1">
+                            Link Google Drive Foto Prewedding / Catatan Tambahan (Atau Kirim langsung di WA)
+                          </label>
+                          <input
+                            type="text"
+                            value={formData.photoDriveLink}
+                            onChange={(e) => updateField('photoDriveLink', e.target.value)}
+                            placeholder="Contoh: https://drive.google.com/... atau 'Foto saya kirim menyusul di chat WA'"
+                            className="w-full px-3 py-2 rounded-xl border border-stone-300 bg-white text-sm"
+                          />
+                        </div>
+                      </div>
+                    </>
+                  )}
                 </>
               )}
             </div>

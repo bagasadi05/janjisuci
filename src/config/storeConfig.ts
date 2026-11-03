@@ -1,3 +1,21 @@
+export type EventType =
+  | 'wedding'
+  | 'khitan'
+  | 'birthday'
+  | 'aqiqah'
+  | 'graduation'
+  | 'syukuran'
+  | 'event'
+
+export type EventCategoryFilter =
+  | 'all'
+  | 'wedding'
+  | 'khitan'
+  | 'birthday'
+  | 'aqiqah'
+  | 'graduation'
+  | 'syukuran'
+
 export interface PaymentMethod {
   id: string
   name: string
@@ -39,7 +57,8 @@ export interface TemplateItem {
   id: string
   name: string
   slug: string
-  category: 'floral' | 'adat' | 'luxury' | 'dark' | 'pastel'
+  eventType?: EventType
+  category: 'floral' | 'adat' | 'luxury' | 'dark' | 'pastel' | 'islamic' | 'kids' | 'formal'
   categoryLabel: string
   price: number
   originalPrice: number
@@ -50,10 +69,35 @@ export interface TemplateItem {
   heroImage: string
   description: string
   features: string[]
-  openingType: 'wax-seal' | 'gunungan-split' | 'curtain-split' | 'celestial-orbit' | 'kraft-vintage' | 'peony-wreath'
-  particleType: 'petals' | 'gold-dust' | 'none' | 'stars' | 'autumn-leaves' | 'sakura'
+  openingType:
+    | 'wax-seal'
+    | 'gunungan-split'
+    | 'curtain-split'
+    | 'celestial-orbit'
+    | 'kraft-vintage'
+    | 'peony-wreath'
+    | 'islamic-arch'
+    | 'gift-box'
+    | 'baby-ribbon'
+    | 'diploma-scroll'
+  particleType:
+    | 'petals'
+    | 'gold-dust'
+    | 'none'
+    | 'stars'
+    | 'autumn-leaves'
+    | 'sakura'
+    | 'confetti'
+    | 'balloons'
   defaultSongTitle: string
   defaultSongSrc: string
+  eventMeta?: {
+    primaryTitle: string
+    secondaryTitle?: string
+    parentsOrHost?: string
+    dateText: string
+    venueText: string
+  }
   sampleCouple: {
     groomShort: string
     groomFull: string
@@ -99,6 +143,29 @@ export interface CustomOrderData {
   resepsiDate: string
   resepsiTime: string
   resepsiVenue: string
+  // Fleksibel Multi-Event
+  celebrantName?: string
+  celebrantNickname?: string
+  celebrantAge?: string
+  parentsName?: string
+  institutionName?: string
+  degreeTitle?: string
+  eventDate?: string
+  eventTime?: string
+  eventVenue?: string
+  khitanChildFullName?: string
+  khitanChildShortName?: string
+  khitanParents?: string
+  birthdayCelebrantName?: string
+  birthdayAge?: string
+  birthdayDresscode?: string
+  aqiqahBabyName?: string
+  aqiqahParents?: string
+  aqiqahBirthStats?: string
+  gradInstitution?: string
+  gradFacultyOrMajor?: string
+  gradDegreeTitle?: string
+  // Lokasi & Media
   mapsAddress: string
   mapsLink: string
   musicChoice: string
@@ -111,8 +178,8 @@ export interface CustomOrderData {
 export const storeConfig = {
   brand: {
     name: "JanjiSuci.id",
-    tagline: "Platform Undangan Pernikahan Digital Premium",
-    subTagline: "Wujudkan undangan pernikahan online impianmu yang elegan, interaktif, dan siap sebar ke ribuan tamu hanya dalam hitungan menit.",
+    tagline: "Platform Undangan Digital Segala Acara & Pernikahan Premium",
+    subTagline: "Wujudkan undangan online impianmu untuk pernikahan, khitanan, ulang tahun, aqiqah, dan wisuda yang elegan, interaktif, dan siap sebar ke ribuan tamu dalam hitungan menit.",
     whatsappNumber: "6289619774116",
     whatsappDisplay: "0896-1977-4116",
     instagram: "@janjisuci.id",
@@ -214,6 +281,7 @@ export const storeConfig = {
       id: "botanical-sage",
       name: "Botanical Sage & Gold",
       slug: "botanical-sage",
+      eventType: "wedding",
       category: "floral",
       categoryLabel: "Bunga & Alam",
       price: 99000,
@@ -254,6 +322,7 @@ export const storeConfig = {
       id: "royal-java",
       name: "Royal Javanese Heritage",
       slug: "royal-java",
+      eventType: "wedding",
       category: "adat",
       categoryLabel: "Adat Nusantara",
       price: 119000,
@@ -294,6 +363,7 @@ export const storeConfig = {
       id: "luxury-champagne",
       name: "Modern Luxury Champagne",
       slug: "luxury-champagne",
+      eventType: "wedding",
       category: "luxury",
       categoryLabel: "Kemewahan Modern",
       price: 139000,
@@ -334,6 +404,7 @@ export const storeConfig = {
       id: "celestial-night",
       name: "Celestial Midnight Star",
       slug: "celestial-night",
+      eventType: "wedding",
       category: "dark",
       categoryLabel: "Malam Elegan",
       price: 115000,
@@ -374,6 +445,7 @@ export const storeConfig = {
       id: "rustic-terracotta",
       name: "Rustic Terracotta Boho",
       slug: "rustic-terracotta",
+      eventType: "wedding",
       category: "floral",
       categoryLabel: "Bunga & Alam",
       price: 75000,
@@ -414,6 +486,7 @@ export const storeConfig = {
       id: "blush-peony",
       name: "Romantic Blush Peony",
       slug: "blush-peony",
+      eventType: "wedding",
       category: "pastel",
       categoryLabel: "Pastel Romantis",
       price: 89000,
@@ -454,6 +527,7 @@ export const storeConfig = {
       id: "royal-midnight",
       name: "Royal Midnight Gold",
       slug: "royal-midnight",
+      eventType: "wedding",
       category: "dark",
       categoryLabel: "Malam Elegan",
       price: 119000,
@@ -494,6 +568,7 @@ export const storeConfig = {
       id: "exclusive-navy",
       name: "Exclusive Royal Navy",
       slug: "exclusive-navy",
+      eventType: "wedding",
       category: "luxury",
       categoryLabel: "Kemewahan Modern",
       price: 109000,
@@ -529,8 +604,200 @@ export const storeConfig = {
         textDark: "#FFFFFF",
         badgeBg: "rgba(245, 158, 11, 0.2)"
       }
+    },
+    {
+      id: "royal-khitan",
+      name: "Royal Barakah Khitan",
+      slug: "royal-khitan",
+      eventType: "khitan",
+      category: "islamic",
+      categoryLabel: "Tasyakuran Khitan",
+      price: 89000,
+      originalPrice: 160000,
+      badge: "Tasyakuran Khitan ✂️",
+      isPopular: true,
+      thumbnail: "https://images.unsplash.com/photo-1584281729288-89826acac5b0?auto=format&fit=crop&w=800&q=80",
+      coverImage: "https://images.unsplash.com/photo-1584281729288-89826acac5b0?auto=format&fit=crop&w=1400&q=85",
+      heroImage: "https://images.unsplash.com/photo-1584281729288-89826acac5b0?auto=format&fit=crop&w=900&q=85",
+      description: "Nuansa islami hijau zamrud dipadukan ornamen kubah emas, kaligrafi Walimatul Khitan, doa anak sholeh, dan tabungan kado khitan.",
+      features: ["Pintu Kubah Islami 3D", "Doa Anak Sholeh", "Tabungan Kado Khitan", "Lagu Religi Syahdu"],
+      openingType: "islamic-arch",
+      particleType: "gold-dust",
+      defaultSongTitle: "Maher Zain - For The Rest of My Life",
+      defaultSongSrc: "https://dev.apdesignku.com/wp-content/uploads/2025/06/Maher-Zain-For-The-Rest-of-My-Life.mp3",
+      eventMeta: {
+        primaryTitle: "Muhammad Rizky Pratama",
+        secondaryTitle: "Walimatul Khitan",
+        parentsOrHost: "Bpk. Hendra Gunawan & Ibu Dian Sastro",
+        dateText: "Minggu, 12 Juli 2026",
+        venueText: "Gedung Pertemuan Al-Ikhlas, Semarang"
+      },
+      sampleCouple: {
+        groomShort: "Kiki",
+        groomFull: "Muhammad Rizky Pratama",
+        groomParents: "Bpk. Hendra Gunawan & Ibu Dian Sastro",
+        groomPhoto: "https://images.unsplash.com/photo-1508214751196-bcfd4ca60f91?auto=format&fit=crop&w=800&q=80",
+        brideShort: "Khitan",
+        brideFull: "Walimatul Khitan",
+        brideParents: "Putra tercinta dari Bpk. Hendra & Ibu Dian",
+        bridePhoto: "https://images.unsplash.com/photo-1584281729288-89826acac5b0?auto=format&fit=crop&w=800&q=80",
+        dateText: "Minggu, 12 Juli 2026",
+        venueText: "Gedung Pertemuan Al-Ikhlas, Semarang"
+      },
+      themeColors: {
+        primaryBg: "#032219",
+        cardBg: "rgba(6, 46, 35, 0.95)",
+        accentHex: "#F59E0B",
+        secondaryHex: "#10B981",
+        textDark: "#F0FDF4",
+        badgeBg: "rgba(245, 158, 11, 0.2)"
+      }
+    },
+    {
+      id: "confetti-birthday",
+      name: "Confetti Pop Birthday",
+      slug: "confetti-birthday",
+      eventType: "birthday",
+      category: "kids",
+      categoryLabel: "Pesta Ulang Tahun",
+      price: 79000,
+      originalPrice: 150000,
+      badge: "Ulang Tahun Ceria 🎂",
+      isPopular: true,
+      thumbnail: "https://images.unsplash.com/photo-1513151233558-d860c5398176?auto=format&fit=crop&w=800&q=80",
+      coverImage: "https://images.unsplash.com/photo-1513151233558-d860c5398176?auto=format&fit=crop&w=1400&q=85",
+      heroImage: "https://images.unsplash.com/photo-1513151233558-d860c5398176?auto=format&fit=crop&w=900&q=85",
+      description: "Warna-warni ceria dengan animasi kotak kado 3D pita terbuka yang meletuskan confetti, kartu dresscode pesta, dan RSVP konfirmasi anak.",
+      features: ["Letusan Confetti 3D", "Info Dresscode Pesta", "RSVP Anak & Pendamping", "Kado Mainan Fisik"],
+      openingType: "gift-box",
+      particleType: "confetti",
+      defaultSongTitle: "Payung Teduh - Berdua Saja",
+      defaultSongSrc: "/audio/berdua-saja.mp3",
+      eventMeta: {
+        primaryTitle: "Hayden Arvy",
+        secondaryTitle: "Turning 5th Birthday Party!",
+        parentsOrHost: "Bpk. Kevin & Ibu Aurel",
+        dateText: "Sabtu, 15 Agustus 2026",
+        venueText: "Fun World Ballroom, Mall Kelapa Gading Jakarta"
+      },
+      sampleCouple: {
+        groomShort: "Hayden",
+        groomFull: "Hayden Arvy Kusuma",
+        groomParents: "Putra ceria dari Bpk. Kevin & Ibu Aurel",
+        groomPhoto: "https://images.unsplash.com/photo-1513151233558-d860c5398176?auto=format&fit=crop&w=800&q=80",
+        brideShort: "5 Tahun",
+        brideFull: "5th Birthday Bash",
+        brideParents: "Dresscode: Colourful & Superhero",
+        bridePhoto: "https://images.unsplash.com/photo-1530103862676-de8c9debad1d?auto=format&fit=crop&w=800&q=80",
+        dateText: "Sabtu, 15 Agustus 2026",
+        venueText: "Fun World Ballroom, Mall Kelapa Gading Jakarta"
+      },
+      themeColors: {
+        primaryBg: "#0F172A",
+        cardBg: "rgba(30, 41, 59, 0.95)",
+        accentHex: "#EC4899",
+        secondaryHex: "#38BDF8",
+        textDark: "#FFFFFF",
+        badgeBg: "rgba(236, 72, 153, 0.2)"
+      }
+    },
+    {
+      id: "little-star-aqiqah",
+      name: "Little Star Aqiqah & Tasmiyah",
+      slug: "little-star-aqiqah",
+      eventType: "aqiqah",
+      category: "pastel",
+      categoryLabel: "Tasyakuran Aqiqah",
+      price: 85000,
+      originalPrice: 155000,
+      badge: "Kelahiran Bayi 👶",
+      isPopular: false,
+      thumbnail: "https://images.unsplash.com/photo-1519689680058-324335c77eba?auto=format&fit=crop&w=800&q=80",
+      coverImage: "https://images.unsplash.com/photo-1519689680058-324335c77eba?auto=format&fit=crop&w=1400&q=85",
+      heroImage: "https://images.unsplash.com/photo-1519689680058-324335c77eba?auto=format&fit=crop&w=900&q=85",
+      description: "Kelembutan warna pastel cream dan soft blue bertabur awan dan bintang keemasan, lengkap dengan biodata lahir bayi (BB & PB) dan doa tasmiyah.",
+      features: ["Kartu Biodata Lahir BB/PB", "Doa Keberkahan Bayi", "Rangkaian Cukur Rambut", "Kado Perlengkapan Bayi"],
+      openingType: "baby-ribbon",
+      particleType: "stars",
+      defaultSongTitle: "Payung Teduh - Akad",
+      defaultSongSrc: "/audio/payung-teduh-akad.mp3",
+      eventMeta: {
+        primaryTitle: "Kinan Althafunnisa",
+        secondaryTitle: "Tasyakuran Aqiqah & Tasmiyah",
+        parentsOrHost: "Bpk. Irfan Hakim & Ibu Annisa Larasati",
+        dateText: "Minggu, 24 Mei 2026",
+        venueText: "Kediaman Keluarga, Jl. Melati No. 12, Bandung"
+      },
+      sampleCouple: {
+        groomShort: "Kinan",
+        groomFull: "Kinan Althafunnisa",
+        groomParents: "Putri pertama dari Bpk. Irfan & Ibu Annisa",
+        groomPhoto: "https://images.unsplash.com/photo-1519689680058-324335c77eba?auto=format&fit=crop&w=800&q=80",
+        brideShort: "Aqiqah",
+        brideFull: "Tasyakuran Kelahiran",
+        brideParents: "BB: 3.2 kg | PB: 49 cm | Jam: 05.15 WIB",
+        bridePhoto: "https://images.unsplash.com/photo-1519689680058-324335c77eba?auto=format&fit=crop&w=800&q=80",
+        dateText: "Minggu, 24 Mei 2026",
+        venueText: "Kediaman Keluarga, Jl. Melati No. 12, Bandung"
+      },
+      themeColors: {
+        primaryBg: "#F8FAFC",
+        cardBg: "rgba(255, 255, 255, 0.94)",
+        accentHex: "#0284C7",
+        secondaryHex: "#F59E0B",
+        textDark: "#0F172A",
+        badgeBg: "#E0F2FE"
+      }
+    },
+    {
+      id: "academic-elegance",
+      name: "Academic Elegance Graduation",
+      slug: "academic-elegance",
+      eventType: "graduation",
+      category: "formal",
+      categoryLabel: "Wisuda & Kelulusan",
+      price: 89000,
+      originalPrice: 165000,
+      badge: "Wisuda Akbar 🎓",
+      isPopular: false,
+      thumbnail: "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?auto=format&fit=crop&w=800&q=80",
+      coverImage: "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?auto=format&fit=crop&w=1400&q=85",
+      heroImage: "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?auto=format&fit=crop&w=900&q=85",
+      description: "Kemegahan prosesi wisuda dengan warna royal navy & gold akademik, tabung ijazah bergulir, rundown sidang senat terbuka, dan streaming YouTube.",
+      features: ["Tabung Ijazah Bergulir", "Rundown Sidang Senat", "Tata Tertib Pendamping", "Streaming YouTube HD"],
+      openingType: "diploma-scroll",
+      particleType: "gold-dust",
+      defaultSongTitle: "Payung Teduh - Berdua Saja",
+      defaultSongSrc: "/audio/berdua-saja.mp3",
+      eventMeta: {
+        primaryTitle: "Universitas Indonesia",
+        secondaryTitle: "Wisuda Program Sarjana & Pascasarjana Semester Genap",
+        parentsOrHost: "Rektor & Senat Akademik Universitas Indonesia",
+        dateText: "Sabtu, 19 September 2026",
+        venueText: "Balairung UI, Kampus UI Depok"
+      },
+      sampleCouple: {
+        groomShort: "Wisuda UI",
+        groomFull: "Wisuda Sarjana & Magister UI",
+        groomParents: "Sidang Terbuka Senat Akademik",
+        groomPhoto: "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?auto=format&fit=crop&w=800&q=80",
+        brideShort: "Kelulusan",
+        brideFull: "Tahun Akademik 2025/2026",
+        brideParents: "Gedung Balairung UI, Depok",
+        bridePhoto: "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?auto=format&fit=crop&w=800&q=80",
+        dateText: "Sabtu, 19 September 2026",
+        venueText: "Balairung UI, Kampus UI Depok"
+      },
+      themeColors: {
+        primaryBg: "#0B132B",
+        cardBg: "rgba(28, 37, 65, 0.95)",
+        accentHex: "#E0A96D",
+        secondaryHex: "#48CAE4",
+        textDark: "#FFFFFF",
+        badgeBg: "rgba(224, 169, 109, 0.2)"
+      }
     }
-  ] satisfies TemplateItem[],
+  ] as TemplateItem[],
 
   testimonials: [
     {

@@ -18,20 +18,86 @@ export const buildMergedWeddingData = (
   template: TemplateItem,
   customOrder?: Partial<CustomOrderData> | null
 ): WeddingConfig => {
-  const groomShort = customOrder?.groomShortName?.trim() || template.sampleCouple.groomShort
-  const groomFull = customOrder?.groomFullName?.trim() || template.sampleCouple.groomFull
-  const brideShort = customOrder?.brideShortName?.trim() || template.sampleCouple.brideShort
-  const brideFull = customOrder?.brideFullName?.trim() || template.sampleCouple.brideFull
+  let groomShort = template.sampleCouple?.groomShort || 'Tamu'
+  let groomFull = template.sampleCouple?.groomFull || 'Mempelai Pria'
+  let brideShort = template.sampleCouple?.brideShort || ''
+  let brideFull = template.sampleCouple?.brideFull || 'Mempelai Wanita'
 
-  const groomParentsParts = (customOrder?.groomParents?.trim() || template.sampleCouple.groomParents).split('&')
-  const brideParentsParts = (customOrder?.brideParents?.trim() || template.sampleCouple.brideParents).split('&')
+  if (template.eventType === 'khitan') {
+    const childName =
+      customOrder?.khitanChildShortName?.trim() ||
+      customOrder?.khitanChildFullName?.trim() ||
+      template.eventMeta?.primaryTitle ||
+      template.sampleCouple.groomShort
+    groomShort = childName
+    brideShort = 'Khitan'
+    groomFull = customOrder?.khitanChildFullName?.trim() || template.eventMeta?.primaryTitle || template.sampleCouple.groomFull
+    brideFull = template.eventMeta?.secondaryTitle || 'Walimatul Khitan'
+  } else if (template.eventType === 'birthday') {
+    const bdayName =
+      customOrder?.birthdayCelebrantName?.trim() ||
+      template.eventMeta?.primaryTitle ||
+      template.sampleCouple.groomShort
+    groomShort = bdayName
+    brideShort = customOrder?.birthdayAge ? `${customOrder.birthdayAge}` : 'Birthday'
+    groomFull = bdayName
+    brideFull = template.eventMeta?.secondaryTitle || 'Birthday Celebration'
+  } else if (template.eventType === 'aqiqah') {
+    const babyName =
+      customOrder?.aqiqahBabyName?.trim() ||
+      template.eventMeta?.primaryTitle ||
+      template.sampleCouple.groomShort
+    groomShort = babyName
+    brideShort = 'Aqiqah'
+    groomFull = babyName
+    brideFull = template.eventMeta?.secondaryTitle || 'Tasyakuran Aqiqah'
+  } else if (template.eventType === 'graduation') {
+    groomShort = customOrder?.gradInstitution?.trim() || template.eventMeta?.primaryTitle || template.sampleCouple.groomShort
+    brideShort = 'Wisuda'
+    groomFull = customOrder?.gradInstitution?.trim() || template.eventMeta?.primaryTitle || template.sampleCouple.groomFull
+    brideFull = customOrder?.gradDegreeTitle?.trim() || template.eventMeta?.secondaryTitle || 'Graduation Ceremony'
+  } else {
+    // Wedding default
+    groomShort = customOrder?.groomShortName?.trim() || template.sampleCouple.groomShort
+    groomFull = customOrder?.groomFullName?.trim() || template.sampleCouple.groomFull
+    brideShort = customOrder?.brideShortName?.trim() || template.sampleCouple.brideShort
+    brideFull = customOrder?.brideFullName?.trim() || template.sampleCouple.brideFull
+  }
+
+  const rawGroomParents =
+    customOrder?.khitanParents?.trim() ||
+    customOrder?.aqiqahParents?.trim() ||
+    customOrder?.groomParents?.trim() ||
+    template.eventMeta?.parentsOrHost ||
+    template.sampleCouple.groomParents ||
+    ''
+  const groomParentsParts = rawGroomParents.split('&')
+
+  const rawBrideParents = customOrder?.brideParents?.trim() || template.sampleCouple.brideParents || ''
+  const brideParentsParts = rawBrideParents.split('&')
+
+  const eventTitleAkad =
+    template.eventType === 'khitan'
+      ? 'Walimatul Khitan'
+      : template.eventType === 'birthday'
+      ? 'Pesta Ulang Tahun'
+      : template.eventType === 'aqiqah'
+      ? 'Tasyakuran Aqiqah'
+      : template.eventType === 'graduation'
+      ? 'Sidang Terbuka Wisuda'
+      : 'Akad Nikah'
+
+  const eventTitleResepsi =
+    template.eventType === 'wedding'
+      ? 'Resepsi Pernikahan'
+      : 'Ramah Tamah & Syukuran'
 
   return {
     ...weddingData,
     meta: {
       ...weddingData.meta,
-      title: `Pernikahan ${groomShort} & ${brideShort}`,
-      description: `Undangan Pernikahan Online ${groomFull} & ${brideFull}`
+      title: `${groomShort} ${brideShort ? '& ' + brideShort : ''}`,
+      description: `Undangan Digital ${groomFull} - ${brideFull}`
     },
     couple: {
       ...weddingData.couple,
@@ -57,17 +123,19 @@ export const buildMergedWeddingData = (
     events: {
       akad: {
         ...weddingData.events.akad,
-        date: customOrder?.akadDate?.trim() || template.sampleCouple.dateText,
+        title: eventTitleAkad,
+        date: customOrder?.akadDate?.trim() || template.eventMeta?.dateText || template.sampleCouple.dateText,
         time: customOrder?.akadTime?.trim() || weddingData.events.akad.time,
-        venue: customOrder?.akadVenue?.trim() || template.sampleCouple.venueText,
+        venue: customOrder?.akadVenue?.trim() || template.eventMeta?.venueText || template.sampleCouple.venueText,
         address: customOrder?.mapsAddress?.trim() || weddingData.events.akad.address,
         mapsUrl: customOrder?.mapsLink?.trim() || weddingData.events.akad.mapsUrl
       },
       resepsi: {
         ...weddingData.events.resepsi,
-        date: customOrder?.resepsiDate?.trim() || customOrder?.akadDate?.trim() || template.sampleCouple.dateText,
+        title: eventTitleResepsi,
+        date: customOrder?.resepsiDate?.trim() || customOrder?.akadDate?.trim() || template.eventMeta?.dateText || template.sampleCouple.dateText,
         time: customOrder?.resepsiTime?.trim() || weddingData.events.resepsi.time,
-        venue: customOrder?.resepsiVenue?.trim() || template.sampleCouple.venueText,
+        venue: customOrder?.resepsiVenue?.trim() || template.eventMeta?.venueText || template.sampleCouple.venueText,
         address: customOrder?.mapsAddress?.trim() || weddingData.events.resepsi.address,
         mapsUrl: customOrder?.mapsLink?.trim() || weddingData.events.resepsi.mapsUrl
       }
@@ -77,14 +145,14 @@ export const buildMergedWeddingData = (
       accounts: customOrder?.giftBankInfo?.trim()
         ? [
             {
-              bank: 'Rekening Pengantin',
+              bank: 'Rekening Hadiah / Kado',
               accountNumber: customOrder.giftBankInfo.split('a.n')[0]?.replace(/[^0-9]/g, '') || customOrder.giftBankInfo,
               accountHolder: customOrder.giftBankInfo.includes('a.n')
                 ? customOrder.giftBankInfo.split('a.n')[1]?.trim()
-                : `${groomShort} & ${brideShort}`,
+                : `${groomShort}`,
               holderName: customOrder.giftBankInfo.includes('a.n')
                 ? customOrder.giftBankInfo.split('a.n')[1]?.trim()
-                : `${groomShort} & ${brideShort}`,
+                : `${groomShort}`,
               logoText: customOrder.giftBankInfo.split(' ')[0]?.toUpperCase() || 'BANK'
             },
             ...weddingData.gift.accounts.slice(1)
