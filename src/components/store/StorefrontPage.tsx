@@ -16,7 +16,8 @@ import {
   ChevronDown,
   ChevronUp,
   Quote,
-  X
+  X,
+  Search
 } from 'lucide-react'
 import {
   storeConfig,
@@ -36,6 +37,7 @@ export const StorefrontPage: React.FC<StorefrontPageProps> = ({
   onOrderTemplate
 }) => {
   const [selectedEvent, setSelectedEvent] = useState<string>('all')
+  const [searchQuery, setSearchQuery] = useState<string>('')
   const [pricingCategory, setPricingCategory] = useState<'wedding' | 'event'>('wedding')
   const [openFaqIndex, setOpenFaqIndex] = useState<number | null>(0)
   const [activeLegalModal, setActiveLegalModal] = useState<'terms' | 'privacy' | 'refund' | null>(null)
@@ -50,9 +52,24 @@ export const StorefrontPage: React.FC<StorefrontPageProps> = ({
   ]
 
   const filteredTemplates = storeConfig.templates.filter((t) => {
-    if (selectedEvent === 'all') return true
-    if (selectedEvent === 'wedding') return !t.eventType || t.eventType === 'wedding'
-    return t.eventType === selectedEvent
+    const matchesEvent =
+      selectedEvent === 'all'
+        ? true
+        : selectedEvent === 'wedding'
+        ? !t.eventType || t.eventType === 'wedding'
+        : t.eventType === selectedEvent
+
+    const query = searchQuery.toLowerCase().trim()
+    if (!query) return matchesEvent
+
+    const matchesQuery =
+      t.name.toLowerCase().includes(query) ||
+      t.description.toLowerCase().includes(query) ||
+      t.categoryLabel.toLowerCase().includes(query) ||
+      (t.badge && t.badge.toLowerCase().includes(query)) ||
+      (t.features && t.features.some((f) => f.toLowerCase().includes(query)))
+
+    return matchesEvent && matchesQuery
   })
 
   const scrollTo = (id: string) => {
@@ -177,6 +194,83 @@ export const StorefrontPage: React.FC<StorefrontPageProps> = ({
             </button>
           </div>
 
+          {/* Interactive Floating 3D Device Showcase */}
+          <div className="relative mt-12 sm:mt-16 max-w-4xl mx-auto px-4">
+            {/* Ambient Background Glow */}
+            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[340px] sm:w-[500px] h-[340px] bg-gradient-to-tr from-amber-600/20 via-amber-400/10 to-transparent rounded-full blur-[90px] pointer-events-none" />
+
+            <div className="relative flex items-center justify-center">
+              {/* Floating Badge Left */}
+              <div className="hidden md:flex absolute -left-4 lg:left-4 top-1/4 z-20 items-center gap-3 p-3.5 rounded-2xl bg-stone-900/90 backdrop-blur-xl border border-amber-500/30 shadow-[0_15px_35px_rgba(0,0,0,0.6)] animate-float">
+                <div className="w-10 h-10 rounded-xl bg-amber-500/20 text-amber-300 flex items-center justify-center shadow-inner">
+                  <Music className="w-5 h-5 animate-pulse" />
+                </div>
+                <div className="text-left">
+                  <p className="text-[10px] text-amber-300 uppercase tracking-widest font-mono font-semibold">Autoplay Musik</p>
+                  <p className="text-xs font-bold text-white">Lagu Romantis Pilihan</p>
+                </div>
+              </div>
+
+              {/* Central Premium Smartphone Mockup */}
+              <div
+                onClick={() => onPreviewTemplate(storeConfig.templates[0])}
+                className="group relative w-64 sm:w-72 rounded-[42px] p-3 bg-gradient-to-b from-stone-700 via-stone-800 to-stone-950 border-4 border-stone-700/80 shadow-[0_25px_60px_rgba(212,175,55,0.25)] hover:shadow-[0_30px_70px_rgba(212,175,55,0.4)] transition-all duration-500 cursor-pointer hover:scale-[1.02]"
+              >
+                {/* Dynamic Island Pill */}
+                <div className="absolute top-5 left-1/2 -translate-x-1/2 w-24 h-4 bg-stone-950 rounded-full z-30 flex items-center justify-center gap-2 border border-white/10 shadow-sm">
+                  <div className="w-2 h-2 rounded-full bg-stone-800" />
+                  <div className="w-1.5 h-1.5 rounded-full bg-stone-900" />
+                </div>
+
+                {/* Inner Screen Preview */}
+                <div className="relative rounded-[32px] overflow-hidden bg-stone-900 aspect-[9/18]">
+                  <img
+                    src="https://images.unsplash.com/photo-1519741497674-611481863552?auto=format&fit=crop&w=800&q=80"
+                    alt="Preview Undangan"
+                    className="w-full h-full object-cover group-hover:scale-108 transition-transform duration-700 filter brightness-95"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-stone-950 via-stone-950/20 to-transparent" />
+
+                  {/* Top Live Badge */}
+                  <div className="absolute top-7 left-4 right-4 flex items-center justify-between z-20">
+                    <span className="px-2.5 py-1 rounded-full bg-black/60 backdrop-blur-md text-[10px] font-bold text-amber-300 border border-amber-500/30 flex items-center gap-1">
+                      <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-ping" />
+                      Live Demo
+                    </span>
+                    <span className="px-2.5 py-1 rounded-full bg-amber-500 text-stone-950 text-[10px] font-bold shadow-md">
+                      17+ Template
+                    </span>
+                  </div>
+
+                  {/* Bottom Preview Overlay */}
+                  <div className="absolute bottom-5 inset-x-4 text-center z-20">
+                    <p className="font-serif text-lg font-bold text-white drop-shadow">
+                      Rian &amp; Sarah
+                    </p>
+                    <p className="text-[11px] text-amber-300 font-mono tracking-wider mt-0.5">
+                      The Wedding Celebration
+                    </p>
+                    <div className="mt-3.5 inline-flex items-center gap-1.5 px-4 py-2 rounded-full bg-white/20 group-hover:bg-amber-400 text-white group-hover:text-stone-950 backdrop-blur-md border border-white/30 text-xs font-bold transition-all shadow-lg">
+                      <Eye className="w-3.5 h-3.5" />
+                      <span>Ketuk Untuk Mencoba</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Floating Badge Right */}
+              <div className="hidden md:flex absolute -right-4 lg:right-4 bottom-1/4 z-20 items-center gap-3 p-3.5 rounded-2xl bg-stone-900/90 backdrop-blur-xl border border-amber-500/30 shadow-[0_15px_35px_rgba(0,0,0,0.6)] animate-float" style={{ animationDelay: '1.5s' }}>
+                <div className="w-10 h-10 rounded-xl bg-emerald-500/20 text-emerald-300 flex items-center justify-center shadow-inner">
+                  <ShieldCheck className="w-5 h-5 text-emerald-400" />
+                </div>
+                <div className="text-left">
+                  <p className="text-[10px] text-emerald-400 uppercase tracking-widest font-mono font-semibold">Tamu Tanpa Batas</p>
+                  <p className="text-xs font-bold text-white">Generator Link Otomatis</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
           {/* Trust Feature Pills */}
           <div className="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4 max-w-4xl mx-auto mt-14">
             {[
@@ -240,10 +334,49 @@ export const StorefrontPage: React.FC<StorefrontPageProps> = ({
                 </button>
               ))}
             </div>
+
+            {/* Instant Search Bar */}
+            <div className="relative max-w-md mx-auto mt-6">
+              <div className="relative flex items-center">
+                <Search className="w-4 h-4 text-stone-400 absolute left-4 pointer-events-none" />
+                <input
+                  type="text"
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  placeholder="Cari tema... (misal: Banjar, Jawa, Sage, Navy, Safari, Khitan)"
+                  className="w-full pl-11 pr-10 py-3 rounded-full bg-stone-900/90 border border-white/15 focus:border-amber-400 text-xs sm:text-sm text-stone-200 placeholder-stone-500 focus:outline-none transition-all shadow-inner"
+                />
+                {searchQuery && (
+                  <button
+                    onClick={() => setSearchQuery('')}
+                    className="absolute right-3.5 p-1 rounded-full text-stone-400 hover:text-white"
+                  >
+                    <X className="w-3.5 h-3.5" />
+                  </button>
+                )}
+              </div>
+            </div>
           </div>
 
-          {/* Template Cards Grid */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
+          {filteredTemplates.length === 0 ? (
+            <div className="text-center py-16 px-4 bg-stone-900/40 rounded-3xl border border-white/10 max-w-md mx-auto">
+              <Sparkles className="w-10 h-10 text-amber-400/60 mx-auto mb-3" />
+              <h3 className="font-serif font-bold text-lg text-white">Tidak ada template yang cocok</h3>
+              <p className="text-xs text-stone-400 mt-1 mb-5">
+                Coba cari dengan kata kunci lain atau pilih kategori acara di atas.
+              </p>
+              <button
+                onClick={() => {
+                  setSearchQuery('');
+                  setSelectedEvent('all');
+                }}
+                className="px-5 py-2 rounded-full bg-amber-500 text-stone-950 font-bold text-xs shadow-md"
+              >
+                Tampilkan Semua Template
+              </button>
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
             {filteredTemplates.map((tpl) => (
               <div
                 key={tpl.id}
@@ -375,6 +508,7 @@ export const StorefrontPage: React.FC<StorefrontPageProps> = ({
               </div>
             ))}
           </div>
+          )}
         </div>
       </section>
 
@@ -722,6 +856,37 @@ export const StorefrontPage: React.FC<StorefrontPageProps> = ({
           </div>
         </div>
       </footer>
+
+      {/* Floating WhatsApp Quick Consultation Pill */}
+      <a
+        href={`https://wa.me/${storeConfig.brand.whatsappNumber}?text=${encodeURIComponent(
+          'Halo Admin JanjiSuci.id, saya ingin tanya-tanya mengenai pembuatan undangan digital.'
+        )}`}
+        target="_blank"
+        rel="noopener noreferrer"
+        className="fixed bottom-6 right-6 z-40 inline-flex items-center gap-2.5 px-4 py-3 rounded-full bg-emerald-500 hover:bg-emerald-600 text-white font-sans text-xs font-bold shadow-[0_10px_30px_rgba(16,185,129,0.5)] hover:scale-105 active:scale-95 transition-all cursor-pointer border border-emerald-400/30"
+      >
+        <div className="relative">
+          <MessageCircle className="w-4 h-4" />
+          <span className="absolute -top-1 -right-1 w-2 h-2 rounded-full bg-emerald-200 animate-ping" />
+        </div>
+        <span className="hidden sm:inline">Tanya Admin WA</span>
+        <span className="px-1.5 py-0.5 rounded-full bg-emerald-800/80 text-[10px] text-emerald-200 font-semibold">Online</span>
+      </a>
+
+      {/* Mobile Bottom Sticky Quick Action Bar */}
+      <div className="fixed bottom-0 inset-x-0 z-30 p-2.5 bg-stone-950/95 backdrop-blur-xl border-t border-amber-500/25 flex items-center justify-between gap-3 sm:hidden shadow-2xl">
+        <div>
+          <p className="text-[10px] text-amber-300 uppercase tracking-widest font-mono font-semibold">Promo Spesial</p>
+          <p className="text-xs font-bold text-white">Mulai Rp 75.000 Saja</p>
+        </div>
+        <button
+          onClick={() => scrollTo('katalog')}
+          className="px-4 py-2 rounded-full bg-gradient-to-r from-amber-500 to-amber-600 text-stone-950 font-bold text-xs shadow-md active:scale-95"
+        >
+          Pilih Template
+        </button>
+      </div>
     </div>
   )
 }
