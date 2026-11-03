@@ -81,50 +81,48 @@ export const AudioPlayer: React.FC<AudioPlayerProps> = ({
         {/* Track Title Badge with Animated Soundwaves */}
         {isPlaying && (
           <div
-            onClick={() => setShowPlaylist(!showPlaylist)}
-            className="hidden sm:flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-stone-900/90 border border-amber-500/40 text-amber-200 text-xs shadow-xl backdrop-blur-md cursor-pointer hover:bg-stone-900 transition-all select-none"
-            title="Klik untuk melihat lagu"
+            className="hidden sm:flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-stone-900/90 border border-amber-500/40 text-amber-200 text-xs shadow-xl backdrop-blur-md select-none"
           >
-            <Music2 className="w-3.5 h-3.5 text-amber-400 shrink-0" />
+            <Music2 className="w-3.5 h-3.5 text-amber-400 shrink-0" aria-hidden="true" />
             <span className="max-w-[150px] truncate text-[11px] font-sans font-medium">
               {activeTrack.title}
             </span>
-            <div className="flex items-end gap-0.5 h-3 px-1">
+            <div className="flex items-end gap-0.5 h-3 px-1" aria-hidden="true">
               <span className="w-0.5 bg-amber-400 rounded-full animate-soundwave-1" />
               <span className="w-0.5 bg-amber-300 rounded-full animate-soundwave-2" />
               <span className="w-0.5 bg-amber-400 rounded-full animate-soundwave-3" />
             </div>
             <button
-              onClick={(e) => {
-                e.stopPropagation()
-                handleNextTrack()
-              }}
+              type="button"
+              onClick={handleNextTrack}
+              aria-label="Ganti lagu musik latar"
               title="Ganti Lagu"
-              className="p-1 hover:text-white transition-colors"
+              className="min-w-[36px] min-h-[36px] -mr-1 rounded-full text-amber-300 hover:text-white hover:bg-white/10 transition-colors cursor-pointer flex items-center justify-center focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-400"
             >
-              <SkipForward className="w-3 h-3 text-amber-300" />
+              <SkipForward className="w-3.5 h-3.5" aria-hidden="true" />
             </button>
           </div>
         )}
 
-        {/* Floating Button */}
+        {/* Floating Toggle Button */}
         <button
+          type="button"
           onClick={handleToggle}
-          aria-label={isPlaying ? "Jeda Musik" : "Putar Musik"}
+          aria-label={isPlaying ? "Jeda musik latar belakang" : "Putar musik latar belakang"}
           title={isPlaying ? "Jeda Musik Latar" : "Putar Musik Latar"}
-          className={`relative p-3.5 sm:p-4 rounded-full backdrop-blur-md shadow-2xl transition-all duration-300 cursor-pointer ${
+          className={`relative min-w-[48px] min-h-[48px] p-3.5 sm:p-4 rounded-full backdrop-blur-md shadow-2xl transition-all duration-300 cursor-pointer flex items-center justify-center focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-400 ${
             isPlaying
               ? 'bg-stone-900/90 text-amber-300 border border-amber-400/50 hover:scale-105 active:scale-95 ring-2 ring-amber-500/25'
-              : 'bg-stone-800/85 text-stone-400 border border-stone-600/40 hover:text-stone-200 hover:scale-105 active:scale-95'
+              : 'bg-stone-800/85 text-stone-300 border border-stone-600/40 hover:text-white hover:scale-105 active:scale-95'
           }`}
         >
           {isPlaying ? (
             <div className="relative flex items-center justify-center">
-              <Disc3 className="w-5 h-5 sm:w-6 sm:h-6 text-amber-300 animate-spin-slow" />
-              <span className="absolute w-2.5 h-2.5 rounded-full bg-amber-400 animate-ping opacity-60" />
+              <Disc3 className="w-5 h-5 sm:w-6 sm:h-6 text-amber-300 animate-spin-slow" aria-hidden="true" />
+              <span className="absolute w-2.5 h-2.5 rounded-full bg-amber-400 animate-ping opacity-60" aria-hidden="true" />
             </div>
           ) : (
-            <VolumeX className="w-5 h-5 sm:w-6 sm:h-6" />
+            <VolumeX className="w-5 h-5 sm:w-6 sm:h-6 text-stone-300" aria-hidden="true" />
           )}
         </button>
       </div>

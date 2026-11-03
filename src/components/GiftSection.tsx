@@ -88,17 +88,19 @@ export const GiftSection: React.FC = () => {
                 {/* Copy Button */}
                 <div className="pt-4 mt-4 border-t border-white/10 flex justify-end">
                   <button
+                    type="button"
                     onClick={() => handleCopy(acc.accountNumber, acc.bank, acc.logoText)}
-                    className="inline-flex items-center gap-1.5 px-4 py-2 rounded-full bg-amber-400/20 hover:bg-amber-400/30 text-amber-200 text-xs font-sans font-medium transition-all cursor-pointer border border-amber-400/30 active:scale-95 shadow-sm"
+                    aria-label={`Salin nomor rekening ${acc.logoText} (${acc.accountNumber})`}
+                    className="min-h-[44px] inline-flex items-center gap-1.5 px-4 py-2 rounded-full bg-amber-400/20 hover:bg-amber-400/30 text-amber-200 text-xs font-sans font-medium transition-all cursor-pointer border border-amber-400/30 active:scale-95 shadow-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-300"
                   >
                     {isCopied ? (
                       <>
-                        <Check className="w-3.5 h-3.5 text-emerald-400" />
+                        <Check className="w-3.5 h-3.5 text-emerald-400" aria-hidden="true" />
                         <span className="text-emerald-400 font-bold">Nomor Tersalin!</span>
                       </>
                     ) : (
                       <>
-                        <Copy className="w-3.5 h-3.5" />
+                        <Copy className="w-3.5 h-3.5" aria-hidden="true" />
                         <span>Salin No. Rekening</span>
                       </>
                     )}
@@ -113,26 +115,29 @@ export const GiftSection: React.FC = () => {
         {gift.qrisUrl && (
           <div className="p-6 sm:p-8 rounded-3xl bg-white/90 backdrop-blur-md border border-amber-800/15 shadow-xl mb-10 max-w-xl mx-auto">
             <button
+              type="button"
               onClick={() => setShowQris(!showQris)}
-              className="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-stone-100 hover:bg-stone-200 text-stone-800 text-xs sm:text-sm font-sans font-semibold transition-colors cursor-pointer shadow-sm active:scale-95"
+              aria-expanded={showQris}
+              aria-controls="qris-content-panel"
+              className="min-h-[44px] inline-flex items-center gap-2 px-6 py-3 rounded-full bg-stone-100 hover:bg-stone-200 text-stone-800 text-xs sm:text-sm font-sans font-semibold transition-colors cursor-pointer shadow-sm active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-700"
             >
-              <QrCode className="w-4 h-4 text-amber-700" />
+              <QrCode className="w-4 h-4 text-amber-700" aria-hidden="true" />
               <span>{showQris ? 'Sembunyikan QRIS' : 'Buka QRIS Pembayaran'}</span>
             </button>
 
             {showQris && (
-              <div className="mt-6 pt-6 border-t border-stone-200 flex flex-col items-center animate-in fade-in">
+              <div id="qris-content-panel" className="mt-6 pt-6 border-t border-stone-200 flex flex-col items-center animate-in fade-in">
                 <p className="text-xs sm:text-sm font-serif font-bold text-stone-800 mb-3">
                   Scan QRIS (M-Banking & E-Wallet)
                 </p>
                 <div className="p-4 bg-white rounded-2xl shadow-lg border border-stone-200">
                   <img
                     src={gift.qrisUrl}
-                    alt="QRIS Wedding Gift"
+                    alt="Kode QRIS Donasi Hadiah Pernikahan"
                     className="w-52 h-52 object-contain"
                   />
                 </div>
-                <p className="text-[11px] text-stone-500 mt-3 font-sans max-w-xs text-center">
+                <p className="text-[11px] text-stone-600 mt-3 font-sans max-w-xs text-center">
                   Mendukung BCA, Mandiri, BRI, BNI, GoPay, OVO, DANA, ShopeePay & LinkAja.
                 </p>
               </div>
@@ -144,7 +149,7 @@ export const GiftSection: React.FC = () => {
         <div className="relative p-6 sm:p-8 rounded-3xl bg-white/90 backdrop-blur-md border border-amber-800/15 shadow-xl text-left overflow-hidden max-w-2xl mx-auto">
           <BotanicalCorner position="top-right" />
           <div className="flex items-center gap-2.5 mb-3 text-stone-800">
-            <Package className="w-5 h-5 text-amber-800" />
+            <Package className="w-5 h-5 text-amber-800" aria-hidden="true" />
             <h3 className="font-serif text-lg sm:text-xl font-bold">
               Kirim Kado Fisik
             </h3>
@@ -158,16 +163,17 @@ export const GiftSection: React.FC = () => {
             <p className="font-bold text-stone-800">
               Penerima: {gift.giftAddress.recipient}
             </p>
-            <p className="text-stone-600">
+            <p className="text-stone-700">
               No. HP: {gift.giftAddress.phone}
             </p>
-            <p className="text-stone-600 leading-relaxed pt-1">
+            <p className="text-stone-700 leading-relaxed pt-1">
               Alamat: {gift.giftAddress.address}
             </p>
           </div>
 
           <div className="flex justify-end">
             <button
+              type="button"
               onClick={() =>
                 handleCopy(
                   `${gift.giftAddress.recipient} (${gift.giftAddress.phone}) - ${gift.giftAddress.address}`,
@@ -175,16 +181,17 @@ export const GiftSection: React.FC = () => {
                   'Alamat'
                 )
               }
-              className="inline-flex items-center gap-1.5 px-5 py-2.5 rounded-full bg-stone-900 text-white hover:bg-stone-800 text-xs font-sans font-medium transition-colors cursor-pointer active:scale-95 shadow-md"
+              aria-label="Salin alamat lengkap penerima kado fisik"
+              className="min-h-[44px] inline-flex items-center gap-1.5 px-5 py-2.5 rounded-full bg-stone-900 text-white hover:bg-stone-800 text-xs font-sans font-medium transition-colors cursor-pointer active:scale-95 shadow-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-500"
             >
               {copiedAddress ? (
                 <>
-                  <Check className="w-3.5 h-3.5 text-emerald-400" />
+                  <Check className="w-3.5 h-3.5 text-emerald-400" aria-hidden="true" />
                   <span className="text-emerald-400 font-bold">Alamat Tersalin!</span>
                 </>
               ) : (
                 <>
-                  <Copy className="w-3.5 h-3.5" />
+                  <Copy className="w-3.5 h-3.5" aria-hidden="true" />
                   <span>Salin Alamat Lengkap</span>
                 </>
               )}

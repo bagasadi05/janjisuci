@@ -148,12 +148,14 @@ export const RusticTerracottaCoverScreen: React.FC<RusticTerracottaCoverScreenPr
 
         {/* Open Button with Vintage Wax Style */}
         <div className="relative inline-block mt-1 w-full">
-          <span className="absolute -inset-1 rounded-full bg-gradient-to-r from-[#C06C54] via-[#DDA15E] to-[#A0522D] opacity-75 blur-md animate-pulse" />
+          <span className="absolute -inset-1 rounded-full bg-gradient-to-r from-[#C06C54] via-[#DDA15E] to-[#A0522D] opacity-75 blur-md animate-pulse" aria-hidden="true" />
           <button
+            type="button"
             onClick={handleOpenInvitation}
-            className="group relative w-full py-3.5 px-6 rounded-full bg-gradient-to-r from-[#A0522D] via-[#C06C54] to-[#A0522D] text-white font-sans font-bold text-xs uppercase tracking-[0.2em] shadow-xl hover:brightness-110 active:scale-95 transition-all duration-300 flex items-center justify-center gap-2 cursor-pointer"
+            aria-label="Buka surat undangan dan nyalakan musik"
+            className="group relative w-full py-3.5 px-6 rounded-full bg-gradient-to-r from-[#A0522D] via-[#C06C54] to-[#A0522D] text-white font-sans font-bold text-xs uppercase tracking-[0.2em] shadow-xl hover:brightness-110 active:scale-95 transition-all duration-300 flex items-center justify-center gap-2 cursor-pointer min-h-[48px] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#C06C54]"
           >
-            <MailOpen className="w-4 h-4 text-white" />
+            <MailOpen className="w-4 h-4 text-white"  aria-hidden="true"/>
             <span>BUKA SURAT UNDANGAN</span>
           </button>
         </div>

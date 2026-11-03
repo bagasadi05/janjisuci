@@ -115,7 +115,7 @@ export const RoyalMidnightCoverScreen: React.FC<RoyalMidnightCoverScreenProps> =
 
         {/* Header Tag */}
         <div className="inline-flex items-center gap-1.5 px-3 py-0.5 rounded-full bg-[#D7BB83]/15 border border-[#D7BB83]/30 text-[#D7BB83] text-[11px] sm:text-xs uppercase tracking-[0.25em] font-serif mb-3">
-          <Sparkles className="w-3 h-3 text-[#D7BB83]" />
+          <Sparkles className="w-3 h-3 text-[#D7BB83]"  aria-hidden="true"/>
           <span>The Wedding of</span>
         </div>
 
@@ -144,12 +144,14 @@ export const RoyalMidnightCoverScreen: React.FC<RoyalMidnightCoverScreenProps> =
 
         {/* Open Button with Glowing Gold Accent */}
         <div className="relative mt-2">
-          <span className="absolute -inset-1 rounded-full bg-gradient-to-r from-[#B99A5C] via-[#D7BB83] to-[#5C4324] opacity-75 blur-md animate-pulse" />
+          <span className="absolute -inset-1 rounded-full bg-gradient-to-r from-[#B99A5C] via-[#D7BB83] to-[#5C4324] opacity-75 blur-md animate-pulse" aria-hidden="true" />
           <button
+            type="button"
             onClick={handleOpenInvitation}
-            className="group relative inline-flex items-center justify-center gap-2.5 px-8 sm:px-10 py-3.5 rounded-full bg-gradient-to-r from-[#D7BB83] via-[#F3E5C8] to-[#B99A5C] text-stone-950 font-serif font-bold text-sm tracking-wider shadow-2xl hover:brightness-110 active:scale-95 transition-all duration-300 cursor-pointer"
+            aria-label="Buka undangan dan nyalakan musik"
+            className="group relative inline-flex items-center justify-center gap-2.5 px-8 sm:px-10 py-3.5 rounded-full bg-gradient-to-r from-[#D7BB83] via-[#F3E5C8] to-[#B99A5C] text-stone-950 font-serif font-bold text-sm tracking-wider shadow-2xl hover:brightness-110 active:scale-95 transition-all duration-300 cursor-pointer min-h-[48px] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#D7BB83]"
           >
-            <MailOpen className="w-4 h-4 text-stone-900 transition-transform group-hover:-translate-y-0.5" />
+            <MailOpen className="w-4 h-4 text-stone-900 transition-transform group-hover:-translate-y-0.5"  aria-hidden="true"/>
             <span className="uppercase tracking-wider">Buka Undangan</span>
           </button>
         </div>

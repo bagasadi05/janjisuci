@@ -102,14 +102,18 @@ export const RoyalMidnightDesktopShowcase: React.FC<RoyalMidnightDesktopShowcase
       <div className="relative z-10 text-center space-y-3">
         <div className="flex items-center justify-center gap-2.5">
           <button
+            type="button"
             onClick={() => scrollTo('rsvp')}
-            className="px-5 py-2 rounded-full bg-gradient-to-r from-[#D7BB83] to-[#B99A5C] hover:brightness-110 text-stone-950 font-serif font-bold text-xs tracking-wider shadow-lg transition-all cursor-pointer active:scale-95"
+            aria-label="Buka formulir RSVP konfirmasi kehadiran"
+            className="min-h-[44px] px-5 py-2.5 rounded-full bg-gradient-to-r from-[#D7BB83] to-[#B99A5C] hover:brightness-110 text-stone-950 font-serif font-bold text-xs tracking-wider shadow-lg transition-all cursor-pointer active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#D7BB83]"
           >
             Kirim Doa &amp; Ucapan
           </button>
           <button
+            type="button"
             onClick={() => scrollTo('gift')}
-            className="px-5 py-2 rounded-full bg-white/10 hover:bg-white/20 border border-[#D7BB83]/30 text-white font-serif text-xs tracking-wider transition-all cursor-pointer active:scale-95"
+            aria-label="Buka bagian kirim kado dan amplop digital"
+            className="min-h-[44px] px-5 py-2.5 rounded-full bg-white/10 hover:bg-white/20 border border-[#D7BB83]/30 text-white font-serif text-xs tracking-wider transition-all cursor-pointer active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#D7BB83]"
           >
             Kirim Kado
           </button>
@@ -119,11 +123,13 @@ export const RoyalMidnightDesktopShowcase: React.FC<RoyalMidnightDesktopShowcase
         <div className="inline-flex items-center justify-between w-full max-w-xs px-3.5 py-2 rounded-2xl bg-black/60 border border-[#D7BB83]/30 text-stone-300 text-xs shadow-inner">
           <div className="flex items-center gap-2.5 truncate">
             <button
+              type="button"
               onClick={onToggleAudio}
-              className="p-1.5 rounded-full bg-[#D7BB83]/20 text-[#D7BB83] hover:bg-[#D7BB83]/30 transition-colors cursor-pointer"
+              aria-label={isPlayingAudio ? 'Jeda Musik Latar' : 'Putar Musik Latar'}
+              className="min-w-[44px] min-h-[44px] flex items-center justify-center rounded-full bg-[#D7BB83]/20 text-[#D7BB83] hover:bg-[#D7BB83]/30 transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#D7BB83]"
               title={isPlayingAudio ? 'Jeda' : 'Putar'}
             >
-              <Disc3 className={`w-4 h-4 ${isPlayingAudio ? 'animate-spin-slow text-[#D7BB83]' : 'text-stone-400'}`} />
+              <Disc3 className={`w-4 h-4 ${isPlayingAudio ? 'animate-spin-slow text-[#D7BB83]' : 'text-stone-400'}`} aria-hidden="true" />
             </button>
             <div className="text-left truncate">
               <p className="text-[11px] font-serif font-medium text-[#D7BB83] truncate">
@@ -136,11 +142,13 @@ export const RoyalMidnightDesktopShowcase: React.FC<RoyalMidnightDesktopShowcase
           </div>
 
           <button
+            type="button"
             onClick={onNextTrack}
-            className="p-1.5 text-stone-400 hover:text-[#D7BB83] transition-colors cursor-pointer"
+            aria-label="Putar lagu berikutnya"
+            className="min-w-[44px] min-h-[44px] flex items-center justify-center rounded-lg text-stone-400 hover:text-[#D7BB83] transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#D7BB83]"
             title="Ganti Lagu"
           >
-            <SkipForward className="w-3.5 h-3.5" />
+            <SkipForward className="w-3.5 h-3.5" aria-hidden="true" />
           </button>
         </div>
       </div>

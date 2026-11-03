@@ -107,14 +107,18 @@ export const DesktopShowcase: React.FC<DesktopShowcaseProps> = ({
         {/* Quick action buttons */}
         <div className="flex items-center justify-center gap-3">
           <button
+            type="button"
             onClick={() => scrollTo('rsvp')}
-            className="px-5 py-2.5 rounded-full bg-gradient-to-r from-amber-600 to-amber-500 hover:from-amber-500 hover:to-amber-400 text-stone-950 font-sans font-bold text-xs tracking-wide shadow-lg transition-all cursor-pointer active:scale-95"
+            aria-label="Konfirmasi kehadiran tamu di bagian RSVP"
+            className="min-h-[44px] px-5 py-2.5 rounded-full bg-gradient-to-r from-amber-600 to-amber-500 hover:from-amber-500 hover:to-amber-400 text-stone-950 font-sans font-bold text-xs tracking-wide shadow-lg transition-all cursor-pointer active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-400 flex items-center justify-center"
           >
             Konfirmasi Hadir
           </button>
           <button
+            type="button"
             onClick={() => scrollTo('gift')}
-            className="px-5 py-2.5 rounded-full bg-white/10 hover:bg-white/20 border border-white/20 text-white font-sans text-xs tracking-wide transition-all cursor-pointer active:scale-95"
+            aria-label="Kirim kado atau amplop digital"
+            className="min-h-[44px] px-5 py-2.5 rounded-full bg-white/10 hover:bg-white/20 border border-white/20 text-white font-sans text-xs tracking-wide transition-all cursor-pointer active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white flex items-center justify-center"
           >
             Kirim Kado
           </button>
@@ -124,11 +128,13 @@ export const DesktopShowcase: React.FC<DesktopShowcaseProps> = ({
         <div className="inline-flex items-center justify-between w-full max-w-xs px-4 py-2.5 rounded-2xl bg-black/40 border border-amber-500/30 text-stone-300 text-xs shadow-inner">
           <div className="flex items-center gap-2.5 truncate">
             <button
+              type="button"
               onClick={onToggleAudio}
-              className="p-1.5 rounded-full bg-amber-500/20 text-amber-300 hover:bg-amber-500/30 transition-colors cursor-pointer"
+              className="min-w-[44px] min-h-[44px] p-2 rounded-full bg-amber-500/20 text-amber-300 hover:bg-amber-500/30 transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-400 flex items-center justify-center"
+              aria-label={isPlayingAudio ? "Jeda musik" : "Putar musik"}
               title={isPlayingAudio ? "Jeda" : "Putar"}
             >
-              <Disc3 className={`w-4 h-4 ${isPlayingAudio ? 'animate-spin-slow text-amber-300' : 'text-stone-400'}`} />
+              <Disc3 className={`w-4 h-4 ${isPlayingAudio ? 'animate-spin-slow text-amber-300' : 'text-stone-400'}`} aria-hidden="true" />
             </button>
             <div className="text-left truncate">
               <p className="text-[11px] font-sans font-medium text-amber-200 truncate">
@@ -141,11 +147,13 @@ export const DesktopShowcase: React.FC<DesktopShowcaseProps> = ({
           </div>
 
           <button
+            type="button"
             onClick={onNextTrack}
-            className="p-1.5 text-stone-400 hover:text-amber-300 transition-colors cursor-pointer"
+            className="min-w-[44px] min-h-[44px] p-2 text-stone-400 hover:text-amber-300 transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-400 flex items-center justify-center"
+            aria-label="Ganti ke lagu berikutnya"
             title="Ganti Lagu Berikutnya"
           >
-            <SkipForward className="w-3.5 h-3.5" />
+            <SkipForward className="w-3.5 h-3.5" aria-hidden="true" />
           </button>
         </div>
       </div>

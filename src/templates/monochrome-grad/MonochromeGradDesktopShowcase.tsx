@@ -112,10 +112,12 @@ export const MonochromeGradDesktopShowcase: React.FC<MonochromeGradDesktopShowca
       <div className="relative z-10 p-3 rounded-2xl bg-[#18181B]/80 border border-white/10 flex items-center justify-between">
         <div className="flex items-center gap-3">
           <button
+            type="button"
             onClick={onToggleAudio}
-            className="w-10 h-10 rounded-full bg-white text-stone-950 flex items-center justify-center cursor-pointer shadow-md hover:scale-105 transition-transform"
+            aria-label={isPlayingAudio ? 'Jeda Musik Wisuda' : 'Putar Musik Wisuda'}
+            className="min-w-[44px] min-h-[44px] rounded-full bg-white text-stone-950 flex items-center justify-center cursor-pointer shadow-md hover:scale-105 transition-transform focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white"
           >
-            {isPlayingAudio ? <Music className="w-4 h-4 animate-spin" /> : <VolumeX className="w-4 h-4" />}
+            {isPlayingAudio ? <Music className="w-4 h-4 animate-spin" aria-hidden="true" /> : <VolumeX className="w-4 h-4" aria-hidden="true" />}
           </button>
           <div className="text-left text-xs">
             <p className="font-semibold text-white truncate max-w-[170px]">

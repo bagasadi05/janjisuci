@@ -2,7 +2,7 @@ import React from 'react'
 
 export const FloralDivider: React.FC<{ className?: string }> = ({ className = "" }) => {
   return (
-    <div className={`flex items-center justify-center gap-3 my-5 ${className}`}>
+    <div aria-hidden="true" className={`flex items-center justify-center gap-3 my-5 ${className}`}>
       <span className="h-[1px] w-14 sm:w-24 bg-gradient-to-r from-transparent via-amber-600/50 to-amber-700/80" />
       <div className="relative flex items-center justify-center text-amber-700/90">
         <svg
@@ -37,7 +37,7 @@ export const BotanicalCorner: React.FC<{
   }
 
   return (
-    <div className={`absolute pointer-events-none p-3.5 z-0 opacity-45 ${getTransforms()} ${className}`}>
+    <div aria-hidden="true" className={`absolute pointer-events-none p-3.5 z-0 opacity-45 ${getTransforms()} ${className}`}>
       <svg width="68" height="68" viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg">
         <path d="M6 6 C28 12, 52 32, 62 72" stroke="#849688" strokeWidth="1.6" strokeLinecap="round" />
         <path d="M6 6 C12 28, 32 52, 72 62" stroke="#D4AF37" strokeWidth="1.4" strokeLinecap="round" />
@@ -58,8 +58,17 @@ export const WaxSealEmblem: React.FC<{
 }> = ({ monogram = "R 💍 S", className = "", onClick }) => {
   return (
     <div
+      role="button"
+      tabIndex={0}
+      aria-label="Segel lilin - Ketuk untuk buka undangan"
       onClick={onClick}
-      className={`relative inline-flex items-center justify-center cursor-pointer select-none group transition-transform duration-300 hover:scale-105 active:scale-95 ${className}`}
+      onKeyDown={(e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault()
+          onClick?.()
+        }
+      }}
+      className={`relative inline-flex items-center justify-center cursor-pointer select-none group transition-transform duration-300 hover:scale-105 active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-400 rounded-full ${className}`}
     >
       {/* Outer Glow */}
       <span className="absolute -inset-2 rounded-full bg-amber-500/30 blur-lg animate-pulse" />

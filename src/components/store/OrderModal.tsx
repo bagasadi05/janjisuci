@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo } from 'react'
+import React, { useState, useEffect, useMemo, useRef } from 'react'
 import {
   X,
   Check,
@@ -48,6 +48,9 @@ export const OrderModal: React.FC<OrderModalProps> = ({
   const [step, setStep] = useState<1 | 2 | 3>(1)
   const [dataMode, setDataMode] = useState<'full' | 'later'>('full')
   const [copiedPayment, setCopiedPayment] = useState(false)
+  const [buyerNameError, setBuyerNameError] = useState(false)
+  const modalRef = useRef<HTMLDivElement>(null)
+  const triggerRef = useRef<HTMLElement | null>(null)
 
   const invoiceCode = useMemo(() => {
     const randomNum = Math.floor(1000 + Math.random() * 9000)
@@ -120,6 +123,64 @@ export const OrderModal: React.FC<OrderModalProps> = ({
       packageId: initialPackage?.id || getDefaultPackageId(initialTemplate, initialPackage)
     }))
   }, [initialTemplate, initialPackage])
+
+  // WAI-ARIA Dialog focus trap, autofocus, scroll locking, and focus restoration
+  useEffect(() => {
+    if (!isOpen) return
+    triggerRef.current = document.activeElement as HTMLElement
+    const originalOverflow = document.body.style.overflow
+    document.body.style.overflow = 'hidden'
+
+    const timer = setTimeout(() => {
+      if (modalRef.current) {
+        const focusable = modalRef.current.querySelectorAll<HTMLElement>(
+          'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
+        )
+        if (focusable.length > 0) {
+          focusable[0].focus()
+        }
+      }
+    }, 50)
+
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        onClose()
+        return
+      }
+      if (e.key === 'Tab' && modalRef.current) {
+        const focusable = Array.from(
+          modalRef.current.querySelectorAll<HTMLElement>(
+            'button:not([disabled]), [href], input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])'
+          )
+        ).filter((el) => el.offsetParent !== null)
+
+        if (focusable.length === 0) return
+
+        const first = focusable[0]
+        const last = focusable[focusable.length - 1]
+
+        if (e.shiftKey) {
+          if (document.activeElement === first) {
+            e.preventDefault()
+            last.focus()
+          }
+        } else {
+          if (document.activeElement === last) {
+            e.preventDefault()
+            first.focus()
+          }
+        }
+      }
+    }
+
+    window.addEventListener('keydown', handleKeyDown)
+    return () => {
+      clearTimeout(timer)
+      document.body.style.overflow = originalOverflow
+      window.removeEventListener('keydown', handleKeyDown)
+      triggerRef.current?.focus()
+    }
+  }, [isOpen, onClose])
 
   if (!isOpen) return null
 
@@ -319,8 +380,15 @@ export const OrderModal: React.FC<OrderModalProps> = ({
   }
 
   return (
-    <div className="fixed inset-0 z-[70] flex items-center justify-center bg-black/80 backdrop-blur-md p-2 sm:p-4 overflow-y-auto">
+    <div
+      onClick={onClose}
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="order-modal-title"
+      className="fixed inset-0 z-[70] flex items-center justify-center bg-black/80 backdrop-blur-md p-2 sm:p-4 overflow-y-auto"
+    >
       <div
+        ref={modalRef}
         onClick={(e) => e.stopPropagation()}
         className="relative w-full max-w-3xl rounded-3xl bg-white text-stone-800 shadow-2xl border border-amber-500/30 overflow-hidden my-auto max-h-[94dvh] flex flex-col"
       >
@@ -331,15 +399,16 @@ export const OrderModal: React.FC<OrderModalProps> = ({
               <Sparkles className="w-3.5 h-3.5" />
               <span>Formulir Pemesanan & Setor Data</span>
             </div>
-            <h2 className="font-serif text-xl sm:text-2xl font-bold text-white mt-0.5">
+            <h2 id="order-modal-title" className="font-serif text-xl sm:text-2xl font-bold text-white mt-0.5">
               {selectedTemplate.name} — {formatRupiah(finalPrice)}
             </h2>
           </div>
 
           <button
+            type="button"
             onClick={onClose}
             aria-label="Tutup formulir pemesanan"
-            className="p-2 rounded-full bg-white/10 hover:bg-white/20 text-stone-300 hover:text-white transition-colors cursor-pointer"
+            className="min-w-[44px] min-h-[44px] flex items-center justify-center rounded-full bg-white/10 hover:bg-white/20 text-stone-300 hover:text-white transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-300"
           >
             <X className="w-5 h-5" />
           </button>
@@ -360,7 +429,8 @@ export const OrderModal: React.FC<OrderModalProps> = ({
                   key={item.num}
                   type="button"
                   onClick={() => setStep(item.num as 1 | 2 | 3)}
-                  className={`flex items-center justify-center gap-1.5 py-2 px-2 rounded-xl text-xs font-sans font-semibold transition-all cursor-pointer ${
+                  aria-current={active ? 'step' : undefined}
+                  className={`min-h-[44px] flex items-center justify-center gap-1.5 py-2 px-2 rounded-xl text-xs font-sans font-semibold transition-all cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-700 ${
                     active
                       ? 'bg-amber-800 text-white shadow-sm'
                       : completed
@@ -386,13 +456,15 @@ export const OrderModal: React.FC<OrderModalProps> = ({
                 <label className="block text-xs font-bold uppercase tracking-wider text-stone-700 mb-2">
                   Desain Template Pilihan Anda
                 </label>
-                <div className="grid grid-cols-2 sm:grid-cols-3 gap-2.5">
+                <div role="radiogroup" aria-label="Desain Template Pilihan" className="grid grid-cols-2 sm:grid-cols-3 gap-2.5">
                   {storeConfig.templates.map((tpl) => {
                     const isSelected = formData.templateId === tpl.id
                     return (
                       <button
                         key={tpl.id}
                         type="button"
+                        role="radio"
+                        aria-checked={isSelected}
                         onClick={() => handleSelectTemplate(tpl.id)}
                         className={`p-2.5 rounded-2xl border text-left transition-all cursor-pointer flex items-center gap-2.5 ${
                           isSelected
@@ -426,14 +498,17 @@ export const OrderModal: React.FC<OrderModalProps> = ({
                     ? 'Pilih Paket Layanan Syukuran / Acara (Mulai Rp 59.000)'
                     : 'Pilih Paket Layanan Pernikahan (Rp 75.000 – Rp 149.000)'}
                 </label>
-                <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                <div role="radiogroup" aria-label="Pilihan Paket Layanan" className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                   {availablePackages.map((pkg) => {
                     const isSelected = selectedPackage.id === pkg.id
                     return (
-                      <div
+                      <button
+                        type="button"
+                        role="radio"
+                        aria-checked={isSelected}
                         key={pkg.id}
                         onClick={() => updateField('packageId', pkg.id)}
-                        className={`p-4 rounded-2xl border cursor-pointer transition-all relative ${
+                        className={`p-4 rounded-2xl border cursor-pointer transition-all relative text-left w-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-700 ${
                           isSelected
                             ? 'border-amber-700 bg-amber-50/60 ring-2 ring-amber-700/20 shadow-md'
                             : 'border-stone-200 hover:border-stone-300 bg-white'
@@ -458,7 +533,7 @@ export const OrderModal: React.FC<OrderModalProps> = ({
                         <p className="text-[11px] text-stone-600 leading-relaxed">
                           {pkg.description}
                         </p>
-                      </div>
+                      </button>
                     )
                   })}
                 </div>
@@ -472,18 +547,18 @@ export const OrderModal: React.FC<OrderModalProps> = ({
                 </div>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs pt-1">
                   <div className="flex items-center justify-between p-2.5 rounded-xl bg-white border border-amber-200">
-                    <span className="text-stone-500">Desain Template:</span>
-                    <span className="font-serif font-bold text-stone-900">{selectedTemplate.name} <span className="text-emerald-600 font-sans font-bold text-[10px]">(Gratis Termasuk)</span></span>
+                    <span className="text-stone-600 font-medium">Desain Template:</span>
+                    <span className="font-serif font-bold text-stone-900">{selectedTemplate.name} <span className="text-emerald-700 font-sans font-bold text-[10px]">(Gratis Termasuk)</span></span>
                   </div>
                   <div className="flex items-center justify-between p-2.5 rounded-xl bg-white border border-amber-200">
-                    <span className="text-stone-500">Paket Layanan:</span>
+                    <span className="text-stone-600 font-medium">Paket Layanan:</span>
                     <span className="font-bold text-amber-900">{selectedPackage.name}</span>
                   </div>
                 </div>
                 <div className="flex items-center justify-between pt-2 border-t border-amber-200">
                   <div>
                     <span className="text-xs font-bold text-stone-900 block">Total Tagihan Final:</span>
-                    <span className="text-[11px] text-stone-500">Sudah all-in lisensi template, domain aktif, dan revisi</span>
+                    <span className="text-[11px] text-stone-600">Sudah all-in lisensi template, domain aktif, dan revisi</span>
                   </div>
                   <span className="font-serif text-2xl font-extrabold text-amber-900">{formatRupiah(finalPrice)}</span>
                 </div>
@@ -497,23 +572,38 @@ export const OrderModal: React.FC<OrderModalProps> = ({
                 </div>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-xs font-semibold text-stone-700 mb-1">
+                    <label htmlFor="buyer-name" className="block text-xs font-semibold text-stone-700 mb-1">
                       Nama Pemesan *
                     </label>
                     <input
+                      id="buyer-name"
                       type="text"
                       required
                       value={formData.buyerName}
-                      onChange={(e) => updateField('buyerName', e.target.value)}
+                      onChange={(e) => {
+                        updateField('buyerName', e.target.value)
+                        if (e.target.value.trim()) setBuyerNameError(false)
+                      }}
                       placeholder="Contoh: Rian Mahendra"
-                      className="w-full px-3.5 py-2.5 rounded-xl border border-stone-300 bg-white text-sm focus:outline-none focus:ring-2 focus:ring-amber-600/30"
+                      aria-invalid={buyerNameError}
+                      aria-describedby={buyerNameError ? "buyer-name-error" : undefined}
+                      className={`w-full px-3.5 py-2.5 rounded-xl border bg-white text-sm focus:outline-none focus:ring-2 ${
+                        buyerNameError
+                          ? 'border-rose-500 focus:ring-rose-500/30'
+                          : 'border-stone-300 focus:ring-amber-600/30'
+                      }`}
                     />
+                    {buyerNameError && (
+                      <p id="buyer-name-error" className="text-[11px] text-rose-600 font-medium mt-1">
+                        Nama Pemesan wajib diisi untuk melanjutkan pemesanan.
+                      </p>
+                    )}
                   </div>
                   <div>
-                    <label className="block text-xs font-semibold text-stone-700 mb-1">
+                    <label htmlFor="buyer-phone" className="block text-xs font-semibold text-stone-700 mb-1">
                       Nomor WhatsApp Aktif *
                     </label>
-                    <input
+                    <input id="buyer-phone"
                       type="tel"
                       required
                       value={formData.buyerPhone}
@@ -531,8 +621,8 @@ export const OrderModal: React.FC<OrderModalProps> = ({
           {step === 2 && (
             <div className="space-y-6 animate-in fade-in duration-200">
               {/* Data Mode Selector */}
-              <div className="bg-stone-100 p-1.5 rounded-2xl flex gap-1.5 border border-stone-200">
-                <button
+              <div role="tablist" aria-label="Mode Pengisian Data" className="bg-stone-100 p-1.5 rounded-2xl flex gap-1.5 border border-stone-200">
+                <button role="tab" aria-selected={dataMode === 'full'}
                   type="button"
                   onClick={() => setDataMode('full')}
                   className={`flex-1 py-2.5 px-3 rounded-xl text-xs font-sans font-bold transition-all cursor-pointer flex items-center justify-center gap-1.5 ${
@@ -543,7 +633,7 @@ export const OrderModal: React.FC<OrderModalProps> = ({
                 >
                   <span>📝 Isi Data Lengkap Sekarang</span>
                 </button>
-                <button
+                <button role="tab" aria-selected={dataMode === 'later'}
                   type="button"
                   onClick={() => setDataMode('later')}
                   className={`flex-1 py-2.5 px-3 rounded-xl text-xs font-sans font-bold transition-all cursor-pointer flex items-center justify-center gap-1.5 ${
@@ -620,13 +710,14 @@ export const OrderModal: React.FC<OrderModalProps> = ({
 
                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                           <div>
-                            <label className="block text-[11px] font-semibold text-stone-600 mb-1">
+                            <label htmlFor="order-celebrant-name" className="block text-[11px] font-semibold text-stone-600 mb-1">
                               {selectedTemplate.eventType === 'khitan' && 'Nama Lengkap Anak'}
                               {selectedTemplate.eventType === 'birthday' && 'Nama Lengkap Yang Berulang Tahun'}
                               {selectedTemplate.eventType === 'aqiqah' && 'Nama Lengkap Bayi'}
                               {selectedTemplate.eventType === 'graduation' && 'Nama Lengkap Wisudawan & Gelar'}
                             </label>
                             <input
+                              id="order-celebrant-name"
                               type="text"
                               value={formData.celebrantName || formData.groomFullName}
                               onChange={(e) => {
@@ -647,7 +738,7 @@ export const OrderModal: React.FC<OrderModalProps> = ({
                           </div>
 
                           <div>
-                            <label className="block text-[11px] font-semibold text-stone-600 mb-1">
+                            <label htmlFor="order-celebrant-extra" className="block text-[11px] font-semibold text-stone-600 mb-1">
                               {selectedTemplate.eventType === 'graduation'
                                 ? 'Fakultas / Program Studi'
                                 : selectedTemplate.eventType === 'birthday'
@@ -655,6 +746,7 @@ export const OrderModal: React.FC<OrderModalProps> = ({
                                 : 'Nama Panggilan'}
                             </label>
                             <input
+                              id="order-celebrant-extra"
                               type="text"
                               value={
                                 selectedTemplate.eventType === 'graduation'
@@ -687,12 +779,13 @@ export const OrderModal: React.FC<OrderModalProps> = ({
 
                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1">
                           <div>
-                            <label className="block text-[11px] font-semibold text-stone-600 mb-1">
+                            <label htmlFor="order-parents-inst" className="block text-[11px] font-semibold text-stone-600 mb-1">
                               {selectedTemplate.eventType === 'graduation'
                                 ? 'Nama Universitas / Institut'
                                 : 'Nama Orang Tua / Penyelenggara'}
                             </label>
                             <input
+                              id="order-parents-inst"
                               type="text"
                               value={
                                 selectedTemplate.eventType === 'graduation'
@@ -717,7 +810,7 @@ export const OrderModal: React.FC<OrderModalProps> = ({
                           </div>
 
                           <div>
-                            <label className="block text-[11px] font-semibold text-stone-600 mb-1">
+                            <label htmlFor="order-parents-extra" className="block text-[11px] font-semibold text-stone-600 mb-1">
                               {selectedTemplate.eventType === 'graduation'
                                 ? 'Nama Kedua Orang Tua'
                                 : selectedTemplate.eventType === 'aqiqah'
@@ -725,6 +818,7 @@ export const OrderModal: React.FC<OrderModalProps> = ({
                                 : 'Instagram / Panggilan Keluarga (Opsional)'}
                             </label>
                             <input
+                              id="order-parents-extra"
                               type="text"
                               value={
                                 selectedTemplate.eventType === 'graduation'
@@ -760,10 +854,11 @@ export const OrderModal: React.FC<OrderModalProps> = ({
                         </div>
                         <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                           <div>
-                            <label className="block text-[11px] font-semibold text-stone-600 mb-1">
+                            <label htmlFor="order-event-date" className="block text-[11px] font-semibold text-stone-600 mb-1">
                               Hari & Tanggal Acara
                             </label>
                             <input
+                              id="order-event-date"
                               type="text"
                               value={formData.eventDate || formData.akadDate || ''}
                               onChange={(e) => {
@@ -775,10 +870,11 @@ export const OrderModal: React.FC<OrderModalProps> = ({
                             />
                           </div>
                           <div>
-                            <label className="block text-[11px] font-semibold text-stone-600 mb-1">
+                            <label htmlFor="order-event-time" className="block text-[11px] font-semibold text-stone-600 mb-1">
                               Jam Pelaksanaan
                             </label>
                             <input
+                              id="order-event-time"
                               type="text"
                               value={formData.eventTime || formData.akadTime || ''}
                               onChange={(e) => {
@@ -790,10 +886,11 @@ export const OrderModal: React.FC<OrderModalProps> = ({
                             />
                           </div>
                           <div>
-                            <label className="block text-[11px] font-semibold text-stone-600 mb-1">
+                            <label htmlFor="order-event-venue" className="block text-[11px] font-semibold text-stone-600 mb-1">
                               Nama Tempat / Gedung
                             </label>
                             <input
+                              id="order-event-venue"
                               type="text"
                               value={formData.eventVenue || formData.akadVenue || ''}
                               onChange={(e) => {
@@ -808,10 +905,11 @@ export const OrderModal: React.FC<OrderModalProps> = ({
 
                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1">
                           <div>
-                            <label className="block text-[11px] font-semibold text-stone-600 mb-1">
+                            <label htmlFor="order-maps-address" className="block text-[11px] font-semibold text-stone-600 mb-1">
                               Alamat Lengkap Lokasi
                             </label>
                             <input
+                              id="order-maps-address"
                               type="text"
                               value={formData.mapsAddress}
                               onChange={(e) => updateField('mapsAddress', e.target.value)}
@@ -820,10 +918,11 @@ export const OrderModal: React.FC<OrderModalProps> = ({
                             />
                           </div>
                           <div>
-                            <label className="block text-[11px] font-semibold text-stone-600 mb-1">
+                            <label htmlFor="order-maps-link" className="block text-[11px] font-semibold text-stone-600 mb-1">
                               Link Titik Google Maps (Opsional)
                             </label>
                             <input
+                              id="order-maps-link"
                               type="text"
                               value={formData.mapsLink}
                               onChange={(e) => updateField('mapsLink', e.target.value)}
@@ -842,10 +941,11 @@ export const OrderModal: React.FC<OrderModalProps> = ({
                         </div>
                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                           <div>
-                            <label className="block text-[11px] font-semibold text-stone-600 mb-1">
+                            <label htmlFor="order-gift-bank" className="block text-[11px] font-semibold text-stone-600 mb-1">
                               No. Rekening Kado / Amplop Digital
                             </label>
                             <input
+                              id="order-gift-bank"
                               type="text"
                               value={formData.giftBankInfo}
                               onChange={(e) => updateField('giftBankInfo', e.target.value)}
@@ -854,10 +954,11 @@ export const OrderModal: React.FC<OrderModalProps> = ({
                             />
                           </div>
                           <div>
-                            <label className="block text-[11px] font-semibold text-stone-600 mb-1">
+                            <label htmlFor="order-photo-drive" className="block text-[11px] font-semibold text-stone-600 mb-1">
                               Link Google Drive Foto / Portofolio (Atau Kirim di WA)
                             </label>
                             <input
+                              id="order-photo-drive"
                               type="text"
                               value={formData.photoDriveLink}
                               onChange={(e) => updateField('photoDriveLink', e.target.value)}
@@ -867,10 +968,11 @@ export const OrderModal: React.FC<OrderModalProps> = ({
                           </div>
                         </div>
                         <div>
-                          <label className="block text-[11px] font-semibold text-stone-600 mb-1">
+                          <label htmlFor="order-buyer-notes" className="block text-[11px] font-semibold text-stone-600 mb-1">
                             Catatan Tambahan (Dress Code, Protokol, dll)
                           </label>
                           <input
+                            id="order-buyer-notes"
                             type="text"
                             value={formData.buyerNotes}
                             onChange={(e) => updateField('buyerNotes', e.target.value)}
@@ -891,10 +993,11 @@ export const OrderModal: React.FC<OrderModalProps> = ({
                             <span>Data Mempelai Pria</span>
                           </div>
                           <div>
-                            <label className="block text-[11px] font-semibold text-stone-600 mb-1">
+                            <label htmlFor="order-groom-short" className="block text-[11px] font-semibold text-stone-600 mb-1">
                               Nama Panggilan Pria
                             </label>
                             <input
+                              id="order-groom-short"
                               type="text"
                               value={formData.groomShortName}
                               onChange={(e) => updateField('groomShortName', e.target.value)}
@@ -903,10 +1006,11 @@ export const OrderModal: React.FC<OrderModalProps> = ({
                             />
                           </div>
                           <div>
-                            <label className="block text-[11px] font-semibold text-stone-600 mb-1">
+                            <label htmlFor="order-groom-full" className="block text-[11px] font-semibold text-stone-600 mb-1">
                               Nama Lengkap & Gelar
                             </label>
                             <input
+                              id="order-groom-full"
                               type="text"
                               value={formData.groomFullName}
                               onChange={(e) => updateField('groomFullName', e.target.value)}
@@ -915,10 +1019,11 @@ export const OrderModal: React.FC<OrderModalProps> = ({
                             />
                           </div>
                           <div>
-                            <label className="block text-[11px] font-semibold text-stone-600 mb-1">
+                            <label htmlFor="order-groom-parents" className="block text-[11px] font-semibold text-stone-600 mb-1">
                               Nama Kedua Orang Tua Pria
                             </label>
                             <input
+                              id="order-groom-parents"
                               type="text"
                               value={formData.groomParents}
                               onChange={(e) => updateField('groomParents', e.target.value)}
@@ -927,10 +1032,11 @@ export const OrderModal: React.FC<OrderModalProps> = ({
                             />
                           </div>
                           <div>
-                            <label className="block text-[11px] font-semibold text-stone-600 mb-1">
+                            <label htmlFor="order-groom-ig" className="block text-[11px] font-semibold text-stone-600 mb-1">
                               Username Instagram (Opsional)
                             </label>
                             <input
+                              id="order-groom-ig"
                               type="text"
                               value={formData.groomIg}
                               onChange={(e) => updateField('groomIg', e.target.value)}
@@ -947,10 +1053,11 @@ export const OrderModal: React.FC<OrderModalProps> = ({
                             <span>Data Mempelai Wanita</span>
                           </div>
                           <div>
-                            <label className="block text-[11px] font-semibold text-stone-600 mb-1">
+                            <label htmlFor="order-bride-short" className="block text-[11px] font-semibold text-stone-600 mb-1">
                               Nama Panggilan Wanita
                             </label>
                             <input
+                              id="order-bride-short"
                               type="text"
                               value={formData.brideShortName}
                               onChange={(e) => updateField('brideShortName', e.target.value)}
@@ -959,10 +1066,11 @@ export const OrderModal: React.FC<OrderModalProps> = ({
                             />
                           </div>
                           <div>
-                            <label className="block text-[11px] font-semibold text-stone-600 mb-1">
+                            <label htmlFor="order-bride-full" className="block text-[11px] font-semibold text-stone-600 mb-1">
                               Nama Lengkap & Gelar
                             </label>
                             <input
+                              id="order-bride-full"
                               type="text"
                               value={formData.brideFullName}
                               onChange={(e) => updateField('brideFullName', e.target.value)}
@@ -971,10 +1079,11 @@ export const OrderModal: React.FC<OrderModalProps> = ({
                             />
                           </div>
                           <div>
-                            <label className="block text-[11px] font-semibold text-stone-600 mb-1">
+                            <label htmlFor="order-bride-parents" className="block text-[11px] font-semibold text-stone-600 mb-1">
                               Nama Kedua Orang Tua Wanita
                             </label>
                             <input
+                              id="order-bride-parents"
                               type="text"
                               value={formData.brideParents}
                               onChange={(e) => updateField('brideParents', e.target.value)}
@@ -983,10 +1092,11 @@ export const OrderModal: React.FC<OrderModalProps> = ({
                             />
                           </div>
                           <div>
-                            <label className="block text-[11px] font-semibold text-stone-600 mb-1">
+                            <label htmlFor="order-bride-ig" className="block text-[11px] font-semibold text-stone-600 mb-1">
                               Username Instagram (Opsional)
                             </label>
                             <input
+                              id="order-bride-ig"
                               type="text"
                               value={formData.brideIg}
                               onChange={(e) => updateField('brideIg', e.target.value)}
@@ -1005,10 +1115,11 @@ export const OrderModal: React.FC<OrderModalProps> = ({
                         </div>
                         <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                           <div>
-                            <label className="block text-[11px] font-semibold text-stone-600 mb-1">
+                            <label htmlFor="order-akad-date" className="block text-[11px] font-semibold text-stone-600 mb-1">
                               Hari & Tanggal Akad
                             </label>
                             <input
+                              id="order-akad-date"
                               type="text"
                               value={formData.akadDate}
                               onChange={(e) => updateField('akadDate', e.target.value)}
@@ -1017,10 +1128,11 @@ export const OrderModal: React.FC<OrderModalProps> = ({
                             />
                           </div>
                           <div>
-                            <label className="block text-[11px] font-semibold text-stone-600 mb-1">
+                            <label htmlFor="order-akad-time" className="block text-[11px] font-semibold text-stone-600 mb-1">
                               Jam Akad Nikah
                             </label>
                             <input
+                              id="order-akad-time"
                               type="text"
                               value={formData.akadTime}
                               onChange={(e) => updateField('akadTime', e.target.value)}
@@ -1029,10 +1141,11 @@ export const OrderModal: React.FC<OrderModalProps> = ({
                             />
                           </div>
                           <div>
-                            <label className="block text-[11px] font-semibold text-stone-600 mb-1">
+                            <label htmlFor="order-akad-venue" className="block text-[11px] font-semibold text-stone-600 mb-1">
                               Tempat / Gedung Akad
                             </label>
                             <input
+                              id="order-akad-venue"
                               type="text"
                               value={formData.akadVenue}
                               onChange={(e) => updateField('akadVenue', e.target.value)}
@@ -1044,10 +1157,11 @@ export const OrderModal: React.FC<OrderModalProps> = ({
 
                         <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-2">
                           <div>
-                            <label className="block text-[11px] font-semibold text-stone-600 mb-1">
+                            <label htmlFor="order-resepsi-date" className="block text-[11px] font-semibold text-stone-600 mb-1">
                               Hari & Tanggal Resepsi
                             </label>
                             <input
+                              id="order-resepsi-date"
                               type="text"
                               value={formData.resepsiDate}
                               onChange={(e) => updateField('resepsiDate', e.target.value)}
@@ -1056,10 +1170,11 @@ export const OrderModal: React.FC<OrderModalProps> = ({
                             />
                           </div>
                           <div>
-                            <label className="block text-[11px] font-semibold text-stone-600 mb-1">
+                            <label htmlFor="order-resepsi-time" className="block text-[11px] font-semibold text-stone-600 mb-1">
                               Jam Resepsi
                             </label>
                             <input
+                              id="order-resepsi-time"
                               type="text"
                               value={formData.resepsiTime}
                               onChange={(e) => updateField('resepsiTime', e.target.value)}
@@ -1068,10 +1183,11 @@ export const OrderModal: React.FC<OrderModalProps> = ({
                             />
                           </div>
                           <div>
-                            <label className="block text-[11px] font-semibold text-stone-600 mb-1">
+                            <label htmlFor="order-resepsi-venue" className="block text-[11px] font-semibold text-stone-600 mb-1">
                               Tempat / Gedung Resepsi
                             </label>
                             <input
+                              id="order-resepsi-venue"
                               type="text"
                               value={formData.resepsiVenue}
                               onChange={(e) => updateField('resepsiVenue', e.target.value)}
@@ -1083,10 +1199,11 @@ export const OrderModal: React.FC<OrderModalProps> = ({
 
                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2">
                           <div>
-                            <label className="block text-[11px] font-semibold text-stone-600 mb-1">
+                            <label htmlFor="order-wedding-maps-address" className="block text-[11px] font-semibold text-stone-600 mb-1">
                               Alamat Lengkap Lokasi
                             </label>
                             <input
+                              id="order-wedding-maps-address"
                               type="text"
                               value={formData.mapsAddress}
                               onChange={(e) => updateField('mapsAddress', e.target.value)}
@@ -1095,10 +1212,11 @@ export const OrderModal: React.FC<OrderModalProps> = ({
                             />
                           </div>
                           <div>
-                            <label className="block text-[11px] font-semibold text-stone-600 mb-1">
+                            <label htmlFor="order-wedding-maps-link" className="block text-[11px] font-semibold text-stone-600 mb-1">
                               Link Titik Google Maps (Opsional)
                             </label>
                             <input
+                              id="order-wedding-maps-link"
                               type="text"
                               value={formData.mapsLink}
                               onChange={(e) => updateField('mapsLink', e.target.value)}
@@ -1117,10 +1235,11 @@ export const OrderModal: React.FC<OrderModalProps> = ({
                         </div>
                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                           <div>
-                            <label className="block text-[11px] font-semibold text-stone-600 mb-1">
+                            <label htmlFor="order-music-choice" className="block text-[11px] font-semibold text-stone-600 mb-1">
                               Pilihan Lagu Latar Indonesia
                             </label>
                             <select
+                              id="order-music-choice"
                               value={formData.musicChoice}
                               onChange={(e) => updateField('musicChoice', e.target.value)}
                               className="w-full px-3 py-2 rounded-xl border border-stone-300 bg-white text-sm"
@@ -1134,10 +1253,11 @@ export const OrderModal: React.FC<OrderModalProps> = ({
                             </select>
                           </div>
                           <div>
-                            <label className="block text-[11px] font-semibold text-stone-600 mb-1">
+                            <label htmlFor="order-wedding-gift-bank" className="block text-[11px] font-semibold text-stone-600 mb-1">
                               No. Rekening Amplop Digital Pengantin
                             </label>
                             <input
+                              id="order-wedding-gift-bank"
                               type="text"
                               value={formData.giftBankInfo}
                               onChange={(e) => updateField('giftBankInfo', e.target.value)}
@@ -1147,10 +1267,11 @@ export const OrderModal: React.FC<OrderModalProps> = ({
                           </div>
                         </div>
                         <div>
-                          <label className="block text-[11px] font-semibold text-stone-600 mb-1">
+                          <label htmlFor="order-wedding-photo-drive" className="block text-[11px] font-semibold text-stone-600 mb-1">
                             Link Google Drive Foto Prewedding / Catatan Tambahan (Atau Kirim langsung di WA)
                           </label>
                           <input
+                            id="order-wedding-photo-drive"
                             type="text"
                             value={formData.photoDriveLink}
                             onChange={(e) => updateField('photoDriveLink', e.target.value)}
@@ -1211,13 +1332,13 @@ export const OrderModal: React.FC<OrderModalProps> = ({
                 <label className="block text-xs font-bold uppercase tracking-wider text-stone-700 mb-2.5">
                   Pilih Metode Pembayaran (GoPay / ShopeePay / DANA)
                 </label>
-                <div className="grid grid-cols-3 gap-3 mb-4">
+                <div role="radiogroup" aria-label="Metode Pembayaran" className="grid grid-cols-3 gap-3 mb-4">
                   {storeConfig.paymentMethods.map((method) => {
                     const active = formData.paymentMethodId === method.id
                     return (
                       <button
                         key={method.id}
-                        type="button"
+                        type="button" role="radio" aria-checked={active}
                         onClick={() => updateField('paymentMethodId', method.id)}
                         className={`p-3.5 rounded-2xl border text-center transition-all cursor-pointer flex flex-col items-center gap-1 ${
                           active
@@ -1250,7 +1371,8 @@ export const OrderModal: React.FC<OrderModalProps> = ({
                   <button
                     type="button"
                     onClick={handleCopyPaymentNumber}
-                    className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-5 py-3 rounded-xl bg-stone-900 hover:bg-stone-800 text-white text-xs font-sans font-semibold transition-all cursor-pointer active:scale-95 shadow-md"
+                    aria-label={`Salin nomor transfer ${selectedPayment.name} ${selectedPayment.number}`}
+                    className="min-h-[44px] w-full sm:w-auto inline-flex items-center justify-center gap-2 px-5 py-3 rounded-xl bg-stone-900 hover:bg-stone-800 text-white text-xs font-sans font-semibold transition-all cursor-pointer active:scale-95 shadow-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-500"
                   >
                     {copiedPayment ? (
                       <>
@@ -1311,7 +1433,7 @@ export const OrderModal: React.FC<OrderModalProps> = ({
             <button
               type="button"
               onClick={() => setStep((prev) => (prev - 1) as 1 | 2 | 3)}
-              className="inline-flex items-center gap-1.5 px-4 py-2.5 rounded-xl border border-stone-300 bg-white hover:bg-stone-100 text-xs font-sans font-semibold text-stone-700 cursor-pointer"
+              className="min-h-[44px] inline-flex items-center gap-1.5 px-4 py-2.5 rounded-xl border border-stone-300 bg-white hover:bg-stone-100 text-xs font-sans font-semibold text-stone-700 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-stone-400"
             >
               <ChevronLeft className="w-4 h-4" />
               <span>Sebelumnya</span>
@@ -1325,7 +1447,7 @@ export const OrderModal: React.FC<OrderModalProps> = ({
               <button
                 type="button"
                 onClick={handlePreviewWithMyData}
-                className="hidden sm:inline-flex items-center gap-1.5 px-4 py-2.5 rounded-xl border border-amber-700/40 bg-amber-50 hover:bg-amber-100 text-amber-900 text-xs font-sans font-semibold cursor-pointer"
+                className="min-h-[44px] hidden sm:inline-flex items-center gap-1.5 px-4 py-2.5 rounded-xl border border-amber-700/40 bg-amber-50 hover:bg-amber-100 text-amber-900 text-xs font-sans font-semibold cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-500"
               >
                 <Eye className="w-4 h-4" />
                 <span>Lihat di Pratinjau</span>
@@ -1337,12 +1459,15 @@ export const OrderModal: React.FC<OrderModalProps> = ({
                 type="button"
                 onClick={() => {
                   if (step === 1 && !formData.buyerName.trim()) {
+                    setBuyerNameError(true)
                     showToast('Mohon isi Nama Pemesan terlebih dahulu', 'info')
+                    const el = document.getElementById('buyer-name')
+                    el?.focus()
                     return
                   }
                   setStep((prev) => (prev + 1) as 1 | 2 | 3)
                 }}
-                className="inline-flex items-center gap-1.5 px-6 py-3 rounded-xl bg-amber-800 hover:bg-amber-900 text-white text-xs sm:text-sm font-sans font-bold shadow-md transition-all cursor-pointer active:scale-95"
+                className="min-h-[44px] inline-flex items-center gap-1.5 px-6 py-3 rounded-xl bg-amber-800 hover:bg-amber-900 text-white text-xs sm:text-sm font-sans font-bold shadow-md transition-all cursor-pointer active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-400"
               >
                 <span>Lanjut ke Langkah {step + 1}</span>
                 <ChevronRight className="w-4 h-4" />
@@ -1351,7 +1476,7 @@ export const OrderModal: React.FC<OrderModalProps> = ({
               <button
                 type="button"
                 onClick={handleSendToWhatsApp}
-                className="inline-flex items-center gap-2 px-6 py-3.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs sm:text-sm font-sans font-bold shadow-lg shadow-emerald-600/25 transition-all cursor-pointer active:scale-95"
+                className="min-h-[44px] inline-flex items-center gap-2 px-6 py-3.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs sm:text-sm font-sans font-bold shadow-lg shadow-emerald-600/25 transition-all cursor-pointer active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400"
               >
                 <Send className="w-4 h-4" />
                 <span>Konfirmasi & Setor Data via WhatsApp</span>

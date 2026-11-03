@@ -163,12 +163,14 @@ export const JungleSafariCoverScreen: React.FC<JungleSafariCoverScreenProps> = (
 
         {/* Open Button with Pulsing Glow */}
         <div className="relative inline-block mt-1">
-          <span className="absolute -inset-1 rounded-full bg-gradient-to-r from-amber-400 via-amber-300 to-lime-400 opacity-75 blur-md animate-pulse" />
+          <span className="absolute -inset-1 rounded-full bg-gradient-to-r from-amber-400 via-amber-300 to-lime-400 opacity-75 blur-md animate-pulse" aria-hidden="true" />
           <button
+            type="button"
             onClick={handleOpenInvitation}
-            className="group relative inline-flex items-center justify-center gap-2 px-8 sm:px-10 py-3.5 rounded-full bg-gradient-to-r from-amber-400 via-amber-300 to-lime-400 text-stone-950 font-extrabold text-xs sm:text-sm tracking-wide shadow-2xl hover:brightness-110 active:scale-95 transition-all duration-300 cursor-pointer"
+            aria-label="Buka undangan pesta safari dan nyalakan musik"
+            className="group relative inline-flex items-center justify-center gap-2 px-8 sm:px-10 py-3.5 rounded-full bg-gradient-to-r from-amber-400 via-amber-300 to-lime-400 text-stone-950 font-extrabold text-xs sm:text-sm tracking-wide shadow-2xl hover:brightness-110 active:scale-95 transition-all duration-300 cursor-pointer min-h-[48px] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-lime-400"
           >
-            <span>🌿</span>
+            <span aria-hidden="true">🌿</span>
             <span className="tracking-wider uppercase font-semibold">Buka Undangan Pesta</span>
           </button>
         </div>

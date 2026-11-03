@@ -6,6 +6,7 @@ interface Reveal3DProps extends React.HTMLAttributes<HTMLElement> {
   delay?: 0 | 100 | 200 | 300 | 400 | 500
   interactive?: boolean
   as?: React.ElementType
+  type?: 'button' | 'submit' | 'reset'
 }
 
 export const Reveal3D: React.FC<Reveal3DProps> = ({

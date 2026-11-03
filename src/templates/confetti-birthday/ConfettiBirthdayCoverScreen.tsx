@@ -116,7 +116,7 @@ export const ConfettiBirthdayCoverScreen: React.FC<ConfettiBirthdayCoverScreenPr
         {/* Top Header Badge */}
         <div className="space-y-1 mb-3">
           <div className="inline-flex items-center gap-1.5 px-3.5 py-1 rounded-full bg-pink-500/20 border border-pink-400/30 text-pink-300 text-[10px] sm:text-xs uppercase tracking-[0.25em] font-mono font-medium">
-            <Sparkles className="w-3.5 h-3.5 text-pink-400" />
+            <Sparkles className="w-3.5 h-3.5 text-pink-400"  aria-hidden="true"/>
             <span>You Are Invited! 🎉</span>
           </div>
         </div>
@@ -163,12 +163,14 @@ export const ConfettiBirthdayCoverScreen: React.FC<ConfettiBirthdayCoverScreenPr
 
         {/* Open Button with Pulsing Glow */}
         <div className="relative inline-block mt-1">
-          <span className="absolute -inset-1 rounded-full bg-gradient-to-r from-pink-500 via-rose-500 to-amber-400 opacity-75 blur-md animate-pulse" />
+          <span className="absolute -inset-1 rounded-full bg-gradient-to-r from-pink-500 via-rose-500 to-amber-400 opacity-75 blur-md animate-pulse" aria-hidden="true" />
           <button
+            type="button"
             onClick={handleOpenInvitation}
-            className="group relative inline-flex items-center justify-center gap-2 px-8 sm:px-10 py-3.5 rounded-full bg-gradient-to-r from-pink-500 via-rose-500 to-amber-400 text-white font-bold text-xs sm:text-sm tracking-wide shadow-2xl hover:brightness-110 active:scale-95 transition-all duration-300 cursor-pointer"
+            aria-label="Buka undangan ulang tahun dan nyalakan musik"
+            className="group relative inline-flex items-center justify-center gap-2 px-8 sm:px-10 py-3.5 rounded-full bg-gradient-to-r from-pink-500 via-rose-500 to-amber-400 text-white font-bold text-xs sm:text-sm tracking-wide shadow-2xl hover:brightness-110 active:scale-95 transition-all duration-300 cursor-pointer min-h-[48px] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-pink-400"
           >
-            <Gift className="w-4 h-4 text-white group-hover:rotate-12 transition-transform duration-300 animate-bounce" />
+            <Gift className="w-4 h-4 text-white group-hover:rotate-12 transition-transform duration-300 animate-bounce"  aria-hidden="true"/>
             <span className="tracking-wider uppercase font-semibold">Buka Kotak Undangan 🎁</span>
           </button>
         </div>

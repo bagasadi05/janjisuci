@@ -163,12 +163,14 @@ export const MonochromeGradCoverScreen: React.FC<MonochromeGradCoverScreenProps>
 
         {/* Open Button with Pulsing Glow */}
         <div className="relative inline-block mt-1">
-          <span className="absolute -inset-1 rounded-full bg-gradient-to-r from-white via-zinc-200 to-amber-200 opacity-75 blur-md animate-pulse" />
+          <span className="absolute -inset-1 rounded-full bg-gradient-to-r from-white via-zinc-200 to-amber-200 opacity-75 blur-md animate-pulse" aria-hidden="true" />
           <button
+            type="button"
             onClick={handleOpenInvitation}
-            className="group relative inline-flex items-center justify-center gap-2 px-8 sm:px-10 py-3.5 rounded-full bg-white hover:bg-zinc-100 text-stone-950 font-extrabold text-xs sm:text-sm tracking-wide shadow-2xl hover:brightness-110 active:scale-95 transition-all duration-300 cursor-pointer"
+            aria-label="Buka undangan wisuda dan nyalakan musik"
+            className="group relative inline-flex items-center justify-center gap-2 px-8 sm:px-10 py-3.5 rounded-full bg-white hover:bg-zinc-100 text-stone-950 font-extrabold text-xs sm:text-sm tracking-wide shadow-2xl hover:brightness-110 active:scale-95 transition-all duration-300 cursor-pointer min-h-[48px] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white"
           >
-            <GraduationCap className="w-4 h-4 text-stone-950" />
+            <GraduationCap className="w-4 h-4 text-stone-950"  aria-hidden="true"/>
             <span className="tracking-wider uppercase font-semibold">Buka Undangan Wisuda</span>
           </button>
         </div>

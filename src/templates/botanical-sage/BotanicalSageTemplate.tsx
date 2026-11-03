@@ -61,7 +61,7 @@ export const BotanicalSageTemplate: React.FC<TemplateViewProps> = ({
           className="w-full lg:w-[58%] xl:w-[62%] min-h-screen shadow-2xl relative border-l border-amber-600/15 transition-colors duration-500"
           style={{ backgroundColor: template.themeColors.primaryBg }}
         >
-          <main className="w-full max-w-4xl mx-auto px-2 sm:px-6 lg:px-8 py-4 sm:py-8">
+          <main className="w-full max-w-4xl mx-auto px-2 sm:px-6 lg:px-8 py-4 sm:py-8 outline-none">
             <HeroSection />
             <QuoteSection />
             <CoupleSection />

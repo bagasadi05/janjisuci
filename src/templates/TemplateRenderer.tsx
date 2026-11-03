@@ -90,7 +90,7 @@ export const TemplateRenderer: React.FC<TemplateRendererProps> = (props) => {
   }
 
   return (
-    <div ref={containerRef} className="w-full min-h-screen">
+    <div id="main-content" tabIndex={-1} ref={containerRef} className="w-full min-h-screen outline-none">
       {renderTemplateContent()}
     </div>
   )

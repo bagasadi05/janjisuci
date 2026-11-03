@@ -144,13 +144,14 @@ export const LuxuryChampagneCoverScreen: React.FC<LuxuryChampagneCoverScreenProp
 
         {/* Reveal Button */}
         <div className="relative inline-block mt-1 w-full">
-          <span className="absolute -inset-1 rounded-full bg-gradient-to-r from-[#D4AF37] via-[#F3E5AB] to-[#B8860B] opacity-75 blur-md animate-pulse" />
+          <span className="absolute -inset-1 rounded-full bg-gradient-to-r from-[#D4AF37] via-[#F3E5AB] to-[#B8860B] opacity-75 blur-md animate-pulse" aria-hidden="true" />
           <button
             type="button"
             onClick={handleOpenInvitation}
-            className="group relative w-full py-3.5 px-6 rounded-full bg-gradient-to-r from-[#D4AF37] via-[#F3E5AB] to-[#D4AF37] text-stone-950 font-sans font-bold text-xs uppercase tracking-[0.25em] shadow-[0_10px_25px_rgba(212,175,55,0.3)] transition-all duration-300 hover:brightness-110 active:scale-95 cursor-pointer flex items-center justify-center gap-2"
+            aria-label="Buka undangan dan nyalakan musik"
+            className="group relative w-full py-3.5 px-6 rounded-full bg-gradient-to-r from-[#D4AF37] via-[#F3E5AB] to-[#D4AF37] text-stone-950 font-sans font-bold text-xs uppercase tracking-[0.25em] shadow-[0_10px_25px_rgba(212,175,55,0.3)] transition-all duration-300 hover:brightness-110 active:scale-95 cursor-pointer flex items-center justify-center gap-2 min-h-[48px] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#D4AF37]"
           >
-            <MailOpen className="w-4 h-4 text-stone-950" />
+            <MailOpen className="w-4 h-4 text-stone-950"  aria-hidden="true"/>
             <span>BUKA UNDANGAN</span>
           </button>
         </div>

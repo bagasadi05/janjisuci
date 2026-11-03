@@ -125,14 +125,16 @@ export const LittleStarAqiqahDesktopShowcase: React.FC<LittleStarAqiqahDesktopSh
         </div>
 
         <button
+          type="button"
           onClick={onToggleAudio}
-          className="w-8 h-8 rounded-full bg-slate-100 hover:bg-slate-200 border border-slate-200 flex items-center justify-center text-slate-700 transition-colors cursor-pointer"
+          aria-label={isPlayingAudio ? 'Jeda Musik Aqiqah' : 'Putar Musik Aqiqah'}
+          className="min-w-[44px] min-h-[44px] rounded-full bg-slate-100 hover:bg-slate-200 border border-slate-300 flex items-center justify-center text-slate-800 transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sky-400"
           title={isPlayingAudio ? 'Jeda Musik' : 'Putar Musik'}
         >
           {isPlayingAudio ? (
-            <Volume2 className="w-4 h-4 text-sky-600 animate-pulse" />
+            <Volume2 className="w-4 h-4 text-sky-600 animate-pulse" aria-hidden="true" />
           ) : (
-            <VolumeX className="w-4 h-4 text-slate-400" />
+            <VolumeX className="w-4 h-4 text-slate-400" aria-hidden="true" />
           )}
         </button>
       </div>

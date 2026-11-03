@@ -138,12 +138,14 @@ export const BlushPeonyCoverScreen: React.FC<BlushPeonyCoverScreenProps> = ({
 
         {/* Open Button */}
         <div className="relative inline-block mt-1 w-full">
-          <span className="absolute -inset-1 rounded-full bg-gradient-to-r from-[#FB6F92] via-[#FFB3C6] to-[#B76E79] opacity-75 blur-md animate-pulse" />
+          <span className="absolute -inset-1 rounded-full bg-gradient-to-r from-[#FB6F92] via-[#FFB3C6] to-[#B76E79] opacity-75 blur-md animate-pulse" aria-hidden="true" />
           <button
+            type="button"
             onClick={handleOpenInvitation}
-            className="group relative w-full py-3.5 px-6 rounded-full bg-gradient-to-r from-[#6A2E46] via-[#B76E79] to-[#6A2E46] text-white font-sans font-bold text-xs uppercase tracking-[0.2em] shadow-xl hover:brightness-110 active:scale-95 transition-all duration-300 flex items-center justify-center gap-2 cursor-pointer"
+            aria-label="Buka undangan dan nyalakan musik"
+            className="group relative w-full py-3.5 px-6 rounded-full bg-gradient-to-r from-[#6A2E46] via-[#B76E79] to-[#6A2E46] text-white font-sans font-bold text-xs uppercase tracking-[0.2em] shadow-xl hover:brightness-110 active:scale-95 transition-all duration-300 flex items-center justify-center gap-2 cursor-pointer min-h-[48px] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#FFB3C6]"
           >
-            <MailOpen className="w-4 h-4 text-white" />
+            <MailOpen className="w-4 h-4 text-white"  aria-hidden="true"/>
             <span>BUKA UNDANGAN</span>
           </button>
         </div>

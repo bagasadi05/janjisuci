@@ -94,12 +94,14 @@ export const AdatBanjarDesktopShowcase: React.FC<AdatBanjarDesktopShowcaseProps>
         <div className="w-full max-w-xs p-3.5 rounded-2xl bg-[#2B1010]/80 backdrop-blur-md border border-[#D7BB83]/40 shadow-xl flex items-center justify-between gap-3">
           <div className="flex items-center gap-2.5 overflow-hidden">
             <button
+              type="button"
               onClick={onToggleAudio}
-              className={`w-9 h-9 rounded-full bg-gradient-to-tr from-[#D7BB83] to-[#A38C5E] text-[#1E0B0B] flex items-center justify-center shrink-0 shadow-md ${
+              aria-label={isPlayingAudio ? 'Jeda Musik Latar' : 'Putar Musik Latar'}
+              className={`min-w-[44px] min-h-[44px] rounded-full bg-gradient-to-tr from-[#D7BB83] to-[#A38C5E] text-[#1E0B0B] flex items-center justify-center shrink-0 shadow-md cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#D7BB83] ${
                 isPlayingAudio ? 'animate-spin-slow' : ''
               }`}
             >
-              <Disc3 className="w-5 h-5" />
+              <Disc3 className="w-5 h-5" aria-hidden="true" />
             </button>
             <div className="truncate text-left">
               <p className="text-[11px] font-semibold text-[#FFFCF3] truncate">
@@ -112,11 +114,13 @@ export const AdatBanjarDesktopShowcase: React.FC<AdatBanjarDesktopShowcaseProps>
           </div>
 
           <button
+            type="button"
             onClick={onNextTrack}
-            className="p-1.5 rounded-lg text-stone-300 hover:text-white hover:bg-white/10 transition-colors"
+            aria-label="Putar lagu adat berikutnya"
+            className="min-w-[44px] min-h-[44px] flex items-center justify-center rounded-lg text-stone-300 hover:text-white hover:bg-white/10 transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#D7BB83]"
             title="Lagu Selanjutnya"
           >
-            <SkipForward className="w-4 h-4 text-[#D7BB83]" />
+            <SkipForward className="w-4 h-4 text-[#D7BB83]" aria-hidden="true" />
           </button>
         </div>
       </div>
@@ -147,23 +151,23 @@ export const AdatBanjarDesktopShowcase: React.FC<AdatBanjarDesktopShowcaseProps>
 
         {/* Quick Jump Buttons */}
         <div className="flex items-center justify-center gap-2 text-[11px] text-stone-300 pt-2 border-t border-white/10">
-          <button onClick={() => scrollTo('mempelai')} className="hover:text-[#D7BB83] transition-colors cursor-pointer">
+          <button type="button" onClick={() => scrollTo('mempelai')} className="hover:text-[#D7BB83] transition-colors cursor-pointer py-1 px-1.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#D7BB83] rounded">
             Mempelai
           </button>
-          <span>•</span>
-          <button onClick={() => scrollTo('acara')} className="hover:text-[#D7BB83] transition-colors cursor-pointer">
+          <span aria-hidden="true">•</span>
+          <button type="button" onClick={() => scrollTo('acara')} className="hover:text-[#D7BB83] transition-colors cursor-pointer py-1 px-1.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#D7BB83] rounded">
             Jadwal Acara
           </button>
-          <span>•</span>
-          <button onClick={() => scrollTo('cerita')} className="hover:text-[#D7BB83] transition-colors cursor-pointer">
+          <span aria-hidden="true">•</span>
+          <button type="button" onClick={() => scrollTo('cerita')} className="hover:text-[#D7BB83] transition-colors cursor-pointer py-1 px-1.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#D7BB83] rounded">
             Love Story
           </button>
-          <span>•</span>
-          <button onClick={() => scrollTo('galeri')} className="hover:text-[#D7BB83] transition-colors cursor-pointer">
+          <span aria-hidden="true">•</span>
+          <button type="button" onClick={() => scrollTo('galeri')} className="hover:text-[#D7BB83] transition-colors cursor-pointer py-1 px-1.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#D7BB83] rounded">
             Galeri
           </button>
-          <span>•</span>
-          <button onClick={() => scrollTo('hadiah')} className="hover:text-[#D7BB83] transition-colors cursor-pointer">
+          <span aria-hidden="true">•</span>
+          <button type="button" onClick={() => scrollTo('hadiah')} className="hover:text-[#D7BB83] transition-colors cursor-pointer py-1 px-1.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#D7BB83] rounded">
             Amplop
           </button>
         </div>

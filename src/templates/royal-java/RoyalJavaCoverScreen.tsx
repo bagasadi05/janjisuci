@@ -154,9 +154,10 @@ export const RoyalJavaCoverScreen: React.FC<RoyalJavaCoverScreenProps> = ({
           <button
             type="button"
             onClick={handleOpenInvitation}
-            className="w-full py-3.5 px-6 rounded-full bg-gradient-to-r from-[#C8963E] via-[#E5C158] to-[#C8963E] hover:from-[#DFB15B] hover:to-[#B68432] text-[#120F0D] font-serif font-bold text-sm sm:text-base tracking-wider uppercase shadow-[0_10px_30px_rgba(200,150,62,0.4)] transition-all duration-300 hover:scale-[1.03] active:scale-95 cursor-pointer flex items-center justify-center gap-2 group"
+            aria-label="Buka serat ulem dan nyalakan musik"
+            className="w-full py-3.5 px-6 rounded-full bg-gradient-to-r from-[#C8963E] via-[#E5C158] to-[#C8963E] hover:from-[#DFB15B] hover:to-[#B68432] text-[#120F0D] font-serif font-bold text-sm sm:text-base tracking-wider uppercase shadow-[0_10px_30px_rgba(200,150,62,0.4)] transition-all duration-300 hover:scale-[1.03] active:scale-95 cursor-pointer flex items-center justify-center gap-2 group min-h-[48px] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#E5C158]"
           >
-            <Sparkles className="w-4 h-4 text-[#120F0D] group-hover:rotate-45 transition-transform" />
+            <Sparkles className="w-4 h-4 text-[#120F0D] group-hover:rotate-45 transition-transform"  aria-hidden="true"/>
             <span>Buka Serat Ulem</span>
           </button>
           <p className="text-[10px] text-stone-400 font-sans mt-3">

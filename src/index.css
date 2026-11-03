@@ -12,10 +12,45 @@
     -webkit-tap-highlight-color: transparent;
   }
 
-  /* Prevent iOS zoom on inputs */
+  /* Prevent iOS zoom on inputs & optimize tap responsiveness */
   input, select, textarea {
     font-size: 16px;
+    touch-action: manipulation;
   }
+
+  button, a {
+    touch-action: manipulation;
+  }
+
+  /* Accessible focus indicators for keyboard navigation (WCAG 2.4.7) */
+  :focus-visible {
+    outline: 2px solid #d97706;
+    outline-offset: 2px;
+  }
+}
+
+/* Screen reader only utility classes */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border-width: 0;
+}
+
+.focus\:not-sr-only:focus {
+  position: fixed;
+  width: auto;
+  height: auto;
+  padding: inherit;
+  margin: inherit;
+  overflow: visible;
+  clip: auto;
+  white-space: normal;
 }
 
 .font-serif {
@@ -231,8 +266,11 @@
   }
 }
 
-/* Respect user preference for reduced motion */
+/* Respect user preference for reduced motion (WCAG 2.3.3) */
 @media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto !important;
+  }
   .reveal-3d {
     opacity: 1 !important;
     transform: none !important;
@@ -240,5 +278,16 @@
   }
   .card-3d-interactive:hover {
     transform: none !important;
+  }
+  .animate-spin-slow,
+  .animate-soundwave-1,
+  .animate-soundwave-2,
+  .animate-soundwave-3,
+  .animate-float,
+  .petal-fall,
+  .animate-pulse,
+  .animate-ping,
+  .animate-bounce {
+    animation: none !important;
   }
 }

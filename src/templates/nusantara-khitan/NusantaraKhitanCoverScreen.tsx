@@ -114,7 +114,7 @@ export const NusantaraKhitanCoverScreen: React.FC<NusantaraKhitanCoverScreenProp
         {/* Top Header Badge */}
         <div className="space-y-1 mb-3">
           <div className="inline-flex items-center gap-1.5 px-3.5 py-1 rounded-full bg-amber-950/80 border border-amber-400/30 text-amber-300 text-[10px] sm:text-xs uppercase tracking-[0.25em] font-serif font-medium">
-            <span>⚜️</span>
+            <span aria-hidden="true">⚜️</span>
             <span>Tasyakuran Walimatul Khitan</span>
           </div>
         </div>
@@ -161,12 +161,14 @@ export const NusantaraKhitanCoverScreen: React.FC<NusantaraKhitanCoverScreenProp
 
         {/* Open Button with Pulsing Gold Glow */}
         <div className="relative inline-block mt-1">
-          <span className="absolute -inset-1 rounded-full bg-gradient-to-r from-amber-500 via-yellow-400 to-amber-600 opacity-75 blur-md animate-pulse" />
+          <span className="absolute -inset-1 rounded-full bg-gradient-to-r from-amber-500 via-yellow-400 to-amber-600 opacity-75 blur-md animate-pulse" aria-hidden="true" />
           <button
+            type="button"
             onClick={handleOpenInvitation}
-            className="group relative inline-flex items-center justify-center gap-2 px-8 sm:px-10 py-3.5 rounded-full bg-gradient-to-r from-amber-500 via-amber-400 to-yellow-500 text-stone-950 font-serif font-bold text-xs sm:text-sm tracking-wide shadow-2xl hover:brightness-110 active:scale-95 transition-all duration-300 cursor-pointer"
+            aria-label="Buka serat undangan khitan dan nyalakan musik"
+            className="group relative inline-flex items-center justify-center gap-2 px-8 sm:px-10 py-3.5 rounded-full bg-gradient-to-r from-amber-500 via-amber-400 to-yellow-500 text-stone-950 font-serif font-bold text-xs sm:text-sm tracking-wide shadow-2xl hover:brightness-110 active:scale-95 transition-all duration-300 cursor-pointer min-h-[48px] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-400"
           >
-            <span>⚜️</span>
+            <span aria-hidden="true">⚜️</span>
             <span className="tracking-wider uppercase font-semibold">Buka Serat Undangan</span>
           </button>
         </div>

@@ -126,14 +126,16 @@ export const ConfettiBirthdayDesktopShowcase: React.FC<ConfettiBirthdayDesktopSh
         </div>
 
         <button
+          type="button"
           onClick={onToggleAudio}
-          className="w-8 h-8 rounded-full bg-white/10 hover:bg-white/20 border border-white/10 flex items-center justify-center text-white transition-colors cursor-pointer"
+          aria-label={isPlayingAudio ? 'Jeda Musik Ulang Tahun' : 'Putar Musik Ulang Tahun'}
+          className="min-w-[44px] min-h-[44px] rounded-full bg-white/10 hover:bg-white/20 border border-white/10 flex items-center justify-center text-white transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-pink-400"
           title={isPlayingAudio ? 'Jeda Musik' : 'Putar Musik'}
         >
           {isPlayingAudio ? (
-            <Volume2 className="w-4 h-4 text-pink-400 animate-pulse" />
+            <Volume2 className="w-4 h-4 text-pink-400 animate-pulse" aria-hidden="true" />
           ) : (
-            <VolumeX className="w-4 h-4 text-slate-400" />
+            <VolumeX className="w-4 h-4 text-slate-400" aria-hidden="true" />
           )}
         </button>
       </div>

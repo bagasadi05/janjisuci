@@ -140,10 +140,11 @@ export const RsvpSection: React.FC = () => {
             <form onSubmit={handleSubmit} className="space-y-4">
               {/* Nama */}
               <div>
-                <label className="block text-xs font-semibold text-stone-700 uppercase tracking-wider mb-1.5">
-                  Nama Lengkap
+                <label htmlFor="rsvp-name" className="block text-xs font-semibold text-stone-700 uppercase tracking-wider mb-1.5">
+                  Nama Lengkap *
                 </label>
                 <input
+                  id="rsvp-name"
                   type="text"
                   required
                   value={name}
@@ -155,46 +156,56 @@ export const RsvpSection: React.FC = () => {
 
               {/* Status Kehadiran Segmented Tabs */}
               <div>
-                <label className="block text-xs font-semibold text-stone-700 uppercase tracking-wider mb-2">
-                  Status Kehadiran
+                <label id="rsvp-status-label" className="block text-xs font-semibold text-stone-700 uppercase tracking-wider mb-2">
+                  Status Kehadiran *
                 </label>
-                <div className="grid grid-cols-3 gap-2">
+                <div
+                  role="radiogroup"
+                  aria-labelledby="rsvp-status-label"
+                  className="grid grid-cols-3 gap-2"
+                >
                   <button
                     type="button"
+                    role="radio"
+                    aria-checked={attendance === 'hadir'}
                     onClick={() => setAttendance('hadir')}
-                    className={`flex flex-col items-center justify-center p-3 rounded-2xl border text-xs font-medium transition-all cursor-pointer ${
+                    className={`flex flex-col items-center justify-center p-3 rounded-2xl border text-xs font-medium transition-all cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500 min-h-[56px] ${
                       attendance === 'hadir'
                         ? 'bg-emerald-50 border-emerald-500 text-emerald-800 font-bold shadow-sm ring-1 ring-emerald-500/30'
                         : 'bg-white border-stone-200 text-stone-600 hover:bg-stone-50 active:scale-95'
                     }`}
                   >
-                    <CheckCircle2 className="w-4 h-4 text-emerald-600 mb-1" />
+                    <CheckCircle2 className="w-4 h-4 text-emerald-600 mb-1" aria-hidden="true" />
                     <span>Hadir</span>
                   </button>
 
                   <button
                     type="button"
+                    role="radio"
+                    aria-checked={attendance === 'ragu'}
                     onClick={() => setAttendance('ragu')}
-                    className={`flex flex-col items-center justify-center p-3 rounded-2xl border text-xs font-medium transition-all cursor-pointer ${
+                    className={`flex flex-col items-center justify-center p-3 rounded-2xl border text-xs font-medium transition-all cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-500 min-h-[56px] ${
                       attendance === 'ragu'
                         ? 'bg-amber-50 border-amber-500 text-amber-800 font-bold shadow-sm ring-1 ring-amber-500/30'
                         : 'bg-white border-stone-200 text-stone-600 hover:bg-stone-50 active:scale-95'
                     }`}
                   >
-                    <HelpCircle className="w-4 h-4 text-amber-600 mb-1" />
+                    <HelpCircle className="w-4 h-4 text-amber-600 mb-1" aria-hidden="true" />
                     <span>Ragu</span>
                   </button>
 
                   <button
                     type="button"
+                    role="radio"
+                    aria-checked={attendance === 'berhalangan'}
                     onClick={() => setAttendance('berhalangan')}
-                    className={`flex flex-col items-center justify-center p-3 rounded-2xl border text-xs font-medium transition-all cursor-pointer ${
+                    className={`flex flex-col items-center justify-center p-3 rounded-2xl border text-xs font-medium transition-all cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rose-500 min-h-[56px] ${
                       attendance === 'berhalangan'
                         ? 'bg-rose-50 border-rose-500 text-rose-800 font-bold shadow-sm ring-1 ring-rose-500/30'
                         : 'bg-white border-stone-200 text-stone-600 hover:bg-stone-50 active:scale-95'
                     }`}
                   >
-                    <XCircle className="w-4 h-4 text-rose-600 mb-1" />
+                    <XCircle className="w-4 h-4 text-rose-600 mb-1" aria-hidden="true" />
                     <span>Berhalangan</span>
                   </button>
                 </div>
@@ -203,10 +214,11 @@ export const RsvpSection: React.FC = () => {
               {/* Jumlah Tamu (jika hadir) */}
               {attendance === 'hadir' && (
                 <div>
-                  <label className="block text-xs font-semibold text-stone-700 uppercase tracking-wider mb-1.5">
+                  <label htmlFor="rsvp-guest-count" className="block text-xs font-semibold text-stone-700 uppercase tracking-wider mb-1.5">
                     Jumlah Orang yang Hadir
                   </label>
                   <select
+                    id="rsvp-guest-count"
                     value={guestCount}
                     onChange={(e) => setGuestCount(Number(e.target.value))}
                     className="w-full px-4 py-3 rounded-2xl border border-stone-300 focus:outline-none focus:ring-2 focus:ring-amber-600/40 text-stone-800 text-sm bg-stone-50/50 cursor-pointer"
@@ -219,10 +231,11 @@ export const RsvpSection: React.FC = () => {
 
               {/* Ucapan & Doa */}
               <div>
-                <label className="block text-xs font-semibold text-stone-700 uppercase tracking-wider mb-1.5">
-                  Ucapan & Doa Restu
+                <label htmlFor="rsvp-message" className="block text-xs font-semibold text-stone-700 uppercase tracking-wider mb-1.5">
+                  Ucapan & Doa Restu *
                 </label>
                 <textarea
+                  id="rsvp-message"
                   required
                   rows={4}
                   value={message}
@@ -236,9 +249,9 @@ export const RsvpSection: React.FC = () => {
               <button
                 type="submit"
                 disabled={isSubmitting}
-                className="w-full inline-flex items-center justify-center gap-2 py-3.5 px-6 rounded-2xl bg-gradient-to-r from-amber-800 to-amber-700 hover:from-amber-900 hover:to-amber-800 active:scale-[0.98] text-white font-sans font-semibold text-sm shadow-md transition-all cursor-pointer disabled:opacity-50"
+                className="w-full min-h-[48px] inline-flex items-center justify-center gap-2 py-3.5 px-6 rounded-2xl bg-gradient-to-r from-amber-800 to-amber-700 hover:from-amber-900 hover:to-amber-800 active:scale-[0.98] text-white font-sans font-semibold text-sm shadow-md transition-all cursor-pointer disabled:opacity-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-600"
               >
-                <Send className="w-4 h-4" />
+                <Send className="w-4 h-4" aria-hidden="true" />
                 <span>{isSubmitting ? 'Mengirim...' : 'Kirim Ucapan & Konfirmasi'}</span>
               </button>
             </form>
@@ -248,22 +261,29 @@ export const RsvpSection: React.FC = () => {
           <div className="lg:col-span-7 p-6 sm:p-8 rounded-3xl bg-white/95 backdrop-blur-md border border-amber-800/15 shadow-xl">
             <div className="flex items-center justify-between mb-4 pb-2 border-b border-stone-200/60">
               <div className="flex items-center gap-2">
-                <MessageSquareHeart className="w-5 h-5 text-amber-800" />
+                <MessageSquareHeart className="w-5 h-5 text-amber-800" aria-hidden="true" />
                 <h3 className="font-serif text-xl font-bold text-stone-800">
                   Doa & Ucapan ({wishes.length})
                 </h3>
               </div>
 
               {/* Filter Tabs */}
-              <div className="flex items-center gap-1 text-[11px]">
+              <div
+                role="tablist"
+                aria-label="Filter ucapan berdasarkan kehadiran"
+                className="flex items-center gap-1 text-[11px]"
+              >
                 {(['semua', 'hadir', 'berhalangan'] as const).map((mode) => (
                   <button
                     key={mode}
+                    type="button"
+                    role="tab"
+                    aria-selected={filter === mode}
                     onClick={() => setFilter(mode)}
-                    className={`px-3 py-1 rounded-full capitalize transition-colors cursor-pointer ${
+                    className={`min-h-[44px] px-3.5 py-2 rounded-full capitalize transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-700 ${
                       filter === mode
                         ? 'bg-amber-800 text-white font-medium'
-                        : 'text-stone-500 hover:text-stone-800'
+                        : 'text-stone-600 hover:text-stone-900'
                     }`}
                   >
                     {mode}
@@ -275,7 +295,7 @@ export const RsvpSection: React.FC = () => {
             {/* Wishes Scrollable Feed */}
             <div className="space-y-3.5 max-h-[480px] overflow-y-auto pr-1.5">
               {filteredWishes.length === 0 ? (
-                <p className="text-center text-xs text-stone-400 py-8">
+                <p className="text-center text-xs text-stone-500 py-8">
                   Belum ada ucapan untuk kategori ini.
                 </p>
               ) : (
@@ -288,7 +308,7 @@ export const RsvpSection: React.FC = () => {
                     >
                       <div className="flex items-center justify-between mb-2">
                         <div className="flex items-center gap-2.5">
-                          <div className="w-8 h-8 rounded-full bg-gradient-to-tr from-amber-200 to-amber-100 text-amber-900 border border-amber-600/30 flex items-center justify-center text-xs font-bold font-serif shadow-sm">
+                          <div className="w-8 h-8 rounded-full bg-gradient-to-tr from-amber-200 to-amber-100 text-amber-900 border border-amber-600/30 flex items-center justify-center text-xs font-bold font-serif shadow-sm" aria-hidden="true">
                             {item.name.charAt(0).toUpperCase()}
                           </div>
                           <span className="font-serif font-bold text-sm sm:text-base text-stone-800">
@@ -314,23 +334,26 @@ export const RsvpSection: React.FC = () => {
                       </p>
 
                       <div className="flex items-center justify-between pl-10 mt-3 pt-2 border-t border-stone-200/50">
-                        <span className="text-[10px] sm:text-[11px] text-stone-400 font-sans">
+                        <span className="text-[10px] sm:text-[11px] text-stone-500 font-sans">
                           {item.createdAt}
                         </span>
 
                         {/* Interactive Heart Reaction Button */}
                         <button
+                          type="button"
                           onClick={() => handleLike(item.id)}
-                          className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs transition-all cursor-pointer ${
+                          aria-label={`${isLiked ? 'Batal sukai' : 'Sukai'} ucapan dari ${item.name}`}
+                          className={`min-h-[44px] inline-flex items-center gap-1.5 px-3.5 py-2 rounded-full text-xs transition-all cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rose-500 ${
                             isLiked
                               ? 'bg-rose-50 text-rose-600 font-semibold'
-                              : 'text-stone-400 hover:text-rose-500'
+                              : 'text-stone-600 hover:text-rose-600'
                           }`}
                         >
                           <Heart
                             className={`w-3.5 h-3.5 ${
                               isLiked ? 'fill-rose-500 text-rose-500 animate-bounce' : ''
                             }`}
+                            aria-hidden="true"
                           />
                           <span>{item.likes || 0}</span>
                         </button>

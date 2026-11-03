@@ -123,7 +123,7 @@ export const AdatBanjarCoverScreen: React.FC<AdatBanjarCoverScreenProps> = ({
 
         {/* Header Tag */}
         <div className="inline-flex items-center gap-1.5 px-3.5 py-1 rounded-full bg-[#722C2C]/10 border border-[#D7BB83]/60 text-[#722C2C] text-[10px] sm:text-xs uppercase tracking-[0.25em] font-sans font-semibold mb-2">
-          <Sparkles className="w-3.5 h-3.5 text-[#D7BB83]" />
+          <Sparkles className="w-3.5 h-3.5 text-[#D7BB83]"  aria-hidden="true"/>
           <span>The Wedding of</span>
         </div>
 
@@ -167,10 +167,12 @@ export const AdatBanjarCoverScreen: React.FC<AdatBanjarCoverScreenProps> = ({
         {/* Open Button with Royal Banjar Gold Accent */}
         <div className="relative inline-block mt-1">
           <button
+            type="button"
             onClick={handleOpenInvitation}
-            className="group relative inline-flex items-center justify-center gap-2.5 px-7 sm:px-9 py-3 sm:py-3.5 rounded-full bg-gradient-to-r from-[#D7BB83] via-[#E5C058] to-[#A38C5E] text-[#291206] font-sans font-bold text-xs sm:text-sm tracking-wide shadow-xl hover:brightness-110 active:scale-95 transition-all duration-300 cursor-pointer border border-[#D7BB83]"
+            aria-label="Buka undangan pernikahan Adat Banjar dan nyalakan musik"
+            className="group relative inline-flex items-center justify-center gap-2.5 px-7 sm:px-9 py-3 sm:py-3.5 rounded-full bg-gradient-to-r from-[#D7BB83] via-[#E5C058] to-[#A38C5E] text-[#291206] font-sans font-bold text-xs sm:text-sm tracking-wide shadow-xl hover:brightness-110 active:scale-95 transition-all duration-300 cursor-pointer border border-[#D7BB83] min-h-[48px] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#D7BB83]"
           >
-            <MailOpen className="w-4 h-4 text-[#291206] transition-transform group-hover:-translate-y-0.5" />
+            <MailOpen className="w-4 h-4 text-[#291206] transition-transform group-hover:-translate-y-0.5"  aria-hidden="true"/>
             <span>Buka Undangan</span>
           </button>
         </div>

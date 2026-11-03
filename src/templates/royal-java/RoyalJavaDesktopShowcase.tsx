@@ -138,18 +138,22 @@ export const RoyalJavaDesktopShowcase: React.FC<RoyalJavaDesktopShowcaseProps> =
 
         <div className="flex items-center gap-1.5 shrink-0">
           <button
+            type="button"
             onClick={onToggleAudio}
-            className="p-2 rounded-full bg-white/10 hover:bg-white/20 text-amber-300 transition-colors cursor-pointer"
+            aria-label={isPlayingAudio ? 'Jeda Gendhing Musik' : 'Putar Gendhing Musik'}
+            className="min-w-[44px] min-h-[44px] flex items-center justify-center rounded-full bg-white/10 hover:bg-white/20 text-amber-300 transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-300"
             title={isPlayingAudio ? 'Jeda Musik' : 'Putar Musik'}
           >
-            {isPlayingAudio ? <Volume2 className="w-4 h-4" /> : <VolumeX className="w-4 h-4 text-stone-400" />}
+            {isPlayingAudio ? <Volume2 className="w-4 h-4" aria-hidden="true" /> : <VolumeX className="w-4 h-4 text-stone-400" aria-hidden="true" />}
           </button>
           <button
+            type="button"
             onClick={onNextTrack}
-            className="p-2 rounded-full bg-white/10 hover:bg-white/20 text-stone-300 hover:text-white transition-colors cursor-pointer"
+            aria-label="Ganti gendhing berikutnya"
+            className="min-w-[44px] min-h-[44px] flex items-center justify-center rounded-full bg-white/10 hover:bg-white/20 text-stone-300 hover:text-white transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-300"
             title="Ganti Gendhing Berikutnya"
           >
-            <SkipForward className="w-4 h-4" />
+            <SkipForward className="w-4 h-4" aria-hidden="true" />
           </button>
         </div>
       </div>

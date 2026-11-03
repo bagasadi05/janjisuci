@@ -109,10 +109,12 @@ export const NusantaraKhitanDesktopShowcase: React.FC<NusantaraKhitanDesktopShow
       <div className="relative z-10 p-3 rounded-2xl bg-[#231B15]/80 border border-amber-500/25 flex items-center justify-between">
         <div className="flex items-center gap-3">
           <button
+            type="button"
             onClick={onToggleAudio}
-            className="w-10 h-10 rounded-full bg-gradient-to-tr from-amber-500 to-yellow-400 text-stone-950 flex items-center justify-center cursor-pointer shadow-md hover:scale-105 transition-transform"
+            aria-label={isPlayingAudio ? 'Jeda Musik Khitan' : 'Putar Musik Khitan'}
+            className="min-w-[44px] min-h-[44px] rounded-full bg-gradient-to-tr from-amber-500 to-yellow-400 text-stone-950 flex items-center justify-center cursor-pointer shadow-md hover:scale-105 transition-transform focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-400"
           >
-            {isPlayingAudio ? <Music className="w-4 h-4 animate-spin" /> : <VolumeX className="w-4 h-4" />}
+            {isPlayingAudio ? <Music className="w-4 h-4 animate-spin" aria-hidden="true" /> : <VolumeX className="w-4 h-4" aria-hidden="true" />}
           </button>
           <div className="text-left text-xs">
             <p className="font-semibold text-white truncate max-w-[170px]">

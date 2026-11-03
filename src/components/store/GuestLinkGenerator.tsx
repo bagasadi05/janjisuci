@@ -67,13 +67,14 @@ export const GuestLinkGenerator: React.FC = () => {
           {/* Left Input Panel */}
           <div className="lg:col-span-5 p-6 rounded-3xl bg-stone-900 border border-white/10 space-y-4 shadow-xl">
             <div>
-              <label className="block text-xs font-semibold text-amber-200 uppercase tracking-wider mb-1.5">
+              <label htmlFor="gen-template" className="block text-xs font-semibold text-amber-200 uppercase tracking-wider mb-1.5">
                 Pilih Tema Undangan
               </label>
               <select
+                id="gen-template"
                 value={selectedTemplateSlug}
                 onChange={(e) => setSelectedTemplateSlug(e.target.value)}
-                className="w-full px-3.5 py-2.5 rounded-xl bg-stone-800 border border-stone-700 text-white text-sm focus:outline-none focus:border-amber-500"
+                className="w-full min-h-[44px] px-3.5 py-2.5 rounded-xl bg-stone-800 border border-stone-700 text-white text-sm focus:outline-none focus:border-amber-500 focus-visible:ring-2 focus-visible:ring-amber-400"
               >
                 {storeConfig.templates.map((t) => (
                   <option key={t.id} value={t.slug}>
@@ -84,28 +85,30 @@ export const GuestLinkGenerator: React.FC = () => {
             </div>
 
             <div>
-              <label className="block text-xs font-semibold text-amber-200 uppercase tracking-wider mb-1.5">
+              <label htmlFor="gen-couple-name" className="block text-xs font-semibold text-amber-200 uppercase tracking-wider mb-1.5">
                 Nama Panggilan Kedua Mempelai
               </label>
               <input
+                id="gen-couple-name"
                 type="text"
                 value={coupleName}
                 onChange={(e) => setCoupleName(e.target.value)}
                 placeholder="Contoh: Rian & Sarah"
-                className="w-full px-3.5 py-2.5 rounded-xl bg-stone-800 border border-stone-700 text-white text-sm focus:outline-none focus:border-amber-500"
+                className="w-full min-h-[44px] px-3.5 py-2.5 rounded-xl bg-stone-800 border border-stone-700 text-white text-sm focus:outline-none focus:border-amber-500 focus-visible:ring-2 focus-visible:ring-amber-400"
               />
             </div>
 
             <div>
-              <label className="block text-xs font-semibold text-amber-200 uppercase tracking-wider mb-1.5">
+              <label htmlFor="gen-guest-input" className="block text-xs font-semibold text-amber-200 uppercase tracking-wider mb-1.5">
                 Daftar Nama Tamu (1 Baris = 1 Tamu)
               </label>
               <textarea
+                id="gen-guest-input"
                 rows={5}
                 value={guestInput}
                 onChange={(e) => setGuestInput(e.target.value)}
                 placeholder="Ketik nama tamu, pisahkan dengan baris baru (Enter)..."
-                className="w-full px-3.5 py-2.5 rounded-xl bg-stone-800 border border-stone-700 text-white text-sm focus:outline-none focus:border-amber-500 resize-none"
+                className="w-full px-3.5 py-2.5 rounded-xl bg-stone-800 border border-stone-700 text-white text-sm focus:outline-none focus:border-amber-500 focus-visible:ring-2 focus-visible:ring-amber-400 resize-none"
               />
             </div>
           </div>
@@ -114,61 +117,72 @@ export const GuestLinkGenerator: React.FC = () => {
           <div className="lg:col-span-7 p-6 rounded-3xl bg-stone-900 border border-white/10 shadow-xl">
             <div className="flex items-center justify-between pb-3 mb-4 border-b border-white/10">
               <div className="flex items-center gap-2 text-white font-serif font-bold text-lg">
-                <Users className="w-5 h-5 text-amber-400" />
-                <span>Daftar Link Tamu Siap Kirim ({guestList.length})</span>
+                <Users className="w-5 h-5 text-amber-400" aria-hidden="true" />
+                <h3 className="text-white font-serif font-bold text-lg">
+                  Daftar Link Tamu Siap Kirim ({guestList.length})
+                </h3>
               </div>
             </div>
 
-            <div className="space-y-3 max-h-[340px] overflow-y-auto pr-1">
-              {guestList.map((guest, idx) => {
-                const isCopied = copiedIndex === idx
-                const inviteUrl = buildInvitationUrl(guest)
-                return (
-                  <div
-                    key={idx}
-                    className="p-4 rounded-2xl bg-stone-800/80 border border-white/10 flex flex-col sm:flex-row sm:items-center justify-between gap-3"
-                  >
-                    <div className="min-w-0">
-                      <p className="font-serif font-bold text-amber-200 text-base truncate">
-                        {guest}
-                      </p>
-                      <p className="text-[11px] text-stone-400 font-mono truncate mt-0.5">
-                        {inviteUrl}
-                      </p>
-                    </div>
+            <div role="region" aria-live="polite" aria-label="Hasil Link Tamu" className="space-y-3 max-h-[340px] overflow-y-auto pr-1">
+              {guestList.length === 0 ? (
+                <div role="status" className="text-center py-10 px-4 text-stone-300 text-xs sm:text-sm">
+                  <p>Belum ada nama tamu yang dimasukkan.</p>
+                  <p className="text-stone-400 text-xs mt-1">Ketik nama tamu pada formulir di sebelah kiri untuk membuat link otomatis.</p>
+                </div>
+              ) : (
+                guestList.map((guest, idx) => {
+                  const isCopied = copiedIndex === idx
+                  const inviteUrl = buildInvitationUrl(guest)
+                  return (
+                    <div
+                      key={idx}
+                      className="p-4 rounded-2xl bg-stone-800/80 border border-white/10 flex flex-col sm:flex-row sm:items-center justify-between gap-3"
+                    >
+                      <div className="min-w-0">
+                        <p className="font-serif font-bold text-amber-200 text-base truncate">
+                          {guest}
+                        </p>
+                        <p className="text-[11px] text-stone-400 font-mono truncate mt-0.5">
+                          {inviteUrl}
+                        </p>
+                      </div>
 
-                    <div className="flex items-center gap-2 shrink-0">
-                      <button
-                        type="button"
-                        onClick={() => handleCopyText(guest, idx)}
-                        className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-amber-500/20 hover:bg-amber-500/30 border border-amber-400/30 text-amber-200 text-xs font-sans font-semibold transition-all cursor-pointer"
-                      >
-                        {isCopied ? (
-                          <>
-                            <Check className="w-3.5 h-3.5 text-emerald-400" />
-                            <span className="text-emerald-400">Tersalin!</span>
-                          </>
-                        ) : (
-                          <>
-                            <Copy className="w-3.5 h-3.5" />
-                            <span>Salin Teks WA</span>
-                          </>
-                        )}
-                      </button>
+                      <div className="flex items-center gap-2 shrink-0">
+                        <button
+                          type="button"
+                          onClick={() => handleCopyText(guest, idx)}
+                          aria-label={`Salin teks undangan WhatsApp untuk ${guest}`}
+                          className="min-h-[44px] inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-amber-500/20 hover:bg-amber-500/30 border border-amber-400/30 text-amber-200 text-xs font-sans font-semibold transition-all cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-400"
+                        >
+                          {isCopied ? (
+                            <>
+                              <Check className="w-3.5 h-3.5 text-emerald-400" aria-hidden="true" />
+                              <span className="text-emerald-400">Tersalin!</span>
+                            </>
+                          ) : (
+                            <>
+                              <Copy className="w-3.5 h-3.5" aria-hidden="true" />
+                              <span>Salin Teks WA</span>
+                            </>
+                          )}
+                        </button>
 
-                      <a
-                        href={`https://wa.me/?text=${encodeURIComponent(buildWhatsAppMessage(guest))}`}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-sans font-semibold transition-all cursor-pointer"
-                      >
-                        <Send className="w-3.5 h-3.5" />
-                        <span>Kirim WA</span>
-                      </a>
+                        <a
+                          href={`https://wa.me/?text=${encodeURIComponent(buildWhatsAppMessage(guest))}`}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          aria-label={`Kirim undangan WhatsApp langsung untuk ${guest}`}
+                          className="min-h-[44px] inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-sans font-semibold transition-all cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400"
+                        >
+                          <Send className="w-3.5 h-3.5" aria-hidden="true" />
+                          <span>Kirim WA</span>
+                        </a>
+                      </div>
                     </div>
-                  </div>
-                )
-              })}
+                  )
+                })
+              )}
             </div>
           </div>
         </div>

@@ -40,7 +40,6 @@ export const StorefrontPage: React.FC<StorefrontPageProps> = ({
   const [searchQuery, setSearchQuery] = useState<string>('')
   const [pricingCategory, setPricingCategory] = useState<'wedding' | 'event'>('wedding')
   const [openFaqIndex, setOpenFaqIndex] = useState<number | null>(0)
-  const [activeLegalModal, setActiveLegalModal] = useState<'terms' | 'privacy' | 'refund' | null>(null)
 
   const eventFilters = [
     { id: 'all', label: 'Semua Acara', count: storeConfig.templates.length, icon: '✨' },
@@ -83,11 +82,13 @@ export const StorefrontPage: React.FC<StorefrontPageProps> = ({
       <header className="sticky top-0 z-50 bg-stone-950/85 backdrop-blur-xl border-b border-amber-500/20 px-4 sm:px-8 py-3.5">
         <div className="max-w-7xl mx-auto flex items-center justify-between">
           {/* Brand Logo */}
-          <div
+          <button
+            type="button"
             onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
-            className="flex items-center gap-2.5 cursor-pointer group"
+            aria-label={`${storeConfig.brand.name} - Beranda Undangan Digital`}
+            className="flex items-center gap-2.5 cursor-pointer group text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-400 rounded-xl p-1 -m-1"
           >
-            <div className="w-9 h-9 rounded-xl bg-gradient-to-tr from-amber-600 via-amber-400 to-amber-200 flex items-center justify-center text-stone-950 font-serif font-extrabold text-lg shadow-md">
+            <div className="w-9 h-9 rounded-xl bg-gradient-to-tr from-amber-600 via-amber-400 to-amber-200 flex items-center justify-center text-stone-950 font-serif font-extrabold text-lg shadow-md" aria-hidden="true">
               💍
             </div>
             <div>
@@ -98,26 +99,26 @@ export const StorefrontPage: React.FC<StorefrontPageProps> = ({
                 Undangan Digital Premium
               </span>
             </div>
-          </div>
+          </button>
 
           {/* Desktop Navigation Links */}
-          <nav className="hidden lg:flex items-center gap-6 text-xs font-medium text-stone-300">
-            <button onClick={() => scrollTo('katalog')} className="hover:text-amber-300 transition-colors cursor-pointer">
+          <nav aria-label="Navigasi Halaman Toko" className="hidden lg:flex items-center gap-6 text-xs font-medium text-stone-300">
+            <button type="button" onClick={() => scrollTo('katalog')} className="hover:text-amber-300 transition-colors cursor-pointer py-1.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-400 rounded-lg">
               Katalog
             </button>
-            <button onClick={() => scrollTo('paket-harga')} className="hover:text-amber-300 transition-colors cursor-pointer">
+            <button type="button" onClick={() => scrollTo('paket-harga')} className="hover:text-amber-300 transition-colors cursor-pointer py-1.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-400 rounded-lg">
               Paket Harga
             </button>
-            <button onClick={() => scrollTo('cara-order')} className="hover:text-amber-300 transition-colors cursor-pointer">
+            <button type="button" onClick={() => scrollTo('cara-order')} className="hover:text-amber-300 transition-colors cursor-pointer py-1.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-400 rounded-lg">
               Cara Pemesanan
             </button>
-            <button onClick={() => scrollTo('testimoni')} className="hover:text-amber-300 transition-colors cursor-pointer">
+            <button type="button" onClick={() => scrollTo('testimoni')} className="hover:text-amber-300 transition-colors cursor-pointer py-1.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-400 rounded-lg">
               Testimoni
             </button>
-            <button onClick={() => scrollTo('faq')} className="hover:text-amber-300 transition-colors cursor-pointer">
+            <button type="button" onClick={() => scrollTo('faq')} className="hover:text-amber-300 transition-colors cursor-pointer py-1.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-400 rounded-lg">
               FAQ
             </button>
-            <button onClick={() => scrollTo('generator')} className="hover:text-amber-300 transition-colors cursor-pointer">
+            <button type="button" onClick={() => scrollTo('generator')} className="hover:text-amber-300 transition-colors cursor-pointer py-1.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-400 rounded-lg">
               Generator Tamu
             </button>
           </nav>
@@ -130,24 +131,28 @@ export const StorefrontPage: React.FC<StorefrontPageProps> = ({
               )}`}
               target="_blank"
               rel="noopener noreferrer"
-              className="hidden sm:inline-flex items-center gap-1.5 px-3.5 py-2 rounded-full bg-white/10 hover:bg-white/15 border border-white/15 text-xs font-medium text-stone-200 transition-all"
+              aria-label={`Chat WhatsApp Admin di ${storeConfig.brand.whatsappDisplay}`}
+              className="hidden sm:inline-flex items-center gap-1.5 px-3.5 py-2 rounded-full bg-white/10 hover:bg-white/15 border border-white/15 text-xs font-medium text-stone-200 transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400 min-h-[38px]"
             >
-              <MessageCircle className="w-3.5 h-3.5 text-emerald-400" />
+              <MessageCircle className="w-3.5 h-3.5 text-emerald-400" aria-hidden="true" />
               <span>WA: {storeConfig.brand.whatsappDisplay}</span>
             </a>
 
             <button
+              type="button"
               onClick={() => onOrderTemplate(storeConfig.templates[0])}
-              className="inline-flex items-center gap-1.5 px-4 py-2 rounded-full bg-gradient-to-r from-amber-500 via-amber-400 to-amber-600 text-stone-950 font-bold text-xs shadow-lg hover:brightness-110 active:scale-95 transition-all cursor-pointer"
+              aria-label="Pesan template undangan pernikahan sekarang"
+              className="min-h-[40px] inline-flex items-center gap-1.5 px-4 py-2 rounded-full bg-gradient-to-r from-amber-500 via-amber-400 to-amber-600 text-stone-950 font-bold text-xs shadow-lg hover:brightness-110 active:scale-95 transition-all cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-300"
             >
-              <ShoppingBag className="w-3.5 h-3.5" />
+              <ShoppingBag className="w-3.5 h-3.5" aria-hidden="true" />
               <span>Pesan Sekarang</span>
             </button>
           </div>
         </div>
       </header>
 
-      {/* HERO SECTION */}
+      <main id="main-content" tabIndex={-1} className="outline-none">
+        {/* HERO SECTION */}
       <section className="relative pt-12 pb-20 sm:py-24 px-4 overflow-hidden">
         {/* Background Ambient Glow */}
         <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[600px] h-[400px] bg-amber-500/15 rounded-full blur-[130px] pointer-events-none" />
@@ -178,18 +183,22 @@ export const StorefrontPage: React.FC<StorefrontPageProps> = ({
           {/* Primary Hero CTAs */}
           <div className="flex flex-col sm:flex-row items-center justify-center gap-3.5 mt-9">
             <button
+              type="button"
               onClick={() => scrollTo('katalog')}
-              className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-8 py-4 rounded-full bg-gradient-to-r from-amber-500 via-amber-400 to-amber-600 text-stone-950 font-bold text-sm shadow-[0_10px_30px_rgba(212,175,55,0.35)] hover:brightness-110 active:scale-95 transition-all cursor-pointer"
+              aria-label="Lihat katalog desain template undangan"
+              className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-8 py-4 rounded-full bg-gradient-to-r from-amber-500 via-amber-400 to-amber-600 text-stone-950 font-bold text-sm shadow-[0_10px_30px_rgba(212,175,55,0.35)] hover:brightness-110 active:scale-95 transition-all cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-300"
             >
               <span>Pilih Desain Template</span>
-              <ArrowRight className="w-4 h-4" />
+              <ArrowRight className="w-4 h-4" aria-hidden="true" />
             </button>
 
             <button
+              type="button"
               onClick={() => onPreviewTemplate(storeConfig.templates[0])}
-              className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-8 py-4 rounded-full bg-white/10 hover:bg-white/15 border border-amber-400/30 text-amber-200 font-semibold text-sm transition-all cursor-pointer"
+              aria-label="Coba demo template undangan pernikahan terlaris"
+              className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-8 py-4 rounded-full bg-white/10 hover:bg-white/15 border border-amber-400/30 text-amber-200 font-semibold text-sm transition-all cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white"
             >
-              <Eye className="w-4 h-4" />
+              <Eye className="w-4 h-4" aria-hidden="true" />
               <span>Coba Demo Terlaris</span>
             </button>
           </div>
@@ -313,21 +322,28 @@ export const StorefrontPage: React.FC<StorefrontPageProps> = ({
             </p>
 
             {/* Event Category Filter Tabs */}
-            <div className="flex items-center justify-center gap-2 flex-wrap mt-7">
+            <div
+              role="tablist"
+              aria-label="Filter kategori acara undangan"
+              className="flex items-center justify-center gap-2 flex-wrap mt-7"
+            >
               {eventFilters.map((cat) => (
                 <button
                   key={cat.id}
+                  type="button"
+                  role="tab"
+                  aria-selected={selectedEvent === cat.id}
                   onClick={() => setSelectedEvent(cat.id)}
-                  className={`inline-flex items-center gap-1.5 px-4 py-2 rounded-full text-xs font-semibold transition-all cursor-pointer ${
+                  className={`min-h-[44px] inline-flex items-center gap-1.5 px-4 py-2 rounded-full text-xs font-semibold transition-all cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-400 ${
                     selectedEvent === cat.id
                       ? 'bg-amber-500 text-stone-950 shadow-md scale-105'
                       : 'bg-stone-800 text-stone-300 hover:bg-stone-700'
                   }`}
                 >
-                  <span>{cat.icon}</span>
+                  <span aria-hidden="true">{cat.icon}</span>
                   <span>{cat.label}</span>
-                  <span className={`text-[10px] px-1.5 py-0.2 rounded-full ${
-                    selectedEvent === cat.id ? 'bg-stone-950/20 text-stone-950' : 'bg-white/10 text-stone-400'
+                  <span className={`text-[10px] px-1.5 py-0.5 rounded-full ${
+                    selectedEvent === cat.id ? 'bg-stone-950/20 text-stone-950' : 'bg-white/10 text-stone-300'
                   }`}>
                     {cat.count}
                   </span>
@@ -337,21 +353,27 @@ export const StorefrontPage: React.FC<StorefrontPageProps> = ({
 
             {/* Instant Search Bar */}
             <div className="relative max-w-md mx-auto mt-6">
+              <label htmlFor="store-search-templates" className="sr-only">
+                Cari tema undangan berdasarkan nama atau fitur
+              </label>
               <div className="relative flex items-center">
-                <Search className="w-4 h-4 text-stone-400 absolute left-4 pointer-events-none" />
+                <Search className="w-4 h-4 text-stone-400 absolute left-4 pointer-events-none" aria-hidden="true" />
                 <input
+                  id="store-search-templates"
                   type="text"
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   placeholder="Cari tema... (misal: Banjar, Jawa, Sage, Navy, Safari, Khitan)"
-                  className="w-full pl-11 pr-10 py-3 rounded-full bg-stone-900/90 border border-white/15 focus:border-amber-400 text-xs sm:text-sm text-stone-200 placeholder-stone-500 focus:outline-none transition-all shadow-inner"
+                  className="w-full min-h-[48px] pl-11 pr-10 py-3 rounded-full bg-stone-900/90 border border-white/15 focus:border-amber-400 text-xs sm:text-sm text-stone-200 placeholder-stone-400 focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-400 transition-all shadow-inner"
                 />
                 {searchQuery && (
                   <button
+                    type="button"
                     onClick={() => setSearchQuery('')}
-                    className="absolute right-3.5 p-1 rounded-full text-stone-400 hover:text-white"
+                    aria-label="Hapus kata kunci pencarian"
+                    className="absolute right-3 p-1.5 rounded-full text-stone-400 hover:text-white hover:bg-white/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-400 cursor-pointer"
                   >
-                    <X className="w-3.5 h-3.5" />
+                    <X className="w-4 h-4" aria-hidden="true" />
                   </button>
                 )}
               </div>
@@ -366,11 +388,12 @@ export const StorefrontPage: React.FC<StorefrontPageProps> = ({
                 Coba cari dengan kata kunci lain atau pilih kategori acara di atas.
               </p>
               <button
+                type="button"
                 onClick={() => {
                   setSearchQuery('');
                   setSelectedEvent('all');
                 }}
-                className="px-5 py-2 rounded-full bg-amber-500 text-stone-950 font-bold text-xs shadow-md"
+                className="min-h-[44px] px-5 py-2.5 rounded-full bg-amber-500 hover:bg-amber-400 text-stone-950 font-bold text-xs shadow-md transition-all cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-300"
               >
                 Tampilkan Semua Template
               </button>
@@ -436,10 +459,12 @@ export const StorefrontPage: React.FC<StorefrontPageProps> = ({
                         </div>
 
                         <button
+                          type="button"
                           onClick={() => onPreviewTemplate(tpl)}
-                          className="px-3 py-1.5 rounded-full bg-white/20 hover:bg-white/30 backdrop-blur-md border border-white/30 text-white text-xs font-semibold flex items-center gap-1.5 transition-all cursor-pointer shrink-0 ml-2"
+                          aria-label={`Lihat demo template ${tpl.name}`}
+                          className="min-h-[44px] px-3.5 py-2 rounded-full bg-white/20 hover:bg-white/30 backdrop-blur-md border border-white/30 text-white text-xs font-semibold flex items-center gap-1.5 transition-all cursor-pointer shrink-0 ml-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white"
                         >
-                          <Eye className="w-3.5 h-3.5" />
+                          <Eye className="w-3.5 h-3.5" aria-hidden="true" />
                           <span>Lihat Demo</span>
                         </button>
                       </div>
@@ -481,7 +506,7 @@ export const StorefrontPage: React.FC<StorefrontPageProps> = ({
                 {/* Price & Action Footer */}
                 <div className="px-6 py-4 bg-stone-950/60 border-t border-white/10 flex items-center justify-between gap-3">
                   <div>
-                    <span className="text-[11px] text-stone-500 line-through block">
+                    <span className="text-[11px] text-stone-400 line-through block">
                       {formatRupiah(tpl.originalPrice)}
                     </span>
                     <span className="font-serif text-2xl font-bold text-amber-300">
@@ -491,16 +516,20 @@ export const StorefrontPage: React.FC<StorefrontPageProps> = ({
 
                   <div className="flex items-center gap-2">
                     <button
+                      type="button"
                       onClick={() => onPreviewTemplate(tpl)}
-                      className="px-3.5 py-2.5 rounded-xl bg-stone-800 hover:bg-stone-700 text-stone-200 text-xs font-semibold transition-colors cursor-pointer"
+                      aria-label={`Lihat demo langsung template ${tpl.name}`}
+                      className="min-h-[44px] px-3.5 py-2.5 rounded-xl bg-stone-800 hover:bg-stone-700 text-stone-200 text-xs font-semibold transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-400"
                     >
                       Lihat Demo
                     </button>
                     <button
+                      type="button"
                       onClick={() => onOrderTemplate(tpl)}
-                      className="inline-flex items-center gap-1.5 px-4 py-2.5 rounded-xl bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-stone-950 text-xs font-bold shadow-md transition-all cursor-pointer active:scale-95"
+                      aria-label={`Pilih dan pesan template ${tpl.name} seharga ${formatRupiah(tpl.price)}`}
+                      className="min-h-[44px] inline-flex items-center gap-1.5 px-4 py-2.5 rounded-xl bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-stone-950 text-xs font-bold shadow-md transition-all cursor-pointer active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-300"
                     >
-                      <ShoppingBag className="w-3.5 h-3.5" />
+                      <ShoppingBag className="w-3.5 h-3.5" aria-hidden="true" />
                       <span>Pilih & Pesan</span>
                     </button>
                   </div>
@@ -528,25 +557,33 @@ export const StorefrontPage: React.FC<StorefrontPageProps> = ({
             </p>
 
             {/* Toggle Tab: Paket Pernikahan vs Paket Syukuran/Ultah/Wisuda */}
-            <div className="inline-flex p-1.5 rounded-2xl bg-stone-900 border border-amber-500/30 max-w-lg mx-auto shadow-xl">
+            <div
+              role="tablist"
+              aria-label="Pilihan kategori paket harga"
+              className="inline-flex p-1.5 rounded-2xl bg-stone-900 border border-amber-500/30 max-w-lg mx-auto shadow-xl"
+            >
               <button
                 type="button"
+                role="tab"
+                aria-selected={pricingCategory === 'wedding'}
                 onClick={() => setPricingCategory('wedding')}
-                className={`px-4 sm:px-6 py-2.5 rounded-xl text-xs sm:text-sm font-bold transition-all cursor-pointer flex items-center gap-2 ${
+                className={`min-h-[44px] px-4 sm:px-6 py-2.5 rounded-xl text-xs sm:text-sm font-bold transition-all cursor-pointer flex items-center gap-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-400 ${
                   pricingCategory === 'wedding'
                     ? 'bg-gradient-to-r from-amber-500 to-amber-600 text-stone-950 shadow-md font-bold'
-                    : 'text-stone-400 hover:text-white'
+                    : 'text-stone-300 hover:text-white'
                 }`}
               >
                 <span>💍 Paket Pernikahan (Mulai 75k)</span>
               </button>
               <button
                 type="button"
+                role="tab"
+                aria-selected={pricingCategory === 'event'}
                 onClick={() => setPricingCategory('event')}
-                className={`px-4 sm:px-6 py-2.5 rounded-xl text-xs sm:text-sm font-bold transition-all cursor-pointer flex items-center gap-2 ${
+                className={`min-h-[44px] px-4 sm:px-6 py-2.5 rounded-xl text-xs sm:text-sm font-bold transition-all cursor-pointer flex items-center gap-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-400 ${
                   pricingCategory === 'event'
                     ? 'bg-gradient-to-r from-amber-500 to-amber-600 text-stone-950 shadow-md font-bold'
-                    : 'text-stone-400 hover:text-white'
+                    : 'text-stone-300 hover:text-white'
                 }`}
               >
                 <span>🎉 Khitan, Ultah & Wisuda (Mulai 59k)</span>
@@ -589,7 +626,7 @@ export const StorefrontPage: React.FC<StorefrontPageProps> = ({
                     </p>
 
                     <div className="my-6 pb-6 border-b border-white/10">
-                      <span className="text-xs text-stone-500 line-through block">
+                      <span className="text-xs text-stone-400 line-through block">
                         Harga Normal {formatRupiah(pkg.originalPrice)}
                       </span>
                       <div className="flex items-baseline gap-1.5 mt-1">
@@ -603,7 +640,7 @@ export const StorefrontPage: React.FC<StorefrontPageProps> = ({
                     <ul className="space-y-3 text-xs sm:text-sm text-stone-300 mb-8">
                       {pkg.features.map((feat, i) => (
                         <li key={i} className="flex items-start gap-2.5">
-                          <Check className="w-4 h-4 text-emerald-400 shrink-0 mt-0.5" />
+                          <Check className="w-4 h-4 text-emerald-400 shrink-0 mt-0.5" aria-hidden="true" />
                           <span>{feat}</span>
                         </li>
                       ))}
@@ -611,8 +648,10 @@ export const StorefrontPage: React.FC<StorefrontPageProps> = ({
                   </div>
 
                   <button
+                    type="button"
                     onClick={() => onOrderTemplate(defaultTemplate, pkg)}
-                    className={`w-full py-3.5 px-6 rounded-2xl font-bold text-xs sm:text-sm transition-all cursor-pointer active:scale-95 ${
+                    aria-label={`Pilih ${pkg.name} seharga ${formatRupiah(pkg.price)}`}
+                    className={`min-h-[48px] w-full py-3.5 px-6 rounded-2xl font-bold text-xs sm:text-sm transition-all cursor-pointer active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-300 ${
                       pkg.isPopular
                         ? 'bg-gradient-to-r from-amber-500 via-amber-400 to-amber-600 text-stone-950 shadow-lg hover:brightness-110'
                         : 'bg-white/10 hover:bg-white/20 text-white border border-white/15'
@@ -699,8 +738,10 @@ export const StorefrontPage: React.FC<StorefrontPageProps> = ({
             </div>
 
             <button
+              type="button"
               onClick={() => onOrderTemplate(storeConfig.templates[0])}
-              className="px-7 py-3.5 rounded-full bg-amber-500 hover:bg-amber-400 text-stone-950 font-bold text-xs sm:text-sm shadow-lg transition-all cursor-pointer shrink-0 active:scale-95"
+              aria-label="Buat pesanan sekarang"
+              className="min-h-[44px] px-7 py-3.5 rounded-full bg-amber-500 hover:bg-amber-400 text-stone-950 font-bold text-xs sm:text-sm shadow-lg transition-all cursor-pointer shrink-0 active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-300"
             >
               Buat Pesanan Sekarang
             </button>
@@ -784,6 +825,8 @@ export const StorefrontPage: React.FC<StorefrontPageProps> = ({
           <div className="space-y-3">
             {storeConfig.faqs.map((faq, idx) => {
               const isOpen = openFaqIndex === idx
+              const questionId = `faq-question-${idx}`
+              const answerId = `faq-answer-${idx}`
               return (
                 <div
                   key={idx}
@@ -791,19 +834,27 @@ export const StorefrontPage: React.FC<StorefrontPageProps> = ({
                 >
                   <button
                     type="button"
+                    id={questionId}
+                    aria-expanded={isOpen}
+                    aria-controls={answerId}
                     onClick={() => setOpenFaqIndex(isOpen ? null : idx)}
-                    className="w-full p-4 sm:p-5 text-left flex items-center justify-between gap-4 cursor-pointer hover:bg-stone-800/60 transition-colors"
+                    className="w-full p-4 sm:p-5 text-left flex items-center justify-between gap-4 cursor-pointer hover:bg-stone-800/60 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-400 min-h-[56px]"
                   >
                     <span className="font-serif font-bold text-sm sm:text-base text-white">
                       {faq.question}
                     </span>
-                    <span className="p-1 rounded-full bg-white/10 text-amber-300 shrink-0">
+                    <span className="p-1 rounded-full bg-white/10 text-amber-300 shrink-0" aria-hidden="true">
                       {isOpen ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
                     </span>
                   </button>
 
                   {isOpen && (
-                    <div className="px-5 pb-5 text-xs sm:text-sm text-stone-300 leading-relaxed border-t border-white/5 pt-3 animate-in fade-in duration-150">
+                    <div
+                      id={answerId}
+                      role="region"
+                      aria-labelledby={questionId}
+                      className="px-5 pb-5 text-xs sm:text-sm text-stone-300 leading-relaxed border-t border-white/5 pt-3 animate-in fade-in duration-150"
+                    >
                       {faq.answer}
                     </div>
                   )}
@@ -814,31 +865,35 @@ export const StorefrontPage: React.FC<StorefrontPageProps> = ({
         </div>
       </section>
 
-      {/* FLOATING WHATSAPP BUTTON */}
+      {/* FLOATING WHATSAPP BUTTON (Single Consolidated Accessible Button) */}
       <a
         href={`https://wa.me/${storeConfig.brand.whatsappNumber}?text=${encodeURIComponent(
           'Halo Admin JanjiSuci.id, saya ingin konsultasi atau pesan undangan pernikahan digital. Boleh dibantu?'
         )}`}
         target="_blank"
         rel="noopener noreferrer"
-        aria-label="Chat WhatsApp Admin"
-        className="fixed bottom-6 right-6 z-40 group flex items-center gap-2.5 px-4 py-3 rounded-full bg-emerald-600 hover:bg-emerald-500 text-white shadow-[0_10px_25px_rgba(16,185,129,0.4)] transition-all duration-300 active:scale-95"
+        aria-label={`Konsultasi langsung via WhatsApp Admin (${storeConfig.brand.whatsappDisplay})`}
+        className="fixed bottom-20 sm:bottom-6 right-4 sm:right-6 z-40 group flex items-center gap-2.5 px-4 py-3 rounded-full bg-emerald-600 hover:bg-emerald-500 text-white shadow-[0_10px_25px_rgba(16,185,129,0.4)] transition-all duration-300 active:scale-95 border border-emerald-400/30 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white min-h-[44px]"
       >
-        <span className="relative flex h-3 w-3">
+        <span className="relative flex h-3 w-3" aria-hidden="true">
           <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-white opacity-75" />
           <span className="relative inline-flex rounded-full h-3 w-3 bg-emerald-200" />
         </span>
-        <MessageCircle className="w-5 h-5 fill-white" />
+        <MessageCircle className="w-5 h-5 fill-white" aria-hidden="true" />
         <span className="font-sans font-bold text-xs sm:text-sm hidden sm:inline">
           Konsultasi Admin WA
         </span>
+        <span className="px-1.5 py-0.5 rounded-full bg-emerald-800/80 text-[10px] text-emerald-200 font-semibold sm:hidden">
+          WA
+        </span>
       </a>
+      </main>
 
       {/* FOOTER STOREFRONT */}
       <footer className="py-12 px-4 bg-stone-950 border-t border-white/10 text-center text-xs text-stone-400">
         <div className="max-w-5xl mx-auto space-y-3">
           <div className="flex items-center justify-center gap-2">
-            <span className="text-lg">💍</span>
+            <span className="text-lg" aria-hidden="true">💍</span>
             <span className="font-serif text-xl font-bold text-white">
               {storeConfig.brand.name}
             </span>
@@ -849,40 +904,25 @@ export const StorefrontPage: React.FC<StorefrontPageProps> = ({
           <p className="text-amber-300/90 font-medium">
             WhatsApp & Pembayaran (GoPay / ShopeePay / DANA): {storeConfig.brand.whatsappDisplay}
           </p>
-          <div className="pt-4 border-t border-white/5 text-[11px] text-stone-500 flex items-center justify-center gap-1">
+          <div className="pt-4 border-t border-white/5 text-[11px] text-stone-400 flex items-center justify-center gap-1">
             <span>© 2026 {storeConfig.brand.name}. Dibuat dengan</span>
-            <Heart className="w-3 h-3 text-rose-500 fill-rose-500" />
+            <Heart className="w-3 h-3 text-rose-500 fill-rose-500" aria-hidden="true" />
             <span>untuk hari bahagia Anda.</span>
           </div>
         </div>
       </footer>
 
-      {/* Floating WhatsApp Quick Consultation Pill */}
-      <a
-        href={`https://wa.me/${storeConfig.brand.whatsappNumber}?text=${encodeURIComponent(
-          'Halo Admin JanjiSuci.id, saya ingin tanya-tanya mengenai pembuatan undangan digital.'
-        )}`}
-        target="_blank"
-        rel="noopener noreferrer"
-        className="fixed bottom-6 right-6 z-40 inline-flex items-center gap-2.5 px-4 py-3 rounded-full bg-emerald-500 hover:bg-emerald-600 text-white font-sans text-xs font-bold shadow-[0_10px_30px_rgba(16,185,129,0.5)] hover:scale-105 active:scale-95 transition-all cursor-pointer border border-emerald-400/30"
-      >
-        <div className="relative">
-          <MessageCircle className="w-4 h-4" />
-          <span className="absolute -top-1 -right-1 w-2 h-2 rounded-full bg-emerald-200 animate-ping" />
-        </div>
-        <span className="hidden sm:inline">Tanya Admin WA</span>
-        <span className="px-1.5 py-0.5 rounded-full bg-emerald-800/80 text-[10px] text-emerald-200 font-semibold">Online</span>
-      </a>
-
       {/* Mobile Bottom Sticky Quick Action Bar */}
-      <div className="fixed bottom-0 inset-x-0 z-30 p-2.5 bg-stone-950/95 backdrop-blur-xl border-t border-amber-500/25 flex items-center justify-between gap-3 sm:hidden shadow-2xl">
+      <div className="fixed bottom-0 inset-x-0 z-30 p-2.5 bg-stone-950/95 backdrop-blur-xl border-t border-amber-500/25 flex items-center justify-between gap-3 sm:hidden shadow-2xl pb-[max(0.625rem,env(safe-area-inset-bottom,0.625rem))]">
         <div>
           <p className="text-[10px] text-amber-300 uppercase tracking-widest font-mono font-semibold">Promo Spesial</p>
           <p className="text-xs font-bold text-white">Mulai Rp 75.000 Saja</p>
         </div>
         <button
+          type="button"
           onClick={() => scrollTo('katalog')}
-          className="px-4 py-2 rounded-full bg-gradient-to-r from-amber-500 to-amber-600 text-stone-950 font-bold text-xs shadow-md active:scale-95"
+          aria-label="Lihat katalog pilihan template undangan"
+          className="min-h-[44px] px-4 py-2 rounded-full bg-gradient-to-r from-amber-500 to-amber-600 text-stone-950 font-bold text-xs shadow-md active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-300 flex items-center justify-center"
         >
           Pilih Template
         </button>
