@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { MailOpen, Sparkles, Crown } from 'lucide-react'
 import confetti from 'canvas-confetti'
+import { useInvitationData } from '../../context/InvitationContext'
 
 interface ExclusiveNavyCoverScreenProps {
   isOpen: boolean
@@ -17,6 +18,7 @@ export const ExclusiveNavyCoverScreen: React.FC<ExclusiveNavyCoverScreenProps> =
   coupleNames = 'Nabilah & Yoga',
   dateText = '20 . 12 . 2025'
 }) => {
+  const { activeTemplate } = useInvitationData()
   const [guestName, setGuestName] = useState<string>(propGuestName || 'Tamu Undangan')
   const [isAnimating, setIsAnimating] = useState(false)
 
@@ -136,8 +138,11 @@ export const ExclusiveNavyCoverScreen: React.FC<ExclusiveNavyCoverScreenProps> =
           <div className="w-32 h-44 sm:w-36 sm:h-48 rounded-t-full rounded-b-xl overflow-hidden p-1 bg-gradient-to-b from-amber-300/40 via-amber-400/20 to-transparent shadow-2xl shadow-black/80">
             <div className="w-full h-full rounded-t-full rounded-b-lg overflow-hidden relative">
               <img
-                src="https://images.unsplash.com/photo-1583939003579-730e3918a45a?auto=format&fit=crop&w=800&q=85"
+                src={activeTemplate?.heroImage || "https://images.unsplash.com/photo-1519225421980-715cb0215aed?auto=format&fit=crop&w=800&q=85"}
                 alt="Pengantin Nabilah & Yoga"
+                loading="eager"
+                fetchPriority="high"
+                decoding="async"
                 className="w-full h-full object-cover object-top filter brightness-95 contrast-105"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-[#0B192C]/80 via-transparent to-transparent" />

@@ -59,6 +59,12 @@ export const TwinklingStarsAmbiance: React.FC<{ active?: boolean }> = ({ active 
             opacity: 0;
           }
         }
+
+        @media (prefers-reduced-motion: reduce) {
+          span, div {
+            animation: none !important;
+          }
+        }
         .animate-meteor {
           animation: meteor 10s linear infinite;
         }

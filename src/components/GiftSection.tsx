@@ -1,15 +1,23 @@
 import React, { useState } from 'react'
 import { Copy, Check, CreditCard, QrCode, Package, Wifi } from 'lucide-react'
 import { weddingData } from '../config/weddingData'
+import { useInvitationData } from '../context/InvitationContext'
 import { FloralDivider, BotanicalCorner } from './Ornament'
 import { useToast } from './Toast'
 import { Reveal3D } from './common/Reveal3D'
 
 export const GiftSection: React.FC = () => {
+  const { activeTemplate } = useInvitationData()
   const [copiedBank, setCopiedBank] = useState<string | null>(null)
   const [copiedAddress, setCopiedAddress] = useState(false)
-  const [showQris, setShowQris] = useState(false)
   const { showToast } = useToast()
+
+  const isDark =
+    activeTemplate.category === 'dark' ||
+    activeTemplate.themeColors.textDark === '#FFFFFF' ||
+    activeTemplate.slug === 'exclusive-navy' ||
+    activeTemplate.slug === 'royal-midnight' ||
+    activeTemplate.slug === 'celestial-night'
 
   const handleCopy = (text: string, identifier: string, label: string) => {
     navigator.clipboard.writeText(text)
@@ -27,17 +35,17 @@ export const GiftSection: React.FC = () => {
   const { gift } = weddingData
 
   return (
-    <section id="gift" className="relative py-12 px-4 scroll-mt-6">
+    <section id="gift" className="relative py-12 px-4 scroll-mt-6 defer-render">
       <div className="max-w-4xl mx-auto text-center">
-        <h2 className="font-serif text-3xl sm:text-4xl font-bold text-stone-800 tracking-tight">
+        <h2 className={`font-serif text-3xl sm:text-4xl font-bold tracking-tight ${isDark ? 'text-white' : 'text-stone-800'}`}>
           {gift.title}
         </h2>
         <FloralDivider className="my-3" />
-        <p className="font-sans text-xs sm:text-sm text-stone-600 leading-relaxed px-4 max-w-xl mx-auto mb-10">
+        <p className={`font-sans text-xs sm:text-sm leading-relaxed px-4 max-w-xl mx-auto mb-10 ${isDark ? 'text-stone-300' : 'text-stone-600'}`}>
           {gift.description}
         </p>
 
-        {/* Bank Cards Grid: 1 col on mobile, 2 cols on tablet/desktop */}
+        {/* Bank Cards Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-10">
           {gift.accounts.map((acc, idx) => {
             const isCopied = copiedBank === acc.bank
@@ -51,13 +59,13 @@ export const GiftSection: React.FC = () => {
                   isBca ? 'bg-card-bca' : 'bg-card-mandiri'
                 }`}
               >
-                {/* Background Card Waves / Texture */}
+                {/* Background Waves */}
                 <div className="absolute -right-10 -bottom-10 w-44 h-44 rounded-full bg-white/5 blur-2xl pointer-events-none" />
                 <div className="absolute top-0 right-0 p-6 opacity-20 pointer-events-none">
                   <CreditCard className="w-24 h-24" />
                 </div>
 
-                {/* Top Row: Bank Name & Contactless Icon */}
+                {/* Top Row */}
                 <div className="flex items-center justify-between mb-6">
                   <span className="font-serif font-bold text-lg sm:text-xl text-amber-200 tracking-wider">
                     {acc.logoText}
@@ -111,93 +119,58 @@ export const GiftSection: React.FC = () => {
           })}
         </div>
 
-        {/* QRIS Section (Toggleable) */}
-        {gift.qrisUrl && (
-          <div className="p-6 sm:p-8 rounded-3xl bg-white/90 backdrop-blur-md border border-amber-800/15 shadow-xl mb-10 max-w-xl mx-auto">
-            <button
-              type="button"
-              onClick={() => setShowQris(!showQris)}
-              aria-expanded={showQris}
-              aria-controls="qris-content-panel"
-              className="min-h-[44px] inline-flex items-center gap-2 px-6 py-3 rounded-full bg-stone-100 hover:bg-stone-200 text-stone-800 text-xs sm:text-sm font-sans font-semibold transition-colors cursor-pointer shadow-sm active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-700"
-            >
-              <QrCode className="w-4 h-4 text-amber-700" aria-hidden="true" />
-              <span>{showQris ? 'Sembunyikan QRIS' : 'Buka QRIS Pembayaran'}</span>
-            </button>
+        {/* Physical Gift / Mailing Address */}
+        {gift.giftAddress && (
+          <Reveal3D
+            delay={300}
+            interactive
+            className={`relative max-w-xl mx-auto p-6 sm:p-8 rounded-3xl backdrop-blur-md shadow-xl text-center border ${
+              isDark
+                ? 'bg-stone-900/85 border-amber-500/30 text-stone-100 shadow-[0_15px_40px_rgba(0,0,0,0.6)]'
+                : 'bg-white/90 border-amber-800/15 text-stone-800'
+            }`}
+          >
+            <BotanicalCorner position="top-right" />
+            <div className="inline-flex items-center justify-center w-12 h-12 rounded-full bg-amber-500/20 text-amber-400 mb-3 border border-amber-500/30">
+              <Package className="w-6 h-6" />
+            </div>
 
-            {showQris && (
-              <div id="qris-content-panel" className="mt-6 pt-6 border-t border-stone-200 flex flex-col items-center animate-in fade-in">
-                <p className="text-xs sm:text-sm font-serif font-bold text-stone-800 mb-3">
-                  Scan QRIS (M-Banking & E-Wallet)
-                </p>
-                <div className="p-4 bg-white rounded-2xl shadow-lg border border-stone-200">
-                  <img
-                    src={gift.qrisUrl}
-                    alt="Kode QRIS Donasi Hadiah Pernikahan"
-                    className="w-52 h-52 object-contain"
-                  />
-                </div>
-                <p className="text-[11px] text-stone-600 mt-3 font-sans max-w-xs text-center">
-                  Mendukung BCA, Mandiri, BRI, BNI, GoPay, OVO, DANA, ShopeePay & LinkAja.
-                </p>
-              </div>
-            )}
-          </div>
-        )}
-
-        {/* Physical Gift Section */}
-        <div className="relative p-6 sm:p-8 rounded-3xl bg-white/90 backdrop-blur-md border border-amber-800/15 shadow-xl text-left overflow-hidden max-w-2xl mx-auto">
-          <BotanicalCorner position="top-right" />
-          <div className="flex items-center gap-2.5 mb-3 text-stone-800">
-            <Package className="w-5 h-5 text-amber-800" aria-hidden="true" />
-            <h3 className="font-serif text-lg sm:text-xl font-bold">
+            <h3 className={`font-serif text-xl sm:text-2xl font-bold mb-2 ${isDark ? 'text-white' : 'text-stone-800'}`}>
               Kirim Kado Fisik
             </h3>
-          </div>
-
-          <p className="font-sans text-xs sm:text-sm text-stone-600 mb-4 leading-relaxed">
-            Bagi keluarga dan sahabat yang ingin mengirimkan bingkisan tanda kasih, dapat dialamatkan ke lokasi berikut:
-          </p>
-
-          <div className="p-4 sm:p-5 rounded-2xl bg-stone-50 border border-stone-200 text-xs sm:text-sm font-sans space-y-1.5 mb-5">
-            <p className="font-bold text-stone-800">
-              Penerima: {gift.giftAddress.recipient}
+            <p className={`font-sans text-xs sm:text-sm max-w-md mx-auto mb-4 ${isDark ? 'text-stone-300' : 'text-stone-600'}`}>
+              Bagi Bapak/Ibu/Saudara/i yang ingin mengirimkan tanda kasih berupa kado fisik, bingkisan dapat dikirimkan ke alamat:
             </p>
-            <p className="text-stone-700">
-              No. HP: {gift.giftAddress.phone}
-            </p>
-            <p className="text-stone-700 leading-relaxed pt-1">
-              Alamat: {gift.giftAddress.address}
-            </p>
-          </div>
 
-          <div className="flex justify-end">
+            <div className={`p-4 rounded-2xl border text-xs sm:text-sm font-sans mb-4 text-left leading-relaxed ${
+              isDark ? 'bg-stone-950/70 border-white/10 text-stone-200' : 'bg-amber-50/60 border-amber-600/20 text-stone-700'
+            }`}>
+              <p className="font-bold text-amber-400 mb-1">Penerima: {gift.giftAddress.recipient}</p>
+              <p>{gift.giftAddress.address}</p>
+              <p className={`mt-1 font-mono text-xs ${isDark ? 'text-stone-400' : 'text-stone-500'}`}>Telp: {gift.giftAddress.phone}</p>
+            </div>
+
             <button
               type="button"
-              onClick={() =>
-                handleCopy(
-                  `${gift.giftAddress.recipient} (${gift.giftAddress.phone}) - ${gift.giftAddress.address}`,
-                  'address',
-                  'Alamat'
-                )
-              }
-              aria-label="Salin alamat lengkap penerima kado fisik"
-              className="min-h-[44px] inline-flex items-center gap-1.5 px-5 py-2.5 rounded-full bg-stone-900 text-white hover:bg-stone-800 text-xs font-sans font-medium transition-colors cursor-pointer active:scale-95 shadow-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-500"
+              onClick={() => handleCopy(`${gift.giftAddress?.recipient} - ${gift.giftAddress?.address} (${gift.giftAddress?.phone})`, 'address', 'Alamat Pengiriman')}
+              className={`min-h-[44px] inline-flex items-center gap-1.5 px-5 py-2.5 rounded-full text-xs font-sans font-bold shadow-md transition-all cursor-pointer active:scale-95 ${
+                isDark ? 'bg-amber-500 hover:bg-amber-400 text-stone-950' : 'bg-amber-700 hover:bg-amber-800 text-white'
+              }`}
             >
               {copiedAddress ? (
                 <>
-                  <Check className="w-3.5 h-3.5 text-emerald-400" aria-hidden="true" />
-                  <span className="text-emerald-400 font-bold">Alamat Tersalin!</span>
+                  <Check className="w-3.5 h-3.5" />
+                  <span>Alamat Tersalin!</span>
                 </>
               ) : (
                 <>
-                  <Copy className="w-3.5 h-3.5" aria-hidden="true" />
+                  <Copy className="w-3.5 h-3.5" />
                   <span>Salin Alamat Lengkap</span>
                 </>
               )}
             </button>
-          </div>
-        </div>
+          </Reveal3D>
+        )}
       </div>
     </section>
   )

@@ -12,6 +12,7 @@ import { InvitationProvider } from './context/InvitationContext'
 import { StorefrontPage } from './components/store/StorefrontPage'
 import { PreviewFloatingBar } from './components/store/PreviewFloatingBar'
 import { OrderModal } from './components/store/OrderModal'
+import { ClientPortalModal } from './components/store/ClientPortalModal'
 import { TemplateRenderer } from './templates/TemplateRenderer'
 
 export const AppContent: React.FC = () => {
@@ -19,6 +20,7 @@ export const AppContent: React.FC = () => {
   const urlParams = new URLSearchParams(window.location.search)
   const initialTemplateParam = urlParams.get('template')
   const hasGuestParam = Boolean(urlParams.get('to') || urlParams.get('u') || urlParams.get('guest'))
+  const hasPortalParam = Boolean(urlParams.get('portal') || urlParams.get('manage') || urlParams.get('invoice'))
 
   const matchedInitialTemplate =
     storeConfig.templates.find(
@@ -39,6 +41,7 @@ export const AppContent: React.FC = () => {
   const [selectedTemplate, setSelectedTemplate] = useState<TemplateItem>(matchedInitialTemplate)
   const [selectedPackage, setSelectedPackage] = useState<PricingTier | undefined>(undefined)
   const [isOrderModalOpen, setIsOrderModalOpen] = useState(false)
+  const [isPortalModalOpen, setIsPortalModalOpen] = useState(hasPortalParam)
   const [customPreviewData, setCustomPreviewData] = useState<CustomOrderData | null>(null)
 
   // Invitation Playback & Cover Gate States
@@ -117,20 +120,20 @@ export const AppContent: React.FC = () => {
   // Storefront Handlers
   const handlePreviewTemplate = (template: TemplateItem) => {
     setSelectedTemplate(template)
-    setIsOpened(false) // Show the unique envelope cover screen of that template
+    setIsOpened(false) // Show envelope cover screen of that template
     setViewMode('preview')
     window.scrollTo({ top: 0, behavior: 'smooth' })
   }
 
   const handleOpenOrderModal = (template: TemplateItem, pkg?: PricingTier) => {
     setSelectedTemplate(template)
-    const defaultPkg = pkg || (
-      template.eventType && template.eventType !== 'wedding'
+    const defaultPkg =
+      pkg ||
+      (template.eventType && template.eventType !== 'wedding'
         ? storeConfig.eventPricingTiers.find((p) => p.id === 'paket-syukuran-exclusive') || storeConfig.eventPricingTiers[1]
         : template.slug === 'royal-midnight'
-          ? storeConfig.pricingTiers.find((p) => p.id === 'paket-vip') || storeConfig.pricingTiers[2]
-          : storeConfig.pricingTiers.find((p) => p.id === 'paket-exclusive') || storeConfig.pricingTiers[1]
-    )
+        ? storeConfig.pricingTiers.find((p) => p.id === 'paket-vip') || storeConfig.pricingTiers[2]
+        : storeConfig.pricingTiers.find((p) => p.id === 'paket-exclusive') || storeConfig.pricingTiers[1])
     setSelectedPackage(defaultPkg)
     setIsOrderModalOpen(true)
   }
@@ -145,19 +148,31 @@ export const AppContent: React.FC = () => {
 
   return (
     <>
-      {/* Order & Data Pengantin Modal (Accessible from both Catalog & Preview) */}
+      {/* Client Portal Modal (Monitor RSVP, Orders, WhatsApp Links) */}
+      <ClientPortalModal
+        isOpen={isPortalModalOpen}
+        onClose={() => setIsPortalModalOpen(false)}
+        onOpenPreview={(slug) => {
+          const found = storeConfig.templates.find((t) => t.slug === slug)
+          if (found) handlePreviewTemplate(found)
+        }}
+      />
+
+      {/* Order & Customizer Modal */}
       <OrderModal
         isOpen={isOrderModalOpen}
         onClose={() => setIsOrderModalOpen(false)}
         initialTemplate={selectedTemplate}
         initialPackage={selectedPackage}
         onApplyCustomPreview={handleApplyCustomPreview}
+        onOpenPortal={() => setIsPortalModalOpen(true)}
       />
 
       {viewMode === 'storefront' ? (
         <StorefrontPage
           onPreviewTemplate={handlePreviewTemplate}
           onOrderTemplate={handleOpenOrderModal}
+          onOpenClientPortal={() => setIsPortalModalOpen(true)}
         />
       ) : (
         <InvitationProvider template={selectedTemplate} customOrder={customPreviewData}>
@@ -166,7 +181,7 @@ export const AppContent: React.FC = () => {
             activeTemplate={selectedTemplate}
             onSelectTemplate={(tpl) => {
               setSelectedTemplate(tpl)
-              setIsOpened(false) // Let user experience each template's unique opening gate!
+              setIsOpened(false) // Let user experience each template's unique opening gate
               showToast(`Tema diganti ke: ${tpl.name}`, 'info')
             }}
             onBackToCatalog={() => setViewMode('storefront')}

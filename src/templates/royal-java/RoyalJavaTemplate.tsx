@@ -93,7 +93,7 @@ export const RoyalJavaTemplate: React.FC<TemplateViewProps> = ({
   }
 
   return (
-    <div className="min-h-screen bg-[#120F0D] flex justify-center text-stone-200 selection:bg-amber-500 selection:text-stone-950 overflow-x-hidden pt-12">
+    <div className="min-h-screen bg-[#120F0D] flex justify-center text-stone-200 selection:bg-amber-500 selection:text-stone-950 overflow-x-hidden pt-16">
       {/* Cover Gate: Gunungan Wayang Split Emas */}
       <RoyalJavaCoverScreen isOpen={isOpened} onOpenWithAudio={onOpenWithAudio} />
 

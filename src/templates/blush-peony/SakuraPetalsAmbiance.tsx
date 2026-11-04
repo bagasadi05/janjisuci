@@ -50,6 +50,13 @@ export const SakuraPetalsAmbiance: React.FC<{ active?: boolean }> = ({ active = 
             opacity: 0;
           }
         }
+
+        @media (prefers-reduced-motion: reduce) {
+          span {
+            animation: none !important;
+            display: none !important;
+          }
+        }
       `}</style>
     </div>
   )

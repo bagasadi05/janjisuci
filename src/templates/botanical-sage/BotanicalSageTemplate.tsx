@@ -36,7 +36,7 @@ export const BotanicalSageTemplate: React.FC<TemplateViewProps> = ({
   onNextTrack
 }) => {
   return (
-    <div className="min-h-screen bg-stone-950 flex justify-center text-stone-800 selection:bg-amber-200 selection:text-stone-900 overflow-x-hidden pt-12">
+    <div className="min-h-screen bg-stone-950 flex justify-center text-stone-800 selection:bg-amber-200 selection:text-stone-900 overflow-x-hidden pt-16">
       {/* Cover Gate: 3D Wax Seal with Classic Sage Envelope */}
       <CoverScreen isOpen={isOpened} onOpenWithAudio={onOpenWithAudio} />
 

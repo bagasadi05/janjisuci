@@ -1,25 +1,40 @@
 import React from 'react'
 import { Sparkles, Clock, ShieldCheck, Camera } from 'lucide-react'
 import { weddingData } from '../config/weddingData'
+import { useInvitationData } from '../context/InvitationContext'
 import { FloralDivider, BotanicalCorner } from './Ornament'
 
 export const DressCodeSection: React.FC = () => {
+  const { activeTemplate } = useInvitationData()
   const { dressCode } = weddingData
 
+  const isDark =
+    activeTemplate.category === 'dark' ||
+    activeTemplate.themeColors.textDark === '#FFFFFF' ||
+    activeTemplate.slug === 'exclusive-navy' ||
+    activeTemplate.slug === 'royal-midnight' ||
+    activeTemplate.slug === 'celestial-night'
+
   return (
-    <section className="relative py-8 px-4">
-      <div className="relative max-w-4xl mx-auto p-6 sm:p-10 rounded-3xl bg-white/90 backdrop-blur-md border border-amber-800/15 shadow-xl text-center overflow-hidden">
+    <section className="relative py-8 px-4 defer-render">
+      <div
+        className={`relative max-w-4xl mx-auto p-6 sm:p-10 rounded-3xl backdrop-blur-md shadow-xl text-center overflow-hidden border ${
+          isDark
+            ? 'bg-stone-900/85 border-amber-500/30 text-stone-100 shadow-[0_20px_50px_rgba(0,0,0,0.7)]'
+            : 'bg-white/90 border-amber-800/15 text-stone-800'
+        }`}
+      >
         <BotanicalCorner position="top-left" />
         <BotanicalCorner position="bottom-right" />
 
-        <div className="inline-flex items-center justify-center w-12 h-12 rounded-full bg-amber-100 text-amber-800 mb-3 shadow-sm">
+        <div className="inline-flex items-center justify-center w-12 h-12 rounded-full bg-amber-500/20 text-amber-400 mb-3 shadow-sm border border-amber-500/30">
           <Sparkles className="w-6 h-6" />
         </div>
 
-        <h3 className="font-serif text-2xl sm:text-3xl font-bold text-stone-800 mb-2">
+        <h3 className={`font-serif text-2xl sm:text-3xl font-bold mb-2 ${isDark ? 'text-white' : 'text-stone-800'}`}>
           {dressCode.title}
         </h3>
-        <p className="font-sans text-xs sm:text-sm text-stone-600 max-w-md mx-auto mb-6 leading-relaxed">
+        <p className={`font-sans text-xs sm:text-sm max-w-md mx-auto mb-6 leading-relaxed ${isDark ? 'text-stone-300' : 'text-stone-600'}`}>
           {dressCode.description}
         </p>
 
@@ -31,7 +46,7 @@ export const DressCodeSection: React.FC = () => {
                 className="w-14 h-14 sm:w-16 sm:h-16 rounded-full shadow-lg border-2 border-white transition-all duration-300 group-hover:scale-110 group-hover:shadow-xl"
                 style={{ backgroundColor: color.hex }}
               />
-              <span className="text-xs font-sans font-medium text-stone-800 mt-2">
+              <span className={`text-xs font-sans font-medium mt-2 ${isDark ? 'text-stone-200' : 'text-stone-800'}`}>
                 {color.name}
               </span>
               <span className="text-[10px] text-stone-400 font-mono">
@@ -43,22 +58,40 @@ export const DressCodeSection: React.FC = () => {
 
         <FloralDivider className="my-6" />
 
-        {/* Event Etiquette Tips: 1 col on mobile, 3 cols on desktop */}
+        {/* Event Etiquette Tips */}
         <div className="text-left pt-2">
-          <p className="font-serif font-bold text-stone-800 text-sm sm:text-base text-center mb-4">
-            Himbauan & Kenyamanan Bersama
+          <p className={`font-serif font-bold text-sm sm:text-base text-center mb-4 ${isDark ? 'text-white' : 'text-stone-800'}`}>
+            Himbauan &amp; Kenyamanan Bersama
           </p>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-3 sm:gap-4">
-            <div className="flex items-start gap-3 p-4 rounded-2xl bg-stone-50 border border-stone-200/60 text-stone-600 text-xs sm:text-sm leading-relaxed">
-              <Clock className="w-5 h-5 text-amber-700 shrink-0 mt-0.5" />
+            <div
+              className={`flex items-start gap-3 p-4 rounded-2xl border text-xs sm:text-sm leading-relaxed ${
+                isDark
+                  ? 'bg-stone-950/70 border-white/10 text-stone-300'
+                  : 'bg-stone-50 border-stone-200/60 text-stone-600'
+              }`}
+            >
+              <Clock className="w-5 h-5 text-amber-500 shrink-0 mt-0.5" />
               <span>Mohon hadir 15 menit sebelum acara dimulai demi kelancaran prosesi.</span>
             </div>
-            <div className="flex items-start gap-3 p-4 rounded-2xl bg-stone-50 border border-stone-200/60 text-stone-600 text-xs sm:text-sm leading-relaxed">
-              <Camera className="w-5 h-5 text-amber-700 shrink-0 mt-0.5" />
-              <span>Dipersilakan mengambil foto & video tanpa mengganggu tim dokumentasi resmi.</span>
+            <div
+              className={`flex items-start gap-3 p-4 rounded-2xl border text-xs sm:text-sm leading-relaxed ${
+                isDark
+                  ? 'bg-stone-950/70 border-white/10 text-stone-300'
+                  : 'bg-stone-50 border-stone-200/60 text-stone-600'
+              }`}
+            >
+              <Camera className="w-5 h-5 text-amber-500 shrink-0 mt-0.5" />
+              <span>Dipersilakan mengambil foto &amp; video tanpa mengganggu tim dokumentasi resmi.</span>
             </div>
-            <div className="flex items-start gap-3 p-4 rounded-2xl bg-stone-50 border border-stone-200/60 text-stone-600 text-xs sm:text-sm leading-relaxed">
-              <ShieldCheck className="w-5 h-5 text-amber-700 shrink-0 mt-0.5" />
+            <div
+              className={`flex items-start gap-3 p-4 rounded-2xl border text-xs sm:text-sm leading-relaxed ${
+                isDark
+                  ? 'bg-stone-950/70 border-white/10 text-stone-300'
+                  : 'bg-stone-50 border-stone-200/60 text-stone-600'
+              }`}
+            >
+              <ShieldCheck className="w-5 h-5 text-amber-500 shrink-0 mt-0.5" />
               <span>Kondisikan ponsel dalam mode hening (*silent*) selama prosesi sakral berlangsung.</span>
             </div>
           </div>

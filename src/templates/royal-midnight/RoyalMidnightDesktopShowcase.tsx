@@ -73,8 +73,11 @@ export const RoyalMidnightDesktopShowcase: React.FC<RoyalMidnightDesktopShowcase
         <div className="relative p-1 rounded-t-[140px] rounded-b-3xl bg-gradient-to-b from-[#D7BB83] via-[#B99A5C] to-[#5C4324] shadow-[0_20px_50px_rgba(0,0,0,0.85)]">
           <div className="rounded-t-[136px] rounded-b-[22px] overflow-hidden bg-stone-900 relative">
             <img
-              src={activeTemplate.heroImage || "https://images.unsplash.com/photo-1519741497674-611481863552?auto=format&fit=crop&w=1000&q=85"}
+              src={activeTemplate.heroImage || "https://images.unsplash.com/photo-1511285560929-80b456fea0bc?auto=format&fit=crop&w=1000&q=85"}
               alt={`Mempelai ${weddingData.couple.bride.shortName} & ${weddingData.couple.groom.shortName}`}
+              loading="eager"
+              fetchPriority="high"
+              decoding="async"
               className="w-full h-[290px] xl:h-[350px] object-cover object-center"
             />
             <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent" />

@@ -157,7 +157,7 @@ export const RoyalMidnightTemplate: React.FC<TemplateViewProps> = ({
   const physicalGiftAddress = 'Jl. Taman Senayan Indah No. 18, Kebayoran Baru, Jakarta Selatan 12190'
 
   return (
-    <div className="min-h-screen bg-[#0A0A0A] text-stone-200 font-sans selection:bg-[#D7BB83] selection:text-stone-950 overflow-x-hidden pt-12 relative">
+    <div className="min-h-screen bg-[#0A0A0A] text-stone-200 font-sans selection:bg-[#D7BB83] selection:text-stone-950 overflow-x-hidden pt-16 relative">
       {/* Cover Gate Overlay */}
       <RoyalMidnightCoverScreen isOpen={isOpened} onOpenWithAudio={onOpenWithAudio} />
 
@@ -210,6 +210,9 @@ export const RoyalMidnightTemplate: React.FC<TemplateViewProps> = ({
                   <img
                     src={heroPhoto}
                     alt="Hero Couple"
+                    loading="eager"
+                    fetchPriority="high"
+                    decoding="async"
                     className="w-full h-80 sm:h-96 object-cover object-center"
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-[#0A0A0A]/90 via-transparent to-transparent" />

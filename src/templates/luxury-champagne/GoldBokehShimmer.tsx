@@ -42,6 +42,13 @@ export const GoldBokehShimmer: React.FC<{ active?: boolean }> = ({ active = true
             opacity: 0.7;
           }
         }
+
+        @media (prefers-reduced-motion: reduce) {
+          span {
+            animation: none !important;
+            display: none !important;
+          }
+        }
       `}</style>
     </div>
   )

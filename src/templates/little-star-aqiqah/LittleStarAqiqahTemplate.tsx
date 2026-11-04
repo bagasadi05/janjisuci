@@ -19,6 +19,7 @@ import {
 import { TemplateViewProps } from '../botanical-sage/BotanicalSageTemplate'
 import { LittleStarAqiqahCoverScreen } from './LittleStarAqiqahCoverScreen'
 import { LittleStarAqiqahDesktopShowcase } from './LittleStarAqiqahDesktopShowcase'
+import { useInvitationData } from '../../context/InvitationContext'
 import { useToast } from '../../components/Toast'
 
 const AQIQAH_PHOTOS = [
@@ -52,9 +53,20 @@ export const LittleStarAqiqahTemplate: React.FC<TemplateViewProps> = ({
   onToggleAudio,
   activeTrack
 }) => {
+  const { data: weddingData, activeTemplate } = useInvitationData()
   const { showToast } = useToast()
 
-  const targetDateStr = '2027-05-24T09:00:00+07:00'
+  const babyName = weddingData.couple.groom.fullName || activeTemplate.sampleCouple?.groomFull || 'Kinan Althafunnisa'
+  const babyShort = weddingData.couple.groom.shortName || activeTemplate.sampleCouple?.groomShort || 'Kinan'
+  const parentsName = weddingData.couple.groom.fatherName && weddingData.couple.groom.motherName
+    ? `Bpk. ${weddingData.couple.groom.fatherName} & Ibu ${weddingData.couple.groom.motherName}`
+    : 'Bpk. Irfan Hakim & Ibu Annisa Larasati'
+  const dateText = weddingData.events.akad.date
+  const timeText = weddingData.events.akad.time
+  const venueText = weddingData.events.akad.venue
+  const addressText = weddingData.events.akad.address
+  const mapsUrl = weddingData.events.akad.mapsUrl || `https://maps.google.com/?q=${encodeURIComponent(addressText || venueText)}`
+  const targetDateStr = weddingData.countdownDate || '2027-05-24T09:00:00+07:00'
   const [timeLeft, setTimeLeft] = useState({ days: 0, hours: 0, minutes: 0, seconds: 0 })
 
   useEffect(() => {
@@ -150,14 +162,14 @@ export const LittleStarAqiqahTemplate: React.FC<TemplateViewProps> = ({
         isOpen={isOpened}
         onOpenWithAudio={onOpenWithAudio}
         guestName={guestName}
-        babyName="Kinan Althafunnisa"
-        dateText="Minggu, 24 Mei 2026"
+        babyName={babyName}
+        dateText={dateText}
       />
 
       <LittleStarAqiqahDesktopShowcase
-        babyName="Kinan Althafunnisa"
-        dateText="Minggu, 24 Mei 2026"
-        venueText="Kediaman Keluarga, Jl. Melati No. 12, Bandung"
+        babyName={babyName}
+        dateText={dateText}
+        venueText={venueText}
         isPlayingAudio={isPlayingAudio}
         onToggleAudio={onToggleAudio}
         activeTrack={activeTrack}
@@ -168,7 +180,8 @@ export const LittleStarAqiqahTemplate: React.FC<TemplateViewProps> = ({
         <div className="fixed bottom-6 right-6 z-40 lg:hidden">
           <button
             onClick={onToggleAudio}
-            className="w-12 h-12 rounded-full bg-gradient-to-tr from-sky-500 to-indigo-600 text-white flex items-center justify-center shadow-[0_0_20px_rgba(2,132,199,0.4)] active:scale-95 transition-transform cursor-pointer"
+            className="w-12 h-12 min-w-[48px] min-h-[48px] rounded-full bg-gradient-to-tr from-sky-500 to-indigo-600 text-white flex items-center justify-center shadow-[0_0_20px_rgba(2,132,199,0.4)] active:scale-95 transition-transform cursor-pointer"
+            aria-label={isPlayingAudio ? 'Jeda Musik' : 'Putar Musik'}
           >
             {isPlayingAudio ? (
               <Music className="w-5 h-5 animate-spin" />
@@ -186,25 +199,29 @@ export const LittleStarAqiqahTemplate: React.FC<TemplateViewProps> = ({
           </div>
 
           <h1 className="font-serif text-3xl sm:text-5xl text-slate-800 font-bold tracking-wide">
-            Kinan Althafunnisa
+            {babyName}
           </h1>
 
           <p className="text-xs font-mono tracking-widest text-slate-500 mt-2">
-            Minggu, 24 Mei 2026
+            {dateText}
           </p>
 
           <div className="relative my-8">
             <div className="w-52 sm:w-60 h-64 sm:h-76 rounded-3xl overflow-hidden p-1.5 bg-gradient-to-tr from-sky-300 via-amber-200 to-sky-200 shadow-xl">
               <img
-                src={template?.heroImage || "https://images.unsplash.com/photo-1656633702381-939966720da4?auto=format&fit=crop&w=800&q=85"}
-                alt="Baby Kinan"
+                src={weddingData.couple.groom.photo || activeTemplate.sampleCouple?.groomPhoto || template?.heroImage || "https://images.unsplash.com/photo-1656633702381-939966720da4?auto=format&fit=crop&w=800&q=85"}
+                alt={`Foto Baby ${babyShort}`}
+                width={240}
+                height={304}
+                loading="eager"
+                decoding="async"
                 className="w-full h-full object-cover object-center"
               />
             </div>
           </div>
 
           <p className="max-w-md text-xs sm:text-sm text-slate-600 leading-relaxed font-sans px-4">
-            Bismillahirahmanirrahim. Ungkapan syukur yang mendalam atas kelahiran putri pertama kami, yang merupakan anugerah dan amanah terindah dari Allah SWT.
+            Bismillahirahmanirrahim. Ungkapan syukur yang mendalam atas kelahiran buah hati kami tercinta, yang merupakan anugerah dan amanah terindah dari Allah SWT.
           </p>
         </section>
 
@@ -236,37 +253,37 @@ export const LittleStarAqiqahTemplate: React.FC<TemplateViewProps> = ({
               Biodata Buah Hati
             </span>
             <h3 className="text-2xl font-serif font-bold text-slate-800">
-              Kinan Althafunnisa
+              {babyName}
             </h3>
 
             <div className="grid grid-cols-2 gap-3 text-left pt-2">
               <div className="bg-white/80 p-3 rounded-xl border border-sky-100">
                 <p className="text-[10px] text-slate-500 font-mono uppercase">Hari &amp; Tanggal Lahir</p>
-                <p className="text-xs font-bold text-slate-800 mt-0.5">Minggu, 10 Mei 2026</p>
+                <p className="text-xs font-bold text-slate-800 mt-0.5">{dateText}</p>
               </div>
               <div className="bg-white/80 p-3 rounded-xl border border-sky-100">
-                <p className="text-[10px] text-slate-500 font-mono uppercase">Jam Kelahiran</p>
-                <p className="text-xs font-bold text-slate-800 mt-0.5">Pukul 05.15 WIB</p>
+                <p className="text-[10px] text-slate-500 font-mono uppercase">Jam Acara</p>
+                <p className="text-xs font-bold text-slate-800 mt-0.5">{timeText}</p>
               </div>
               <div className="bg-white/80 p-3 rounded-xl border border-sky-100">
-                <p className="text-[10px] text-slate-500 font-mono uppercase">Berat Badan (BB)</p>
-                <p className="text-xs font-bold text-sky-700 mt-0.5">3.200 Gram (3.2 kg)</p>
+                <p className="text-[10px] text-slate-500 font-mono uppercase">Status Ananda</p>
+                <p className="text-xs font-bold text-sky-700 mt-0.5">Putra/Putri Tercinta</p>
               </div>
               <div className="bg-white/80 p-3 rounded-xl border border-sky-100">
-                <p className="text-[10px] text-slate-500 font-mono uppercase">Panjang Badan (PB)</p>
-                <p className="text-xs font-bold text-sky-700 mt-0.5">49 cm</p>
+                <p className="text-[10px] text-slate-500 font-mono uppercase">Doa Utama</p>
+                <p className="text-xs font-bold text-sky-700 mt-0.5">Sholeh &amp; Berbakti</p>
               </div>
             </div>
 
             <div className="pt-2 text-xs text-slate-600 bg-white/60 p-3 rounded-xl border border-sky-100">
-              <p className="font-semibold text-sky-800">Arti Nama:</p>
+              <p className="font-semibold text-sky-800">Arti &amp; Makna Nama:</p>
               <p className="italic mt-0.5">
-                &ldquo;Kinan: Tempat berlindung yang aman. Althafunnisa: Wanita yang memiliki kelembutan hati.&rdquo;
+                &ldquo;Penyejuk hati keluarga yang senantiasa berada dalam lindungan dan keberkahan Allah SWT.&rdquo;
               </p>
             </div>
 
             <p className="text-xs text-slate-500 pt-1">
-              Putri Pertama dari: <strong>Bpk. Irfan Hakim &amp; Ibu Annisa Larasati</strong>
+              Putra/Putri Tercinta dari: <strong>{parentsName}</strong>
             </p>
           </div>
         </section>
@@ -303,17 +320,17 @@ export const LittleStarAqiqahTemplate: React.FC<TemplateViewProps> = ({
                 <div className="flex items-start gap-2.5">
                   <Calendar className="w-4 h-4 text-sky-600 mt-0.5 shrink-0" />
                   <div>
-                    <p className="font-semibold text-slate-800">Minggu, 24 Mei 2026</p>
-                    <p className="text-slate-500 text-xs">Pukul 09.00 – 12.00 WIB</p>
+                    <p className="font-semibold text-slate-800">{dateText}</p>
+                    <p className="text-slate-500 text-xs">{timeText}</p>
                   </div>
                 </div>
 
                 <div className="flex items-start gap-2.5">
                   <MapPin className="w-4 h-4 text-sky-600 mt-0.5 shrink-0" />
                   <div>
-                    <p className="font-semibold text-slate-800">Kediaman Keluarga</p>
+                    <p className="font-semibold text-slate-800">{venueText}</p>
                     <p className="text-slate-500 text-xs leading-relaxed">
-                      Jl. Melati No. 12, Kel. Cidadap, Kec. Coblong, Kota Bandung, Jawa Barat
+                      {addressText}
                     </p>
                   </div>
                 </div>
@@ -321,19 +338,19 @@ export const LittleStarAqiqahTemplate: React.FC<TemplateViewProps> = ({
 
               <div className="pt-2 flex flex-wrap gap-2.5">
                 <a
-                  href="https://maps.google.com/?q=Bandung"
+                  href={mapsUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="flex-1 min-w-[130px] inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-sky-600 hover:bg-sky-700 text-xs text-white font-medium transition-all"
+                  className="flex-1 min-w-[130px] min-h-[44px] inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-sky-600 hover:bg-sky-700 text-xs text-white font-medium transition-all cursor-pointer"
                 >
                   <Navigation className="w-3.5 h-3.5" />
                   <span>Petunjuk Peta Maps</span>
                 </a>
                 <a
-                  href="https://calendar.google.com"
+                  href={`https://calendar.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent(`Tasyakuran Aqiqah ${babyName}`)}&location=${encodeURIComponent(addressText)}&details=${encodeURIComponent(`Tasyakuran Aqiqah ${babyName}`)}`}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-xs text-slate-700 transition-all"
+                  className="inline-flex items-center justify-center gap-2 px-4 py-2.5 min-h-[44px] rounded-xl bg-slate-100 hover:bg-slate-200 text-xs text-slate-700 transition-all cursor-pointer"
                 >
                   <Clock className="w-3.5 h-3.5 text-sky-600" />
                   <span>Simpan Kalender</span>
@@ -412,70 +429,80 @@ export const LittleStarAqiqahTemplate: React.FC<TemplateViewProps> = ({
               </p>
             </div>
 
-            <div className="rounded-2xl bg-white border border-sky-200 p-5 shadow-md space-y-3">
-              <div className="flex items-center justify-between">
-                <div className="px-3 py-1 rounded-md bg-blue-600 text-white font-bold text-xs tracking-wider">
-                  BANK BCA
-                </div>
-                <CreditCard className="w-5 h-5 text-sky-600" />
+            {weddingData.gift.accounts && weddingData.gift.accounts.length > 0 && (
+              <div className="space-y-3">
+                {weddingData.gift.accounts.map((acc, idx) => (
+                  <div key={idx} className="rounded-2xl bg-white border border-sky-200 p-5 shadow-md space-y-3">
+                    <div className="flex items-center justify-between">
+                      <div className="px-3 py-1 rounded-md bg-blue-600 text-white font-bold text-xs tracking-wider">
+                        {acc.bank}
+                      </div>
+                      <CreditCard className="w-5 h-5 text-sky-600" />
+                    </div>
+                    <p className="text-[11px] text-slate-400 font-mono uppercase">Nomor Rekening</p>
+                    <p className="text-lg sm:text-xl font-mono font-bold text-sky-800 tracking-wider">
+                      {acc.accountNumber}
+                    </p>
+                    <p className="text-xs text-slate-600">a.n. {acc.accountHolder || acc.holderName}</p>
+                    <button
+                      onClick={() => handleCopy(acc.accountNumber, `Rekening ${acc.bank}`)}
+                      className="w-full min-h-[44px] py-2 rounded-xl bg-sky-50 hover:bg-sky-100 border border-sky-200 text-xs text-sky-800 font-semibold flex items-center justify-center gap-2 transition-colors cursor-pointer"
+                    >
+                      {copiedBank === `Rekening ${acc.bank}` ? (
+                        <>
+                          <Check className="w-3.5 h-3.5 text-emerald-600" />
+                          <span className="text-emerald-600">Tersalin!</span>
+                        </>
+                      ) : (
+                        <>
+                          <Copy className="w-3.5 h-3.5 text-sky-600" />
+                          <span>Salin Nomor Rekening</span>
+                        </>
+                      )}
+                    </button>
+                  </div>
+                ))}
               </div>
-              <p className="text-[11px] text-slate-400 font-mono uppercase">Nomor Rekening</p>
-              <p className="text-lg sm:text-xl font-mono font-bold text-sky-800 tracking-wider">
-                1230491823
-              </p>
-              <p className="text-xs text-slate-600">a.n. Irfan Hakim (Ayah Bayi)</p>
-              <button
-                onClick={() => handleCopy('1230491823', 'Rekening BCA')}
-                className="w-full py-2 rounded-xl bg-sky-50 hover:bg-sky-100 border border-sky-200 text-xs text-sky-800 font-semibold flex items-center justify-center gap-2 transition-colors cursor-pointer"
-              >
-                {copiedBank === 'Rekening BCA' ? (
-                  <>
-                    <Check className="w-3.5 h-3.5 text-emerald-600" />
-                    <span className="text-emerald-600">Tersalin!</span>
-                  </>
-                ) : (
-                  <>
-                    <Copy className="w-3.5 h-3.5 text-sky-600" />
-                    <span>Salin Nomor Rekening</span>
-                  </>
-                )}
-              </button>
-            </div>
+            )}
 
-            <div className="rounded-2xl bg-white border border-sky-200 p-5 shadow-md space-y-3">
-              <div className="flex items-center gap-2">
-                <Package className="w-5 h-5 text-sky-600" />
-                <h4 className="text-base font-serif text-slate-800 font-semibold">Kirim Kado Perlengkapan</h4>
+            {weddingData.gift.giftAddress && (
+              <div className="rounded-2xl bg-white border border-sky-200 p-5 shadow-md space-y-3">
+                <div className="flex items-center gap-2">
+                  <Package className="w-5 h-5 text-sky-600" />
+                  <h4 className="text-base font-serif text-slate-800 font-semibold">Kirim Kado Perlengkapan</h4>
+                </div>
+                <div className="text-xs text-slate-600 space-y-1">
+                  <p className="font-semibold text-slate-800">
+                    Penerima: {weddingData.gift.giftAddress.recipient || babyName} ({weddingData.gift.giftAddress.phone})
+                  </p>
+                  <p className="leading-relaxed">
+                    {weddingData.gift.giftAddress.address}
+                  </p>
+                </div>
+                <button
+                  onClick={() =>
+                    handleCopy(
+                      `${weddingData.gift.giftAddress.recipient || babyName} - ${weddingData.gift.giftAddress.address} (${weddingData.gift.giftAddress.phone})`,
+                      'Alamat Rumah',
+                      true
+                    )
+                  }
+                  className="w-full min-h-[44px] py-2 rounded-xl bg-sky-50 hover:bg-sky-100 border border-sky-200 text-xs text-sky-800 font-semibold flex items-center justify-center gap-2 transition-colors cursor-pointer"
+                >
+                  {copiedAddress ? (
+                    <>
+                      <Check className="w-3.5 h-3.5 text-emerald-600" />
+                      <span className="text-emerald-600">Alamat Tersalin!</span>
+                    </>
+                  ) : (
+                    <>
+                      <Copy className="w-3.5 h-3.5 text-sky-600" />
+                      <span>Salin Alamat Rumah</span>
+                    </>
+                  )}
+                </button>
               </div>
-              <div className="text-xs text-slate-600 space-y-1">
-                <p className="font-semibold text-slate-800">Penerima: Kinan Althafunnisa / Irfan (0896-1977-4116)</p>
-                <p className="leading-relaxed">
-                  Jl. Melati No. 12, Kel. Cidadap, Kec. Coblong, Kota Bandung, Jawa Barat
-                </p>
-              </div>
-              <button
-                onClick={() =>
-                  handleCopy(
-                    'Jl. Melati No. 12, Kel. Cidadap, Kec. Coblong, Kota Bandung (Penerima: Baby Kinan / Irfan - 089619774116)',
-                    'Alamat Rumah',
-                    true
-                  )
-                }
-                className="w-full py-2 rounded-xl bg-sky-50 hover:bg-sky-100 border border-sky-200 text-xs text-sky-800 font-semibold flex items-center justify-center gap-2 transition-colors cursor-pointer"
-              >
-                {copiedAddress ? (
-                  <>
-                    <Check className="w-3.5 h-3.5 text-emerald-600" />
-                    <span className="text-emerald-600">Alamat Tersalin!</span>
-                  </>
-                ) : (
-                  <>
-                    <Copy className="w-3.5 h-3.5 text-sky-600" />
-                    <span>Salin Alamat Rumah</span>
-                  </>
-                )}
-              </button>
-            </div>
+            )}
           </div>
         </section>
 
@@ -523,20 +550,20 @@ export const LittleStarAqiqahTemplate: React.FC<TemplateViewProps> = ({
 
               <div>
                 <label className="block text-xs font-medium text-slate-600 mb-1">
-                  Doa Untuk Kinan
+                  Doa Untuk {babyShort}
                 </label>
                 <textarea
                   rows={3}
                   value={blessingMessage}
                   onChange={(e) => setBlessingMessage(e.target.value)}
-                  placeholder="Tuliskan untaian doa untuk ananda Kinan..."
+                  placeholder={`Tuliskan untaian doa untuk ananda ${babyShort}...`}
                   className="w-full px-3.5 py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-slate-800 placeholder:text-slate-400 text-xs focus:outline-none focus:border-sky-500 resize-none"
                 />
               </div>
 
               <button
                 type="submit"
-                className="w-full py-3 rounded-xl bg-gradient-to-r from-sky-600 to-indigo-600 text-white font-bold text-xs flex items-center justify-center gap-2 shadow-md hover:brightness-105 active:scale-95 transition-all cursor-pointer"
+                className="w-full min-h-[44px] py-3 rounded-xl bg-gradient-to-r from-sky-600 to-indigo-600 text-white font-bold text-xs flex items-center justify-center gap-2 shadow-md hover:brightness-105 active:scale-95 transition-all cursor-pointer"
               >
                 <Send className="w-3.5 h-3.5 text-white" />
                 <span>Kirim Doa Restu 👶</span>
@@ -567,9 +594,9 @@ export const LittleStarAqiqahTemplate: React.FC<TemplateViewProps> = ({
 
         {/* SECTION 9: FOOTER */}
         <footer className="px-6 pt-10 pb-16 text-center space-y-4">
-          <h3 className="text-2xl font-serif text-sky-800 font-bold">Kinan Althafunnisa</h3>
+          <h3 className="text-2xl font-serif text-sky-800 font-bold">{babyName}</h3>
           <p className="text-xs text-slate-500 max-w-sm mx-auto leading-relaxed">
-            Keluarga Besar Bpk. Irfan Hakim &amp; Ibu Annisa Larasati mengucapkan terima kasih yang tulus atas kehadiran dan doa restu Bapak/Ibu/Saudara/i sekalian.
+            Keluarga Besar {parentsName} mengucapkan terima kasih yang tulus atas kehadiran dan doa restu Bapak/Ibu/Saudara/i sekalian.
           </p>
           <p className="text-[11px] text-slate-400 pt-4 border-t border-slate-200 font-mono">
             Digital Invitation by JanjiSuci.id
@@ -582,7 +609,8 @@ export const LittleStarAqiqahTemplate: React.FC<TemplateViewProps> = ({
         <div className="fixed inset-0 z-50 bg-black/95 backdrop-blur-md flex items-center justify-center p-4">
           <button
             onClick={() => setSelectedPhotoIdx(null)}
-            className="absolute top-5 right-5 w-10 h-10 rounded-full bg-white/10 hover:bg-white/20 text-white flex items-center justify-center transition-colors z-50 cursor-pointer"
+            className="absolute top-5 right-5 w-11 h-11 min-w-[44px] min-h-[44px] rounded-full bg-white/10 hover:bg-white/20 text-white flex items-center justify-center transition-colors z-50 cursor-pointer"
+            aria-label="Tutup Foto"
           >
             <X className="w-5 h-5" />
           </button>

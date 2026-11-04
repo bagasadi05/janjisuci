@@ -56,7 +56,24 @@ export const NusantaraKhitanTemplate: React.FC<TemplateViewProps> = ({
   const { data: weddingData } = useInvitationData()
   const { showToast } = useToast()
 
-  const targetDateStr = '2027-09-06T09:00:00+07:00'
+  const targetDateStr = weddingData.countdownDate || '2027-09-06T09:00:00+07:00'
+  const childName = weddingData.couple.groom.fullName || 'Raden Arya Danendra'
+  const childShort = weddingData.couple.groom.shortName || 'Arya'
+  const parentsName = weddingData.couple.groom.fatherName && weddingData.couple.groom.motherName
+    ? `Bpk. ${weddingData.couple.groom.fatherName} & Ibu ${weddingData.couple.groom.motherName}`
+    : 'Bpk. R. Danang Suroso & Ibu Ayu Wardani'
+  const dateText = weddingData.events.akad.date || 'Minggu, 06 September 2026'
+  const timeText = weddingData.events.akad.time || '09.00 - 13.00 WIB'
+  const venueText = weddingData.events.akad.venue || 'Pendopo Sasana Krida'
+  const addressText = weddingData.events.akad.address || 'Jl. Malioboro No. 56, Sosromenduran, Gedong Tengen, Kota Yogyakarta'
+  const mapsUrl = weddingData.events.akad.mapsUrl || 'https://maps.google.com/?q=Malioboro+Yogyakarta'
+  const physicalAddress = weddingData.gift.giftAddress
+    ? `${weddingData.gift.giftAddress.address} (Penerima: ${weddingData.gift.giftAddress.recipient} - ${weddingData.gift.giftAddress.phone})`
+    : 'Jl. Sagan Kidul No. 18, Gondokusuman, Kota Yogyakarta 55223 (Penerima: Danang Suroso - 0812-3456-9988)'
+  const accounts = weddingData.gift.accounts?.length > 0
+    ? weddingData.gift.accounts
+    : [{ bank: 'Bank Mandiri', accountNumber: '137-00-1982341-0', accountHolder: `${childName} (QQ Danang Suroso)`, logoText: 'Mandiri' }]
+
   const [copiedBank, setCopiedBank] = useState<string | null>(null)
   const [copiedAddress, setCopiedAddress] = useState(false)
   const [selectedPhotoIdx, setSelectedPhotoIdx] = useState<number | null>(null)
@@ -133,14 +150,14 @@ export const NusantaraKhitanTemplate: React.FC<TemplateViewProps> = ({
         isOpen={isOpened}
         onOpenWithAudio={onOpenWithAudio}
         guestName={guestName}
-        childName="Raden Arya Danendra"
-        dateText="Minggu, 06 September 2026"
+        childName={childName}
+        dateText={dateText}
       />
 
       <NusantaraKhitanDesktopShowcase
-        childName="Raden Arya Danendra"
-        dateText="Minggu, 06 September 2026"
-        venueText="Pendopo Sasana Krida, Malioboro Yogyakarta"
+        childName={childName}
+        dateText={dateText}
+        venueText={venueText}
         isPlayingAudio={isPlayingAudio}
         onToggleAudio={onToggleAudio}
         activeTrack={activeTrack}
@@ -154,7 +171,7 @@ export const NusantaraKhitanTemplate: React.FC<TemplateViewProps> = ({
             className="w-12 h-12 rounded-full bg-gradient-to-tr from-amber-500 to-yellow-400 text-stone-950 flex items-center justify-center shadow-[0_0_20px_rgba(217,119,6,0.5)] active:scale-95 transition-transform"
           >
             {isPlayingAudio ? (
-              <Music className="w-5 h-5 animate-spin" />
+              <Music className="w-5 h-5 animate-spin motion-reduce:animate-none" />
             ) : (
               <VolumeX className="w-5 h-5" />
             )}
@@ -169,21 +186,23 @@ export const NusantaraKhitanTemplate: React.FC<TemplateViewProps> = ({
           </div>
 
           <h1 className="font-serif text-3xl sm:text-5xl md:text-6xl text-transparent bg-clip-text bg-gradient-to-r from-amber-100 via-amber-200 to-amber-400 font-bold tracking-wide">
-            Raden Arya Danendra
+            {childName}
           </h1>
           <p className="text-sm font-serif italic text-amber-300/90 mt-1">
-            (Ananda Arya)
+            (Ananda {childShort})
           </p>
 
           <p className="text-xs font-mono tracking-widest text-amber-200/80 mt-2">
-            Minggu, 06 September 2026 • 09.00 - 13.00 WIB
+            {dateText} • {timeText}
           </p>
 
           <div className="relative my-8">
             <div className="w-52 sm:w-60 h-72 sm:h-84 rounded-3xl overflow-hidden p-1.5 bg-gradient-to-b from-amber-400/50 via-yellow-600/30 to-amber-950 shadow-2xl">
               <img
                 src={weddingData.couple.groom.photo || "https://images.unsplash.com/photo-1720238281687-dcc6d8a6e7d4?auto=format&fit=crop&crop=top,right&w=800&h=800&q=85"}
-                alt="Raden Arya Danendra"
+                alt={childName}
+                loading="lazy"
+                decoding="async"
                 className="w-full h-full object-cover object-center filter brightness-95"
               />
             </div>
@@ -207,12 +226,12 @@ export const NusantaraKhitanTemplate: React.FC<TemplateViewProps> = ({
             </p>
 
             <blockquote className="text-xs sm:text-sm text-amber-100/90 leading-relaxed italic mb-4 font-serif">
-              &ldquo;Ya Allah, mugi paringana ananda Arya dados putra ingkang sholeh, bekti dhumateng tiyang sepuh kalih, migunani tumrap agami, bangsa, lan nagari.&rdquo;
+              &ldquo;Ya Allah, mugi paringana ananda {childShort} dados putra ingkang sholeh, bekti dhumateng tiyang sepuh kalih, migunani tumrap agami, bangsa, lan nagari.&rdquo;
             </blockquote>
 
             <div className="pt-2 border-t border-amber-500/15 text-xs text-amber-200/90">
               <p className="text-[11px] uppercase tracking-wider text-amber-300/60 mb-1">Putra Tercinta Dari Pasangan:</p>
-              <p className="font-serif font-bold text-white text-sm">Bpk. R. Danang Suroso & Ibu Ayu Wardani</p>
+              <p className="font-serif font-bold text-white text-sm">{parentsName}</p>
             </div>
           </div>
         </section>
@@ -274,8 +293,8 @@ export const NusantaraKhitanTemplate: React.FC<TemplateViewProps> = ({
           <div className="max-w-lg mx-auto">
             <div className="text-center mb-8">
               <span className="text-[11px] uppercase tracking-widest text-amber-300 font-serif">Papan Palenggahan</span>
-              <h3 className="text-2xl font-serif font-bold text-white mt-1">Pendopo Sasana Krida</h3>
-              <p className="text-xs text-amber-200/80 mt-1">Jl. Malioboro No. 56, Sosromenduran, Gedong Tengen, Kota Yogyakarta</p>
+              <h3 className="text-2xl font-serif font-bold text-white mt-1">{venueText}</h3>
+              <p className="text-xs text-amber-200/80 mt-1">{addressText}</p>
             </div>
 
             <div className="rounded-2xl overflow-hidden border border-amber-500/20 shadow-2xl bg-[#231B15]">
@@ -298,10 +317,10 @@ export const NusantaraKhitanTemplate: React.FC<TemplateViewProps> = ({
                   <p className="text-[11px] text-amber-300/80">Parkir Luas & Akses Strategis Pusat Kota</p>
                 </div>
                 <a
-                  href="https://maps.google.com/?q=Malioboro+Yogyakarta"
+                  href={mapsUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="w-full sm:w-auto px-4 py-2 rounded-full bg-gradient-to-r from-amber-500 to-yellow-500 text-stone-950 font-bold text-xs flex items-center justify-center gap-1.5 shadow-md cursor-pointer"
+                  className="w-full sm:w-auto min-h-[44px] px-5 py-2.5 rounded-full bg-gradient-to-r from-amber-500 to-yellow-500 text-stone-950 font-bold text-xs flex items-center justify-center gap-1.5 shadow-md cursor-pointer"
                 >
                   <Navigation className="w-3.5 h-3.5" />
                   <span>Petunjuk Arah Google Maps</span>
@@ -367,31 +386,33 @@ export const NusantaraKhitanTemplate: React.FC<TemplateViewProps> = ({
           <div className="max-w-lg mx-auto">
             <div className="text-center mb-8">
               <span className="text-[11px] uppercase tracking-widest text-amber-300 font-serif">Tandha Asih</span>
-              <h3 className="text-2xl font-serif font-bold text-white mt-1">Kado & Tabungan Ananda</h3>
+              <h3 className="text-2xl font-serif font-bold text-white mt-1">Kado & Tabungan Ananda {childShort}</h3>
               <p className="text-xs text-amber-200/80 mt-1 max-w-sm mx-auto">
                 Donga pangestu panjenengan dados kanugrahan ingkang tanpa upami. Kagem ingkang kepareng ngaturaken tandha asih:
               </p>
             </div>
 
             <div className="space-y-4">
-              <div className="p-5 rounded-2xl bg-[#231B15] border border-amber-500/25 shadow-lg">
-                <div className="flex items-center justify-between mb-3">
-                  <div className="flex items-center gap-2">
-                    <CreditCard className="w-4 h-4 text-amber-400" />
-                    <span className="font-bold text-xs uppercase text-white">Bank Mandiri</span>
+              {accounts.map((acc, idx) => (
+                <div key={idx} className="p-5 rounded-2xl bg-[#231B15] border border-amber-500/25 shadow-lg">
+                  <div className="flex items-center justify-between mb-3">
+                    <div className="flex items-center gap-2">
+                      <CreditCard className="w-4 h-4 text-amber-400" />
+                      <span className="font-bold text-xs uppercase text-white">{acc.bank}</span>
+                    </div>
+                    <span className="text-[10px] px-2 py-0.5 rounded bg-amber-900/60 text-amber-200">Tabungan Anak</span>
                   </div>
-                  <span className="text-[10px] px-2 py-0.5 rounded bg-amber-900/60 text-amber-200">Tabungan Anak</span>
+                  <p className="font-mono text-lg font-bold text-amber-300 tracking-wider">{acc.accountNumber}</p>
+                  <p className="text-xs text-amber-200/80 mt-0.5">a.n. {acc.accountHolder}</p>
+                  <button
+                    onClick={() => handleCopy(acc.accountNumber, `Rekening ${acc.bank}`)}
+                    className="mt-3 w-full min-h-[44px] py-2.5 rounded-lg bg-amber-950 hover:bg-amber-900 border border-amber-500/30 text-xs font-semibold text-amber-300 flex items-center justify-center gap-1.5 transition-colors cursor-pointer"
+                  >
+                    {copiedBank === `Rekening ${acc.bank}` ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Copy className="w-3.5 h-3.5" />}
+                    <span>{copiedBank === `Rekening ${acc.bank}` ? 'Tersalin' : 'Salin Nomor Rekening'}</span>
+                  </button>
                 </div>
-                <p className="font-mono text-lg font-bold text-amber-300 tracking-wider">137-00-1982341-0</p>
-                <p className="text-xs text-amber-200/80 mt-0.5">a.n. Danang Suroso (QQ Arya Danendra)</p>
-                <button
-                  onClick={() => handleCopy('1370019823410', 'Rekening Mandiri')}
-                  className="mt-3 w-full py-2 rounded-lg bg-amber-950 hover:bg-amber-900 border border-amber-500/30 text-xs font-semibold text-amber-300 flex items-center justify-center gap-1.5 transition-colors cursor-pointer"
-                >
-                  {copiedBank === 'Rekening Mandiri' ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Copy className="w-3.5 h-3.5" />}
-                  <span>{copiedBank === 'Rekening Mandiri' ? 'Tersalin' : 'Salin Nomor Rekening'}</span>
-                </button>
-              </div>
+              ))}
 
               <div className="p-5 rounded-2xl bg-[#231B15] border border-amber-500/25 shadow-lg">
                 <div className="flex items-center gap-2 mb-2">
@@ -399,11 +420,11 @@ export const NusantaraKhitanTemplate: React.FC<TemplateViewProps> = ({
                   <span className="font-bold text-xs uppercase text-white">Alamat Pengiriman Kado</span>
                 </div>
                 <p className="text-xs text-amber-200/90 leading-relaxed">
-                  Jl. Sagan Kidul No. 18, Gondokusuman, Kota Yogyakarta 55223 (Penerima: Danang Suroso - 0812-3456-9988)
+                  {physicalAddress}
                 </p>
                 <button
-                  onClick={() => handleCopy('Jl. Sagan Kidul No. 18, Gondokusuman, Kota Yogyakarta 55223 (Penerima: Danang Suroso - 0812-3456-9988)', 'Alamat Rumah', true)}
-                  className="mt-3 w-full py-2 rounded-lg bg-amber-950 hover:bg-amber-900 border border-amber-500/30 text-xs font-semibold text-amber-300 flex items-center justify-center gap-1.5 transition-colors cursor-pointer"
+                  onClick={() => handleCopy(physicalAddress, 'Alamat Rumah', true)}
+                  className="mt-3 w-full min-h-[44px] py-2.5 rounded-lg bg-amber-950 hover:bg-amber-900 border border-amber-500/30 text-xs font-semibold text-amber-300 flex items-center justify-center gap-1.5 transition-colors cursor-pointer"
                 >
                   {copiedAddress ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Copy className="w-3.5 h-3.5" />}
                   <span>{copiedAddress ? 'Alamat Tersalin' : 'Salin Alamat Rumah'}</span>

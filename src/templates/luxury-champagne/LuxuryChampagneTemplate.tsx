@@ -81,7 +81,7 @@ export const LuxuryChampagneTemplate: React.FC<TemplateViewProps> = ({
   }
 
   return (
-    <div className="min-h-screen bg-[#0A0A0A] flex justify-center text-stone-200 selection:bg-[#D4AF37] selection:text-stone-950 overflow-x-hidden pt-12">
+    <div className="min-h-screen bg-[#0A0A0A] flex justify-center text-stone-200 selection:bg-[#D4AF37] selection:text-stone-950 overflow-x-hidden pt-16">
       {/* Cover Gate: Vogue Editorial Curtain Split */}
       <LuxuryChampagneCoverScreen isOpen={isOpened} onOpenWithAudio={onOpenWithAudio} />
 

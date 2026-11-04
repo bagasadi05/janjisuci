@@ -72,6 +72,8 @@ export const CoverScreen: React.FC<CoverScreenProps> = ({ isOpen, onOpenWithAudi
         <img
           src={activeTemplate.coverImage}
           alt="Wedding Cover Background"
+          loading="eager"
+          decoding="async"
           className="w-full h-full object-cover object-center filter brightness-[0.28] scale-105"
         />
         <div className="absolute inset-0 bg-gradient-to-t from-stone-950 via-stone-950/75 to-stone-950/85" />

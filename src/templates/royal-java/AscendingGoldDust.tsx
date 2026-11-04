@@ -58,6 +58,13 @@ export const AscendingGoldDust: React.FC<GoldDustProps> = ({ active = true }) =>
             opacity: 0;
           }
         }
+
+        @media (prefers-reduced-motion: reduce) {
+          span {
+            animation: none !important;
+            display: none !important;
+          }
+        }
       `}</style>
     </div>
   )

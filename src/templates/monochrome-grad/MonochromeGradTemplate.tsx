@@ -63,7 +63,22 @@ export const MonochromeGradTemplate: React.FC<TemplateViewProps> = ({
   const { data: weddingData } = useInvitationData()
   const { showToast } = useToast()
 
-  const targetDateStr = '2027-10-23T08:00:00+07:00'
+  const targetDateStr = weddingData.countdownDate || '2027-10-23T08:00:00+07:00'
+  const graduateName = weddingData.couple.bride.fullName || weddingData.couple.groom.fullName || 'Nadine Aulia, S.Ds.'
+  const parentsName = weddingData.couple.groom.fatherName && weddingData.couple.groom.motherName
+    ? `Bpk. ${weddingData.couple.groom.fatherName} & Ibu ${weddingData.couple.groom.motherName}`
+    : 'Bpk. Ir. Hendro Prabowo & Ibu Dr. Sri Rejeki'
+  const dateText = weddingData.events.akad.date || 'Sabtu, 24 Oktober 2026'
+  const venueText = weddingData.events.akad.venue || 'Sasana Budaya Ganesa (Sabuga ITB), Bandung'
+  const addressText = weddingData.events.akad.address || 'Jl. Tamansari No. 73, Lb. Siliwangi, Coblong, Kota Bandung'
+  const mapsUrl = weddingData.events.akad.mapsUrl || 'https://maps.google.com/?q=Sabuga+ITB+Bandung'
+  const physicalAddress = weddingData.gift.giftAddress
+    ? `${weddingData.gift.giftAddress.address} (Penerima: ${weddingData.gift.giftAddress.recipient} - ${weddingData.gift.giftAddress.phone})`
+    : 'Jl. Dago Asri No. 15, Dago, Coblong, Kota Bandung 40135 (Penerima: Nadine Aulia - 0812-7788-9900)'
+  const accounts = weddingData.gift.accounts?.length > 0
+    ? weddingData.gift.accounts
+    : [{ bank: 'Bank BCA', accountNumber: '846-512-9081', accountHolder: graduateName, logoText: 'BCA' }]
+
   const [copiedBank, setCopiedBank] = useState<string | null>(null)
   const [copiedAddress, setCopiedAddress] = useState(false)
   const [selectedPhotoIdx, setSelectedPhotoIdx] = useState<number | null>(null)
@@ -140,16 +155,16 @@ export const MonochromeGradTemplate: React.FC<TemplateViewProps> = ({
         isOpen={isOpened}
         onOpenWithAudio={onOpenWithAudio}
         guestName={guestName}
-        graduateName="Nadine Aulia, S.Ds."
+        graduateName={graduateName}
         institutionName="Institut Teknologi Bandung (ITB)"
-        dateText="Sabtu, 24 Oktober 2026"
+        dateText={dateText}
       />
 
       <MonochromeGradDesktopShowcase
-        graduateName="Nadine Aulia, S.Ds."
+        graduateName={graduateName}
         institutionName="Institut Teknologi Bandung (ITB)"
-        dateText="Sabtu, 24 Oktober 2026"
-        venueText="Sasana Budaya Ganesa (Sabuga ITB), Bandung"
+        dateText={dateText}
+        venueText={venueText}
         isPlayingAudio={isPlayingAudio}
         onToggleAudio={onToggleAudio}
         activeTrack={activeTrack}
@@ -163,7 +178,7 @@ export const MonochromeGradTemplate: React.FC<TemplateViewProps> = ({
             className="w-12 h-12 rounded-full bg-white text-stone-950 flex items-center justify-center shadow-[0_0_20px_rgba(255,255,255,0.4)] active:scale-95 transition-transform"
           >
             {isPlayingAudio ? (
-              <Music className="w-5 h-5 animate-spin" />
+              <Music className="w-5 h-5 animate-spin motion-reduce:animate-none" />
             ) : (
               <VolumeX className="w-5 h-5" />
             )}
@@ -178,21 +193,23 @@ export const MonochromeGradTemplate: React.FC<TemplateViewProps> = ({
           </div>
 
           <h1 className="font-serif text-3xl sm:text-5xl md:text-6xl text-white font-extrabold tracking-tight">
-            Nadine Aulia, S.Ds.
+            {graduateName}
           </h1>
           <p className="text-sm font-sans text-zinc-400 mt-1">
             Sarjana Desain Komunikasi Visual (FSRD ITB)
           </p>
 
           <p className="text-xs font-mono tracking-widest text-zinc-400 mt-2">
-            Sabtu, 24 Oktober 2026 • Sabuga ITB Bandung
+            {dateText} • {venueText}
           </p>
 
           <div className="relative my-8">
             <div className="w-52 sm:w-60 h-72 sm:h-84 rounded-2xl overflow-hidden p-1 bg-gradient-to-b from-white/30 via-zinc-600/20 to-transparent shadow-2xl">
               <img
                 src={template?.heroImage || "https://images.unsplash.com/photo-1672839415384-95cdbcba77ee?auto=format&fit=crop&w=800&q=85"}
-                alt="Nadine Aulia"
+                alt={graduateName}
+                loading="lazy"
+                decoding="async"
                 className="w-full h-full object-cover object-center filter grayscale contrast-110"
               />
             </div>
@@ -221,7 +238,7 @@ export const MonochromeGradTemplate: React.FC<TemplateViewProps> = ({
 
             <div className="pt-2 border-t border-white/10 text-xs text-zinc-400">
               <p className="text-[11px] uppercase tracking-wider text-zinc-400 mb-1">Putri Tercinta Dari:</p>
-              <p className="font-serif font-bold text-white text-sm">Bpk. Ir. Hendro Prabowo & Ibu Dr. Sri Rejeki</p>
+              <p className="font-serif font-bold text-white text-sm">{parentsName}</p>
             </div>
           </div>
         </section>
@@ -283,8 +300,8 @@ export const MonochromeGradTemplate: React.FC<TemplateViewProps> = ({
           <div className="max-w-lg mx-auto">
             <div className="text-center mb-8">
               <span className="text-[11px] uppercase tracking-widest text-zinc-400 font-mono">Lokasi Prosesi</span>
-              <h3 className="text-2xl font-serif font-bold text-white mt-1">Sasana Budaya Ganesa (Sabuga)</h3>
-              <p className="text-xs text-zinc-400 mt-1">Jl. Tamansari No. 73, Lb. Siliwangi, Coblong, Kota Bandung</p>
+              <h3 className="text-2xl font-serif font-bold text-white mt-1">{venueText}</h3>
+              <p className="text-xs text-zinc-400 mt-1">{addressText}</p>
             </div>
 
             <div className="rounded-2xl overflow-hidden border border-white/15 shadow-2xl bg-[#18181B]">
@@ -307,10 +324,10 @@ export const MonochromeGradTemplate: React.FC<TemplateViewProps> = ({
                   <p className="text-[11px] text-zinc-400">Parkir Khusus Tamu & Pendamping Wisudawan</p>
                 </div>
                 <a
-                  href="https://maps.google.com/?q=Sabuga+ITB+Bandung"
+                  href={mapsUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="w-full sm:w-auto px-4 py-2 rounded-full bg-white text-stone-950 font-bold text-xs flex items-center justify-center gap-1.5 shadow-md cursor-pointer hover:bg-zinc-200 transition-colors"
+                  className="w-full sm:w-auto min-h-[44px] px-5 py-2.5 rounded-full bg-white text-stone-950 font-bold text-xs flex items-center justify-center gap-1.5 shadow-md cursor-pointer hover:bg-zinc-200 transition-colors"
                 >
                   <Navigation className="w-3.5 h-3.5" />
                   <span>Petunjuk Arah Google Maps</span>
@@ -407,24 +424,26 @@ export const MonochromeGradTemplate: React.FC<TemplateViewProps> = ({
             </div>
 
             <div className="space-y-4">
-              <div className="p-5 rounded-2xl bg-[#18181B] border border-white/10 shadow-lg">
-                <div className="flex items-center justify-between mb-3">
-                  <div className="flex items-center gap-2">
-                    <CreditCard className="w-4 h-4 text-zinc-200" />
-                    <span className="font-bold text-xs uppercase text-white">Bank BCA</span>
+              {accounts.map((acc, idx) => (
+                <div key={idx} className="p-5 rounded-2xl bg-[#18181B] border border-white/10 shadow-lg">
+                  <div className="flex items-center justify-between mb-3">
+                    <div className="flex items-center gap-2">
+                      <CreditCard className="w-4 h-4 text-zinc-200" />
+                      <span className="font-bold text-xs uppercase text-white">{acc.bank}</span>
+                    </div>
+                    <span className="text-[10px] px-2 py-0.5 rounded bg-zinc-800 text-zinc-300">Rekening Wisudawan</span>
                   </div>
-                  <span className="text-[10px] px-2 py-0.5 rounded bg-zinc-800 text-zinc-300">Rekening Wisudawan</span>
+                  <p className="font-mono text-lg font-bold text-white tracking-wider">{acc.accountNumber}</p>
+                  <p className="text-xs text-zinc-400 mt-0.5">a.n. {acc.accountHolder}</p>
+                  <button
+                    onClick={() => handleCopy(acc.accountNumber, `Rekening ${acc.bank}`)}
+                    className="mt-3 w-full min-h-[44px] py-2.5 rounded-lg bg-zinc-900 hover:bg-zinc-800 border border-white/15 text-xs font-semibold text-white flex items-center justify-center gap-1.5 transition-colors cursor-pointer"
+                  >
+                    {copiedBank === `Rekening ${acc.bank}` ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Copy className="w-3.5 h-3.5" />}
+                    <span>{copiedBank === `Rekening ${acc.bank}` ? 'Tersalin' : 'Salin Nomor Rekening'}</span>
+                  </button>
                 </div>
-                <p className="font-mono text-lg font-bold text-white tracking-wider">846-512-9081</p>
-                <p className="text-xs text-zinc-400 mt-0.5">a.n. Nadine Aulia</p>
-                <button
-                  onClick={() => handleCopy('8465129081', 'Rekening BCA')}
-                  className="mt-3 w-full py-2 rounded-lg bg-zinc-900 hover:bg-zinc-800 border border-white/15 text-xs font-semibold text-white flex items-center justify-center gap-1.5 transition-colors cursor-pointer"
-                >
-                  {copiedBank === 'Rekening BCA' ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Copy className="w-3.5 h-3.5" />}
-                  <span>{copiedBank === 'Rekening BCA' ? 'Tersalin' : 'Salin Nomor Rekening'}</span>
-                </button>
-              </div>
+              ))}
 
               <div className="p-5 rounded-2xl bg-[#18181B] border border-white/10 shadow-lg">
                 <div className="flex items-center gap-2 mb-2">
@@ -432,11 +451,11 @@ export const MonochromeGradTemplate: React.FC<TemplateViewProps> = ({
                   <span className="font-bold text-xs uppercase text-white">Kirim Buket Bunga / Hadiah</span>
                 </div>
                 <p className="text-xs text-zinc-300 leading-relaxed">
-                  Jl. Dago Asri No. 15, Dago, Coblong, Kota Bandung 40135 (Penerima: Nadine Aulia - 0812-7788-9900)
+                  {physicalAddress}
                 </p>
                 <button
-                  onClick={() => handleCopy('Jl. Dago Asri No. 15, Dago, Coblong, Kota Bandung 40135 (Penerima: Nadine Aulia - 0812-7788-9900)', 'Alamat Rumah', true)}
-                  className="mt-3 w-full py-2 rounded-lg bg-zinc-900 hover:bg-zinc-800 border border-white/15 text-xs font-semibold text-white flex items-center justify-center gap-1.5 transition-colors cursor-pointer"
+                  onClick={() => handleCopy(physicalAddress, 'Alamat Rumah', true)}
+                  className="mt-3 w-full min-h-[44px] py-2.5 rounded-lg bg-zinc-900 hover:bg-zinc-800 border border-white/15 text-xs font-semibold text-white flex items-center justify-center gap-1.5 transition-colors cursor-pointer"
                 >
                   {copiedAddress ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Copy className="w-3.5 h-3.5" />}
                   <span>{copiedAddress ? 'Alamat Tersalin' : 'Salin Alamat Penerima'}</span>

@@ -14,6 +14,11 @@ interface ToastContextType {
 const ToastContext = createContext<ToastContextType | undefined>(undefined)
 
 export const ToastProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
+  const existingContext = useContext(ToastContext)
+  if (existingContext) {
+    return <>{children}</>
+  }
+
   const [toasts, setToasts] = useState<Toast[]>([])
 
   const showToast = (message: string, type: 'success' | 'info' = 'success') => {
@@ -69,7 +74,11 @@ export const ToastProvider: React.FC<{ children: ReactNode }> = ({ children }) =
 export const useToast = () => {
   const context = useContext(ToastContext)
   if (!context) {
-    throw new Error('useToast must be used within a ToastProvider')
+    return {
+      showToast: (message: string, type: 'success' | 'info' = 'success') => {
+        console.warn(`[Toast ${type} (fallback)]:`, message)
+      }
+    }
   }
   return context
 }

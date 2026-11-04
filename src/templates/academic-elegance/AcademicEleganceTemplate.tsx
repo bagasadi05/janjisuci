@@ -63,10 +63,21 @@ export const AcademicEleganceTemplate: React.FC<TemplateViewProps> = ({
   onToggleAudio,
   activeTrack
 }) => {
-  const { data: weddingData } = useInvitationData()
+  const { data: weddingData, activeTemplate } = useInvitationData()
   const { showToast } = useToast()
 
-  const targetDateStr = '2027-09-19T08:00:00+07:00'
+  const graduateName = weddingData.couple.groom.fullName || activeTemplate.sampleCouple?.groomFull || 'Faris Alamsyah, S.Kom., M.T.'
+  const institutionName = weddingData.couple.groom.shortName || activeTemplate.sampleCouple?.groomShort || 'Universitas Indonesia'
+  const degreeTitle = weddingData.couple.bride.fullName || activeTemplate.sampleCouple?.brideFull || 'Magister Ilmu Komputer (FASILKOM UI)'
+  const parentsName = weddingData.couple.groom.fatherName && weddingData.couple.groom.motherName
+    ? `Bpk. ${weddingData.couple.groom.fatherName} & Ibu ${weddingData.couple.groom.motherName}`
+    : 'Bpk. Ir. Hendra Alamsyah & Ibu Hj. Ratna Juwita, S.E.'
+  const dateText = weddingData.events.akad.date
+  const timeText = weddingData.events.akad.time
+  const venueText = weddingData.events.akad.venue
+  const addressText = weddingData.events.akad.address
+  const mapsUrl = weddingData.events.akad.mapsUrl || `https://maps.google.com/?q=${encodeURIComponent(addressText || venueText)}`
+  const targetDateStr = weddingData.countdownDate || '2027-09-19T08:00:00+07:00'
   const [timeLeft, setTimeLeft] = useState({ days: 0, hours: 0, minutes: 0, seconds: 0 })
 
   useEffect(() => {
@@ -170,15 +181,15 @@ export const AcademicEleganceTemplate: React.FC<TemplateViewProps> = ({
         isOpen={isOpened}
         onOpenWithAudio={onOpenWithAudio}
         guestName={guestName}
-        institutionName="Universitas Indonesia"
-        ceremonyTitle="Wisuda Sarjana & Magister Gasal 2026"
-        dateText="Sabtu, 19 September 2026"
+        institutionName={institutionName}
+        ceremonyTitle={`Wisuda & Pelepasan Kelulusan`}
+        dateText={dateText}
       />
 
       <AcademicEleganceDesktopShowcase
-        institutionName="Universitas Indonesia"
-        dateText="Sabtu, 19 September 2026"
-        venueText="Balairung UI, Kampus UI Depok"
+        institutionName={institutionName}
+        dateText={dateText}
+        venueText={venueText}
         isPlayingAudio={isPlayingAudio}
         onToggleAudio={onToggleAudio}
         activeTrack={activeTrack}
@@ -190,7 +201,8 @@ export const AcademicEleganceTemplate: React.FC<TemplateViewProps> = ({
         <div className="fixed bottom-6 right-6 z-40 lg:hidden">
           <button
             onClick={onToggleAudio}
-            className="w-12 h-12 rounded-full bg-gradient-to-tr from-amber-400 to-amber-200 text-slate-950 flex items-center justify-center shadow-[0_0_20px_rgba(245,158,11,0.5)] active:scale-95 transition-transform"
+            className="w-12 h-12 min-w-[48px] min-h-[48px] rounded-full bg-gradient-to-tr from-amber-400 to-amber-200 text-slate-950 flex items-center justify-center shadow-[0_0_20px_rgba(245,158,11,0.5)] active:scale-95 transition-transform cursor-pointer"
+            aria-label={isPlayingAudio ? 'Jeda Musik' : 'Putar Musik'}
           >
             {isPlayingAudio ? (
               <Music className="w-5 h-5 animate-spin" />
@@ -204,32 +216,36 @@ export const AcademicEleganceTemplate: React.FC<TemplateViewProps> = ({
         <section className="relative px-6 pt-16 pb-12 flex flex-col items-center text-center">
           <div className="inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full bg-blue-950/80 border border-amber-400/30 text-amber-200 text-xs font-serif uppercase tracking-widest mb-4 shadow-lg">
             <GraduationCap className="w-3.5 h-3.5 text-amber-300" />
-            <span>Sidang Terbuka Senat Universitas Indonesia</span>
+            <span>Sidang Terbuka Senat {institutionName}</span>
           </div>
 
           <h1 className="font-serif text-3xl sm:text-5xl md:text-6xl text-transparent bg-clip-text bg-gradient-to-r from-amber-100 via-amber-200 to-amber-400 font-bold tracking-wide">
-            Faris Alamsyah, S.Kom., M.T.
+            {graduateName}
           </h1>
           <p className="text-sm font-serif italic text-amber-300/90 mt-1">
-            Magister Ilmu Komputer (FASILKOM UI)
+            {degreeTitle}
           </p>
 
           <p className="text-xs font-mono tracking-widest text-blue-200/80 mt-2">
-            Sabtu, 19 September 2026 • Balairung UI Depok
+            {dateText} • {venueText}
           </p>
 
           <div className="relative my-8">
             <div className="w-52 sm:w-60 h-72 sm:h-84 rounded-3xl overflow-hidden p-1.5 bg-gradient-to-b from-amber-400/40 via-blue-500/20 to-transparent shadow-2xl">
               <img
-                src={template?.heroImage || "https://images.unsplash.com/photo-1495995424756-6a5a3f9e7543?auto=format&fit=crop&w=800&q=85"}
-                alt="Wisuda Faris Alamsyah"
+                src={weddingData.couple.groom.photo || activeTemplate.sampleCouple?.groomPhoto || template?.heroImage || "https://images.unsplash.com/photo-1495995424756-6a5a3f9e7543?auto=format&fit=crop&w=800&q=85"}
+                alt={`Wisuda ${graduateName}`}
+                width={240}
+                height={336}
+                loading="eager"
+                decoding="async"
                 className="w-full h-full object-cover object-center filter brightness-95"
               />
             </div>
             <div className="absolute -inset-2 rounded-3xl border border-amber-400/20 pointer-events-none -z-10" />
             <div className="absolute -bottom-3 left-1/2 -translate-x-1/2 px-4 py-1 rounded-full bg-[#0B132B] border border-amber-400/40 text-xs text-amber-200 font-serif tracking-wider shadow-lg flex items-center gap-1.5 whitespace-nowrap">
               <Award className="w-3.5 h-3.5 text-amber-400" />
-              <span>Summa Cum Laude (IPK 3.92)</span>
+              <span>Kelulusan Terbaik</span>
             </div>
           </div>
 
@@ -268,24 +284,22 @@ export const AcademicEleganceTemplate: React.FC<TemplateViewProps> = ({
 
             <div>
               <h2 className="text-xl sm:text-2xl font-serif font-bold text-white tracking-wide">
-                Faris Alamsyah, S.Kom., M.T.
+                {graduateName}
               </h2>
               <p className="text-xs text-amber-300 mt-1 font-mono">
-                NPM: 2206891204 • Magister Ilmu Komputer
+                {degreeTitle}
               </p>
               <div className="mt-3 p-3 rounded-xl bg-blue-950/60 border border-blue-400/20 text-xs text-blue-200/90 text-left max-w-sm mx-auto space-y-1">
-                <p className="font-semibold text-amber-200 font-serif">Judul Tesis:</p>
+                <p className="font-semibold text-amber-200 font-serif">Institusi &amp; Gelar:</p>
                 <p className="italic text-[11px] leading-relaxed text-blue-100">
-                  &ldquo;Penerapan Deep Learning Multi-Modal pada Diagnostik Radiologi Otomatis Berbasis Federated Learning&rdquo;
+                  {institutionName} • {degreeTitle}
                 </p>
               </div>
             </div>
 
             <div className="pt-2 text-xs text-blue-200/90 font-sans">
-              <p className="text-[11px] uppercase tracking-wider text-blue-300/60 mb-1">Putra Tercinta Dari Pasangan:</p>
-              <p className="font-serif font-semibold text-white text-sm">Bpk. Ir. Hendra Alamsyah</p>
-              <p className="text-blue-300/70 text-xs">&</p>
-              <p className="font-serif font-semibold text-white text-sm">Ibu Hj. Ratna Juwita, S.E.</p>
+              <p className="text-[11px] uppercase tracking-wider text-blue-300/60 mb-1">Putra/Putri Tercinta Dari Pasangan:</p>
+              <p className="font-serif font-semibold text-white text-sm">{parentsName}</p>
             </div>
           </div>
         </section>
@@ -538,42 +552,50 @@ export const AcademicEleganceTemplate: React.FC<TemplateViewProps> = ({
 
             <div className="space-y-4">
               {/* Rekening Bank */}
-              <div className="p-5 rounded-2xl bg-[#101B38] border border-blue-400/25 shadow-lg">
-                <div className="flex items-center justify-between mb-3">
-                  <div className="flex items-center gap-2">
-                    <CreditCard className="w-4 h-4 text-amber-400" />
-                    <span className="font-bold text-xs uppercase tracking-wider text-white">Bank Mandiri</span>
-                  </div>
-                  <span className="text-[10px] px-2 py-0.5 rounded bg-blue-900/60 text-blue-200 border border-blue-500/30">Rekening Wisudawan</span>
+              {weddingData.gift.accounts && weddingData.gift.accounts.length > 0 && (
+                <div className="space-y-3">
+                  {weddingData.gift.accounts.map((acc, idx) => (
+                    <div key={idx} className="p-5 rounded-2xl bg-[#101B38] border border-blue-400/25 shadow-lg">
+                      <div className="flex items-center justify-between mb-3">
+                        <div className="flex items-center gap-2">
+                          <CreditCard className="w-4 h-4 text-amber-400" />
+                          <span className="font-bold text-xs uppercase tracking-wider text-white">{acc.bank}</span>
+                        </div>
+                        <span className="text-[10px] px-2 py-0.5 rounded bg-blue-900/60 text-blue-200 border border-blue-500/30">Rekening Wisudawan</span>
+                      </div>
+                      <p className="font-mono text-lg font-bold text-amber-200 tracking-wider">{acc.accountNumber}</p>
+                      <p className="text-xs text-blue-200/80 mt-0.5">a.n. {acc.accountHolder || acc.holderName}</p>
+                      <button
+                        onClick={() => handleCopy(acc.accountNumber, `Nomor Rekening ${acc.bank}`)}
+                        className="mt-3 w-full min-h-[44px] py-2 rounded-lg bg-blue-950 hover:bg-blue-900 border border-blue-400/30 text-xs font-semibold text-amber-200 flex items-center justify-center gap-1.5 transition-colors cursor-pointer"
+                      >
+                        {copiedBank === `Nomor Rekening ${acc.bank}` ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Copy className="w-3.5 h-3.5" />}
+                        <span>{copiedBank === `Nomor Rekening ${acc.bank}` ? 'Tersalin' : 'Salin Nomor Rekening'}</span>
+                      </button>
+                    </div>
+                  ))}
                 </div>
-                <p className="font-mono text-lg font-bold text-amber-200 tracking-wider">157-00-0982341-2</p>
-                <p className="text-xs text-blue-200/80 mt-0.5">a.n. Faris Alamsyah</p>
-                <button
-                  onClick={() => handleCopy('1570009823412', 'Nomor Rekening Mandiri')}
-                  className="mt-3 w-full py-2 rounded-lg bg-blue-950 hover:bg-blue-900 border border-blue-400/30 text-xs font-semibold text-amber-200 flex items-center justify-center gap-1.5 transition-colors cursor-pointer"
-                >
-                  {copiedBank === 'Nomor Rekening Mandiri' ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Copy className="w-3.5 h-3.5" />}
-                  <span>{copiedBank === 'Nomor Rekening Mandiri' ? 'Tersalin' : 'Salin Nomor Rekening'}</span>
-                </button>
-              </div>
+              )}
 
               {/* Kirim Hadiah Fisik / Bunga Wisuda */}
-              <div className="p-5 rounded-2xl bg-[#101B38] border border-blue-400/25 shadow-lg">
-                <div className="flex items-center gap-2 mb-2">
-                  <Package className="w-4 h-4 text-amber-400" />
-                  <span className="font-bold text-xs uppercase tracking-wider text-white">Kirim Kado / Buket Bunga Wisuda</span>
+              {weddingData.gift.giftAddress && (
+                <div className="p-5 rounded-2xl bg-[#101B38] border border-blue-400/25 shadow-lg">
+                  <div className="flex items-center gap-2 mb-2">
+                    <Package className="w-4 h-4 text-amber-400" />
+                    <span className="font-bold text-xs uppercase tracking-wider text-white">Kirim Kado / Buket Bunga Wisuda</span>
+                  </div>
+                  <p className="text-xs text-blue-200/90 leading-relaxed">
+                    {weddingData.gift.giftAddress.address} (Penerima: {weddingData.gift.giftAddress.recipient || graduateName} - {weddingData.gift.giftAddress.phone})
+                  </p>
+                  <button
+                    onClick={() => handleCopy(`${weddingData.gift.giftAddress.address} (Penerima: ${weddingData.gift.giftAddress.recipient || graduateName} - ${weddingData.gift.giftAddress.phone})`, 'Alamat Pengiriman', true)}
+                    className="mt-3 w-full min-h-[44px] py-2 rounded-lg bg-blue-950 hover:bg-blue-900 border border-blue-400/30 text-xs font-semibold text-amber-200 flex items-center justify-center gap-1.5 transition-colors cursor-pointer"
+                  >
+                    {copiedAddress ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Copy className="w-3.5 h-3.5" />}
+                    <span>{copiedAddress ? 'Alamat Tersalin' : 'Salin Alamat Penerima'}</span>
+                  </button>
                 </div>
-                <p className="text-xs text-blue-200/90 leading-relaxed">
-                  Jl. Margonda Raya No. 45B, Beji, Kota Depok, Jawa Barat 16424 (Penerima: Faris Alamsyah - 0812-9876-5432)
-                </p>
-                <button
-                  onClick={() => handleCopy('Jl. Margonda Raya No. 45B, Beji, Kota Depok, Jawa Barat 16424 (Penerima: Faris Alamsyah - 0812-9876-5432)', 'Alamat Pengiriman', true)}
-                  className="mt-3 w-full py-2 rounded-lg bg-blue-950 hover:bg-blue-900 border border-blue-400/30 text-xs font-semibold text-amber-200 flex items-center justify-center gap-1.5 transition-colors cursor-pointer"
-                >
-                  {copiedAddress ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Copy className="w-3.5 h-3.5" />}
-                  <span>{copiedAddress ? 'Alamat Tersalin' : 'Salin Alamat Penerima'}</span>
-                </button>
-              </div>
+              )}
             </div>
           </div>
         </section>
@@ -686,7 +708,7 @@ export const AcademicEleganceTemplate: React.FC<TemplateViewProps> = ({
             &ldquo;Berilmu Amaliah, Beramal Ilmiah, Berakhlakul Karimah&rdquo;
           </p>
           <p className="text-[11px] font-sans">
-            Keluarga Besar Faris Alamsyah • Balairung Universitas Indonesia 2026
+            Keluarga Besar {graduateName} • {venueText} {dateText}
           </p>
           <p className="text-[10px] pt-4 font-mono text-blue-400/50">
             Dibuat dengan penuh dedikasi oleh <span className="text-amber-300 font-serif">JanjiSuci.id</span>

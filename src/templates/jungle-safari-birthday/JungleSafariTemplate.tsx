@@ -59,7 +59,23 @@ export const JungleSafariTemplate: React.FC<TemplateViewProps> = ({
   const { data: weddingData } = useInvitationData()
   const { showToast } = useToast()
 
-  const targetDateStr = '2027-10-18T10:00:00+07:00'
+  const targetDateStr = weddingData.countdownDate || '2027-10-18T10:00:00+07:00'
+  const celebrantName = weddingData.couple.groom.fullName || 'Kenzo Dirgantara'
+  const parentsName = weddingData.couple.groom.fatherName && weddingData.couple.groom.motherName
+    ? `Keluarga Bpk. ${weddingData.couple.groom.fatherName} & Ibu ${weddingData.couple.groom.motherName}`
+    : 'Keluarga Bpk. Aditya Dirgantara & Ibu Renata Anggraini'
+  const dateText = weddingData.events.akad.date || 'Minggu, 18 Oktober 2026'
+  const timeText = weddingData.events.akad.time || '10:00 - 13:00 WIB'
+  const venueText = weddingData.events.akad.venue || 'Playground Safari Café, Kemang Jakarta'
+  const addressText = weddingData.events.akad.address || 'Jl. Kemang Raya No. 45B, Mampang Prapatan, Jakarta Selatan'
+  const mapsUrl = weddingData.events.akad.mapsUrl || 'https://maps.google.com/?q=Kemang+Jakarta+Selatan'
+  const physicalAddress = weddingData.gift.giftAddress
+    ? `${weddingData.gift.giftAddress.address} (Penerima: ${weddingData.gift.giftAddress.recipient} - ${weddingData.gift.giftAddress.phone})`
+    : 'Jl. Ampera Raya No. 12, Cilandak Timur, Pasar Minggu, Jakarta Selatan 12560 (Penerima: Kenzo / Aditya - 0812-9876-1234)'
+  const accounts = weddingData.gift.accounts?.length > 0
+    ? weddingData.gift.accounts
+    : [{ bank: 'Bank BCA', accountNumber: '731-089-2341', accountHolder: `${celebrantName} (QQ Aditya Dirgantara)`, logoText: 'BCA' }]
+
   const [copiedBank, setCopiedBank] = useState<string | null>(null)
   const [copiedAddress, setCopiedAddress] = useState(false)
   const [selectedPhotoIdx, setSelectedPhotoIdx] = useState<number | null>(null)
@@ -140,15 +156,15 @@ export const JungleSafariTemplate: React.FC<TemplateViewProps> = ({
         isOpen={isOpened}
         onOpenWithAudio={onOpenWithAudio}
         guestName={guestName}
-        celebrantName="Kenzo Dirgantara"
+        celebrantName={celebrantName}
         ageText="Turning 3rd Birthday!"
-        dateText="Minggu, 18 Oktober 2026"
+        dateText={dateText}
       />
 
       <JungleSafariDesktopShowcase
-        celebrantName="Kenzo Dirgantara"
-        dateText="Minggu, 18 Oktober 2026"
-        venueText="Playground Safari Café, Kemang Jakarta"
+        celebrantName={celebrantName}
+        dateText={dateText}
+        venueText={venueText}
         isPlayingAudio={isPlayingAudio}
         onToggleAudio={onToggleAudio}
         activeTrack={activeTrack}
@@ -162,7 +178,7 @@ export const JungleSafariTemplate: React.FC<TemplateViewProps> = ({
             className="w-12 h-12 rounded-full bg-gradient-to-tr from-amber-400 to-lime-300 text-stone-950 flex items-center justify-center shadow-[0_0_20px_rgba(245,158,11,0.5)] active:scale-95 transition-transform"
           >
             {isPlayingAudio ? (
-              <Music className="w-5 h-5 animate-spin" />
+              <Music className="w-5 h-5 animate-spin motion-reduce:animate-none" />
             ) : (
               <VolumeX className="w-5 h-5" />
             )}
@@ -177,21 +193,23 @@ export const JungleSafariTemplate: React.FC<TemplateViewProps> = ({
           </div>
 
           <h1 className="font-serif text-4xl sm:text-6xl text-transparent bg-clip-text bg-gradient-to-r from-amber-200 via-amber-300 to-lime-200 font-extrabold tracking-wide">
-            Kenzo Dirgantara
+            {celebrantName}
           </h1>
           <div className="mt-2 inline-block px-4 py-1 rounded-full bg-amber-500/20 text-amber-300 text-sm font-bold">
             🎉 Turning 3rd Birthday Party!
           </div>
 
           <p className="text-xs font-mono tracking-widest text-emerald-200/80 mt-3">
-            Minggu, 18 Oktober 2026 • 10:00 - 13:00 WIB
+            {dateText} • {timeText}
           </p>
 
           <div className="relative my-8">
             <div className="w-52 sm:w-60 h-72 sm:h-84 rounded-3xl overflow-hidden p-1.5 bg-gradient-to-b from-amber-400/40 via-lime-400/20 to-emerald-950 shadow-2xl">
               <img
                 src={weddingData.couple.groom.photo || "https://images.unsplash.com/photo-1772724317403-63337bf58fff?auto=format&fit=crop&w=800&q=85"}
-                alt="Kenzo Dirgantara"
+                alt={celebrantName}
+                loading="lazy"
+                decoding="async"
                 className="w-full h-full object-cover object-center filter brightness-95"
               />
             </div>
@@ -199,7 +217,7 @@ export const JungleSafariTemplate: React.FC<TemplateViewProps> = ({
           </div>
 
           <p className="max-w-md text-xs sm:text-sm text-emerald-100/90 leading-relaxed font-sans px-4">
-            Halo teman-teman tersayang! Kenzo sekarang sudah berusia 3 tahun! Yuk ikut berpetualang dan bersenang-senang di pesta hutan safari bersama hewan-hewan lucu, sulap seru, dan kue ulang tahun lezat!
+            Halo teman-teman tersayang! {celebrantName} sekarang sudah bertambah usia! Yuk ikut berpetualang dan bersenang-senang di pesta hutan safari bersama hewan-hewan lucu, sulap seru, dan kue ulang tahun lezat!
           </p>
         </section>
 
@@ -215,11 +233,11 @@ export const JungleSafariTemplate: React.FC<TemplateViewProps> = ({
             </p>
 
             <blockquote className="text-xs sm:text-sm text-emerald-100/90 leading-relaxed italic mb-4">
-              &ldquo;Semoga ananda Kenzo tumbuh menjadi anak yang sehat, pemberani, berhati lembut, ceria, dan selalu membawa tawa serta kebahagiaan bagi orang-orang di sekitarnya.&rdquo;
+              &ldquo;Semoga ananda tercinta tumbuh menjadi anak yang sehat, pemberani, berhati lembut, ceria, dan selalu membawa tawa serta kebahagiaan bagi orang-orang di sekitarnya.&rdquo;
             </blockquote>
 
             <p className="text-xs text-amber-200 font-sans font-semibold">
-              Keluarga Bpk. Aditya Dirgantara & Ibu Renata Anggraini
+              {parentsName}
             </p>
           </div>
         </section>
@@ -281,8 +299,8 @@ export const JungleSafariTemplate: React.FC<TemplateViewProps> = ({
           <div className="max-w-lg mx-auto">
             <div className="text-center mb-8">
               <span className="text-[11px] uppercase tracking-widest text-amber-300 font-sans font-bold">Tempat Pesta</span>
-              <h3 className="text-2xl font-serif font-bold text-white mt-1">Playground Safari Café</h3>
-              <p className="text-xs text-emerald-200/80 mt-1">Jl. Kemang Raya No. 45B, Mampang Prapatan, Jakarta Selatan</p>
+              <h3 className="text-2xl font-serif font-bold text-white mt-1">{venueText}</h3>
+              <p className="text-xs text-emerald-200/80 mt-1">{addressText}</p>
             </div>
 
             <div className="rounded-2xl overflow-hidden border border-emerald-500/20 shadow-2xl bg-[#1C3121]">
@@ -305,10 +323,10 @@ export const JungleSafariTemplate: React.FC<TemplateViewProps> = ({
                   <p className="text-[11px] text-emerald-300/80">Indoor AC + Outdoor Safari Playground</p>
                 </div>
                 <a
-                  href="https://maps.google.com/?q=Kemang+Jakarta+Selatan"
+                  href={mapsUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="w-full sm:w-auto px-4 py-2 rounded-full bg-gradient-to-r from-amber-400 to-lime-400 text-stone-950 font-bold text-xs flex items-center justify-center gap-1.5 shadow-md cursor-pointer"
+                  className="w-full sm:w-auto min-h-[44px] px-5 py-2.5 rounded-full bg-gradient-to-r from-amber-400 to-lime-400 text-stone-950 font-bold text-xs flex items-center justify-center gap-1.5 shadow-md cursor-pointer"
                 >
                   <Navigation className="w-3.5 h-3.5" />
                   <span>Petunjuk Arah Google Maps</span>
@@ -385,31 +403,33 @@ export const JungleSafariTemplate: React.FC<TemplateViewProps> = ({
           <div className="max-w-lg mx-auto">
             <div className="text-center mb-8">
               <span className="text-[11px] uppercase tracking-widest text-amber-300 font-sans font-bold">Tanda Kasih</span>
-              <h3 className="text-2xl font-serif font-bold text-white mt-1">Kado & Tabungan Kenzo</h3>
+              <h3 className="text-2xl font-serif font-bold text-white mt-1">Kado & Tabungan {celebrantName}</h3>
               <p className="text-xs text-emerald-200/80 mt-1">
-                Kehadiran dan senyum teman-teman adalah kado terindah bagi Kenzo. Bagi yang ingin mengirimkan kado mainan atau tabungan:
+                Kehadiran dan senyum teman-teman adalah kado terindah bagi {celebrantName}. Bagi yang ingin mengirimkan kado mainan atau tabungan:
               </p>
             </div>
 
             <div className="space-y-4">
-              <div className="p-5 rounded-2xl bg-[#1C3121] border border-emerald-500/25 shadow-lg">
-                <div className="flex items-center justify-between mb-3">
-                  <div className="flex items-center gap-2">
-                    <CreditCard className="w-4 h-4 text-amber-400" />
-                    <span className="font-bold text-xs uppercase text-white">Bank BCA</span>
+              {accounts.map((acc, idx) => (
+                <div key={idx} className="p-5 rounded-2xl bg-[#1C3121] border border-emerald-500/25 shadow-lg">
+                  <div className="flex items-center justify-between mb-3">
+                    <div className="flex items-center gap-2">
+                      <CreditCard className="w-4 h-4 text-amber-400" />
+                      <span className="font-bold text-xs uppercase text-white">{acc.bank}</span>
+                    </div>
+                    <span className="text-[10px] px-2 py-0.5 rounded bg-emerald-900/60 text-emerald-200">Tabungan Anak</span>
                   </div>
-                  <span className="text-[10px] px-2 py-0.5 rounded bg-emerald-900/60 text-emerald-200">Tabungan Anak</span>
+                  <p className="font-mono text-lg font-bold text-amber-300 tracking-wider">{acc.accountNumber}</p>
+                  <p className="text-xs text-emerald-200/80 mt-0.5">a.n. {acc.accountHolder}</p>
+                  <button
+                    onClick={() => handleCopy(acc.accountNumber, `Rekening ${acc.bank}`)}
+                    className="mt-3 w-full min-h-[44px] py-2.5 rounded-lg bg-emerald-950 hover:bg-emerald-900 border border-emerald-500/30 text-xs font-semibold text-amber-300 flex items-center justify-center gap-1.5 transition-colors cursor-pointer"
+                  >
+                    {copiedBank === `Rekening ${acc.bank}` ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Copy className="w-3.5 h-3.5" />}
+                    <span>{copiedBank === `Rekening ${acc.bank}` ? 'Tersalin' : 'Salin Nomor Rekening'}</span>
+                  </button>
                 </div>
-                <p className="font-mono text-lg font-bold text-amber-300 tracking-wider">731-089-2341</p>
-                <p className="text-xs text-emerald-200/80 mt-0.5">a.n. Aditya Dirgantara (QQ Kenzo)</p>
-                <button
-                  onClick={() => handleCopy('7310892341', 'Rekening BCA')}
-                  className="mt-3 w-full py-2 rounded-lg bg-emerald-950 hover:bg-emerald-900 border border-emerald-500/30 text-xs font-semibold text-amber-300 flex items-center justify-center gap-1.5 transition-colors cursor-pointer"
-                >
-                  {copiedBank === 'Rekening BCA' ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Copy className="w-3.5 h-3.5" />}
-                  <span>{copiedBank === 'Rekening BCA' ? 'Tersalin' : 'Salin Nomor Rekening'}</span>
-                </button>
-              </div>
+              ))}
 
               <div className="p-5 rounded-2xl bg-[#1C3121] border border-emerald-500/25 shadow-lg">
                 <div className="flex items-center gap-2 mb-2">
@@ -417,11 +437,11 @@ export const JungleSafariTemplate: React.FC<TemplateViewProps> = ({
                   <span className="font-bold text-xs uppercase text-white">Alamat Pengiriman Kado</span>
                 </div>
                 <p className="text-xs text-emerald-200/90 leading-relaxed">
-                  Jl. Ampera Raya No. 12, Cilandak Timur, Pasar Minggu, Jakarta Selatan 12560 (Penerima: Kenzo / Aditya - 0812-9876-1234)
+                  {physicalAddress}
                 </p>
                 <button
-                  onClick={() => handleCopy('Jl. Ampera Raya No. 12, Cilandak Timur, Pasar Minggu, Jakarta Selatan 12560 (Penerima: Kenzo / Aditya - 0812-9876-1234)', 'Alamat Rumah', true)}
-                  className="mt-3 w-full py-2 rounded-lg bg-emerald-950 hover:bg-emerald-900 border border-emerald-500/30 text-xs font-semibold text-amber-300 flex items-center justify-center gap-1.5 transition-colors cursor-pointer"
+                  onClick={() => handleCopy(physicalAddress, 'Alamat Rumah', true)}
+                  className="mt-3 w-full min-h-[44px] py-2.5 rounded-lg bg-emerald-950 hover:bg-emerald-900 border border-emerald-500/30 text-xs font-semibold text-amber-300 flex items-center justify-center gap-1.5 transition-colors cursor-pointer"
                 >
                   {copiedAddress ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Copy className="w-3.5 h-3.5" />}
                   <span>{copiedAddress ? 'Alamat Tersalin' : 'Salin Alamat Rumah'}</span>

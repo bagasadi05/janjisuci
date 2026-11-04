@@ -81,7 +81,7 @@ export const BlushPeonyTemplate: React.FC<TemplateViewProps> = ({
   }
 
   return (
-    <div className="min-h-screen bg-[#FFF8F9] flex justify-center text-[#4A2033] selection:bg-[#B76E79] selection:text-white overflow-x-hidden pt-12">
+    <div className="min-h-screen bg-[#FFF8F9] flex justify-center text-[#4A2033] selection:bg-[#B76E79] selection:text-white overflow-x-hidden pt-16">
       {/* Cover Gate: Blooming Floral Peony Wreath */}
       <BlushPeonyCoverScreen isOpen={isOpened} onOpenWithAudio={onOpenWithAudio} />
 

@@ -1,14 +1,23 @@
 import React, { useState, useEffect, useRef } from 'react'
 import { X, ChevronLeft, ChevronRight, ZoomIn, Sparkles, Heart } from 'lucide-react'
 import { weddingData } from '../config/weddingData'
+import { useInvitationData } from '../context/InvitationContext'
 import { FloralDivider } from './Ornament'
 import { Reveal3D } from './common/Reveal3D'
 
 export const GallerySection: React.FC = () => {
+  const { activeTemplate } = useInvitationData()
   const [selectedItemIndex, setSelectedItemIndex] = useState<number | null>(null)
   const [categoryFilter, setCategoryFilter] = useState<'all' | 'prewed' | 'ceremony'>('all')
   const lightboxRef = useRef<HTMLDivElement>(null)
   const triggerThumbnailRef = useRef<HTMLElement | null>(null)
+
+  const isDark =
+    activeTemplate.category === 'dark' ||
+    activeTemplate.themeColors.textDark === '#FFFFFF' ||
+    activeTemplate.slug === 'exclusive-navy' ||
+    activeTemplate.slug === 'royal-midnight' ||
+    activeTemplate.slug === 'celestial-night'
 
   // Full Lightbox dialog focus management, keyboard navigation & scroll lock
   useEffect(() => {
@@ -100,48 +109,45 @@ export const GallerySection: React.FC = () => {
     }
   }
 
-  const selectedImage = selectedItemIndex !== null ? filteredGallery[selectedItemIndex] : null
-
   return (
-    <section id="gallery" className="relative py-12 px-4 scroll-mt-6">
+    <section id="gallery" className="relative py-12 px-4 scroll-mt-6 defer-render-lg">
       <div className="max-w-4xl mx-auto text-center">
-        <div className="inline-flex items-center gap-1.5 px-3.5 py-1 rounded-full bg-amber-900/10 border border-amber-700/20 text-amber-900 text-xs uppercase tracking-widest font-sans font-medium mb-3">
-          <Sparkles className="w-3.5 h-3.5 text-amber-700" />
+        <div
+          className={`inline-flex items-center gap-1.5 px-3.5 py-1 rounded-full text-xs uppercase tracking-widest font-sans font-medium mb-3 ${
+            isDark
+              ? 'bg-amber-500/15 border border-amber-400/30 text-amber-300'
+              : 'bg-amber-900/10 border border-amber-700/20 text-amber-900'
+          }`}
+        >
+          <Sparkles className={`w-3.5 h-3.5 ${isDark ? 'text-amber-400' : 'text-amber-700'}`} />
           <span>Momen Bahagia</span>
         </div>
 
-        <h2 className="font-serif text-3xl sm:text-4xl font-bold text-stone-800 tracking-tight">
-          Galeri Kenangan
+        <h2 className={`font-serif text-3xl sm:text-4xl font-bold tracking-tight ${isDark ? 'text-white' : 'text-stone-800'}`}>
+          Galeri Foto Kami
         </h2>
         <FloralDivider className="my-3" />
-        <p className="font-sans text-xs sm:text-sm text-stone-600 leading-relaxed px-4 max-w-xl mx-auto mb-6">
-          Momen-momen indah perjalanan cinta kami yang terekam dalam bingkai kenangan:
+        <p className={`font-serif italic text-xs sm:text-sm mb-8 px-4 max-w-lg mx-auto leading-relaxed ${isDark ? 'text-stone-300' : 'text-stone-600'}`}>
+          "Setiap bingkai gambar merekam cerita indah perjalanan kami menuju hari bahagia."
         </p>
 
-        {/* Category Filter Tabs */}
-        <div
-          role="tablist"
-          aria-label="Filter kategori galeri foto"
-          className="inline-flex items-center p-1 rounded-full bg-stone-200/60 backdrop-blur-sm border border-stone-300/40 mb-8 gap-1"
-        >
+        {/* Category Filter Pills */}
+        <div className="flex items-center justify-center gap-2 mb-8 flex-wrap">
           {[
-            { id: 'all', label: 'Semua Foto' },
+            { id: 'all', label: 'Semua Momen' },
             { id: 'prewed', label: 'Prewedding' },
-            { id: 'ceremony', label: 'Prosesi Sakral' },
+            { id: 'ceremony', label: 'Momen Bahagia' }
           ].map((cat) => (
             <button
               key={cat.id}
-              role="tab"
               type="button"
-              aria-selected={categoryFilter === cat.id}
-              onClick={() => {
-                setCategoryFilter(cat.id as any)
-                setSelectedItemIndex(null)
-              }}
-              className={`min-h-[38px] px-4 py-1.5 rounded-full text-xs font-sans font-medium transition-all cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-700 ${
+              onClick={() => setCategoryFilter(cat.id as 'all' | 'prewed' | 'ceremony')}
+              className={`min-h-[44px] px-5 py-2 rounded-full text-xs font-serif font-bold transition-all cursor-pointer ${
                 categoryFilter === cat.id
-                  ? 'bg-amber-800 text-white shadow-md'
-                  : 'text-stone-700 hover:text-stone-900'
+                  ? 'bg-amber-500 text-stone-950 shadow-md scale-105'
+                  : isDark
+                  ? 'bg-stone-800 text-stone-300 hover:bg-stone-700 border border-white/10'
+                  : 'bg-white/80 text-stone-700 hover:bg-amber-100 border border-amber-600/20'
               }`}
             >
               {cat.label}
@@ -149,99 +155,99 @@ export const GallerySection: React.FC = () => {
           ))}
         </div>
 
-        {/* Responsive Masonry Grid: 2 columns on mobile, 3 columns on tablet/desktop */}
-        <div className="grid grid-cols-2 md:grid-cols-3 gap-3.5 sm:gap-5">
+        {/* Gallery Grid */}
+        <div className="grid grid-cols-2 md:grid-cols-3 gap-3 sm:gap-5">
           {filteredGallery.map((item, idx) => (
             <Reveal3D
-              as="button"
-              type="button"
               key={item.id}
-              delay={((idx % 3) * 100) as any}
+              delay={((idx % 6) * 100) as 0 | 100 | 200 | 300 | 400 | 500}
               interactive
-              onClick={() => openLightbox(idx)}
-              aria-label={`Buka pratinjau foto ${idx + 1}: ${item.caption}`}
-              className={`group relative overflow-hidden rounded-3xl bg-stone-200 cursor-pointer shadow-lg hover:shadow-2xl transition-all duration-300 text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-700 ${
-                item.aspect === 'landscape' && idx === 0 ? 'col-span-2 md:col-span-2 h-56 sm:h-72' : 'h-52 sm:h-72'
+              className={`group relative rounded-2xl sm:rounded-3xl overflow-hidden aspect-[4/5] shadow-lg cursor-pointer border transition-all duration-300 ${
+                isDark ? 'border-white/10 bg-stone-900' : 'border-amber-800/15 bg-stone-100'
               }`}
+              onClick={() => openLightbox(idx)}
             >
               <img
-                src={item.thumb}
+                src={item.src}
                 alt={item.caption}
                 loading="lazy"
-                className="w-full h-full object-cover object-center group-hover:scale-110 transition-transform duration-700"
+                decoding="async"
+                className="w-full h-full object-cover object-center group-hover:scale-108 transition-transform duration-700"
               />
-              {/* Overlay with zoom icon & caption */}
-              <div className="absolute inset-0 bg-stone-950/45 opacity-0 group-hover:opacity-100 group-focus-visible:opacity-100 transition-opacity duration-300 flex flex-col items-center justify-center p-4 text-white">
-                <span className="p-3 rounded-full bg-white/90 text-stone-900 shadow-xl transform scale-90 group-hover:scale-100 transition-transform mb-2">
-                  <ZoomIn className="w-5 h-5 text-amber-800" aria-hidden="true" />
+              <div className="absolute inset-0 bg-gradient-to-t from-stone-950/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-3.5 text-left text-white">
+                <span className="font-serif text-xs font-semibold drop-shadow line-clamp-1">
+                  {item.caption}
                 </span>
-                <p className="text-xs font-serif italic text-center max-w-xs line-clamp-2 drop-shadow-md">
-                  "{item.caption}"
-                </p>
+                <span className="text-[10px] text-amber-300 flex items-center gap-1 mt-1 font-mono">
+                  <ZoomIn className="w-3 h-3" />
+                  Lihat Foto HD
+                </span>
               </div>
             </Reveal3D>
           ))}
         </div>
       </div>
 
-      {/* Lightbox Modal */}
-      {selectedImage && selectedItemIndex !== null && (
+      {/* Lightbox Modal Dialog */}
+      {selectedItemIndex !== null && (
         <div
           ref={lightboxRef}
           role="dialog"
           aria-modal="true"
-          aria-label="Tampilan foto galeri"
+          aria-label="Penampil Galeri Foto HD"
           onClick={closeLightbox}
-          className="fixed inset-0 z-50 flex items-center justify-center bg-black/94 backdrop-blur-md p-4 animate-in fade-in duration-300"
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/90 backdrop-blur-md p-4 animate-fade-in"
         >
-          {/* Top Bar with Counter & Close */}
-          <div className="absolute top-4 left-0 right-0 px-6 flex items-center justify-between text-white z-50 pointer-events-none">
-            <span className="font-sans text-xs tracking-wider bg-white/20 px-3.5 py-1.5 rounded-full backdrop-blur-md pointer-events-auto">
-              Foto {selectedItemIndex + 1} dari {filteredGallery.length}
-            </span>
+          <div
+            onClick={(e) => e.stopPropagation()}
+            className="relative max-w-4xl max-h-[90vh] flex flex-col items-center justify-center"
+          >
+            {/* Close Button */}
             <button
               type="button"
               onClick={closeLightbox}
-              aria-label="Tutup tampilan foto"
-              className="min-w-[44px] min-h-[44px] p-2.5 rounded-full bg-white/20 text-white hover:bg-white/40 transition-colors cursor-pointer pointer-events-auto active:scale-95 flex items-center justify-center focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white"
+              aria-label="Tutup foto"
+              className="min-w-[44px] min-h-[44px] absolute -top-12 right-0 p-2 text-white hover:text-amber-300 transition-colors cursor-pointer flex items-center justify-center focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-400"
             >
-              <X className="w-5 h-5 sm:w-6 sm:h-6" aria-hidden="true" />
+              <X className="w-6 h-6" />
             </button>
-          </div>
 
-          {/* Navigation Prev */}
-          <button
-            type="button"
-            onClick={prevImage}
-            aria-label="Foto sebelumnya"
-            className="absolute left-2 sm:left-6 top-1/2 -translate-y-1/2 min-w-[44px] min-h-[44px] p-3 sm:p-3.5 rounded-full bg-white/20 text-white hover:bg-white/40 transition-colors cursor-pointer z-50 active:scale-95 flex items-center justify-center focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white"
-          >
-            <ChevronLeft className="w-6 h-6 sm:w-7 sm:h-7" aria-hidden="true" />
-          </button>
+            {/* Prev Button */}
+            <button
+              type="button"
+              onClick={prevImage}
+              aria-label="Foto sebelumnya"
+              className="min-w-[44px] min-h-[44px] absolute left-2 sm:-left-14 top-1/2 -translate-y-1/2 p-2.5 rounded-full bg-black/60 hover:bg-black/80 text-white transition-all cursor-pointer border border-white/20 flex items-center justify-center focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-400"
+            >
+              <ChevronLeft className="w-5 h-5" />
+            </button>
 
-          {/* Navigation Next */}
-          <button
-            type="button"
-            onClick={nextImage}
-            aria-label="Foto selanjutnya"
-            className="absolute right-2 sm:right-6 top-1/2 -translate-y-1/2 min-w-[44px] min-h-[44px] p-3 sm:p-3.5 rounded-full bg-white/20 text-white hover:bg-white/40 transition-colors cursor-pointer z-50 active:scale-95 flex items-center justify-center focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white"
-          >
-            <ChevronRight className="w-6 h-6 sm:w-7 sm:h-7" aria-hidden="true" />
-          </button>
+            {/* Next Button */}
+            <button
+              type="button"
+              onClick={nextImage}
+              aria-label="Foto berikutnya"
+              className="min-w-[44px] min-h-[44px] absolute right-2 sm:-right-14 top-1/2 -translate-y-1/2 p-2.5 rounded-full bg-black/60 hover:bg-black/80 text-white transition-all cursor-pointer border border-white/20 flex items-center justify-center focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-400"
+            >
+              <ChevronRight className="w-5 h-5" />
+            </button>
 
-          {/* Image & Caption Container */}
-          <div
-            onClick={(e) => e.stopPropagation()}
-            className="relative max-w-3xl w-full max-h-[85vh] flex flex-col items-center"
-          >
+            {/* Active Image */}
             <img
-              src={selectedImage.src}
-              alt={selectedImage.caption}
-              className="max-h-[66vh] sm:max-h-[72vh] w-auto max-w-full rounded-3xl object-contain shadow-2xl border border-white/20"
+              src={filteredGallery[selectedItemIndex].src}
+              alt={filteredGallery[selectedItemIndex].caption}
+              className="max-w-full max-h-[75vh] object-contain rounded-2xl shadow-2xl border border-white/15"
             />
-            <p className="mt-4 text-center font-serif italic text-xs sm:text-sm text-stone-200 max-w-lg px-4 leading-relaxed">
-              "{selectedImage.caption}"
-            </p>
+
+            {/* Caption & Counter */}
+            <div className="mt-3 text-center text-white">
+              <p className="font-serif text-sm sm:text-base font-semibold drop-shadow">
+                {filteredGallery[selectedItemIndex].caption}
+              </p>
+              <p className="text-[11px] text-amber-300 font-mono mt-0.5">
+                {selectedItemIndex + 1} dari {filteredGallery.length} Foto
+              </p>
+            </div>
           </div>
         </div>
       )}

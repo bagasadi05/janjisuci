@@ -145,7 +145,7 @@ export const AdatBanjarTemplate: React.FC<TemplateViewProps> = ({
   const { groom, bride } = weddingData.couple
 
   return (
-    <div className="min-h-screen bg-[#1E0B0B] flex justify-center text-stone-800 selection:bg-[#D7BB83] selection:text-[#1E0B0B] overflow-x-hidden pt-12">
+    <div className="min-h-screen bg-[#1E0B0B] flex justify-center text-stone-800 selection:bg-[#D7BB83] selection:text-[#1E0B0B] overflow-x-hidden pt-16">
       {/* Cover Gate: Adat Banjar Envelope & Illustrations */}
       <AdatBanjarCoverScreen isOpen={isOpened} onOpenWithAudio={onOpenWithAudio} />
 
@@ -229,8 +229,11 @@ export const AdatBanjarTemplate: React.FC<TemplateViewProps> = ({
                 <Reveal3D delay={100} interactive className="relative mx-auto max-w-xs sm:max-w-sm">
                   <div className="relative rounded-t-[140px] rounded-b-3xl overflow-hidden border-4 border-[#D7BB83] shadow-2xl bg-[#1A0A0A]">
                     <img
-                      src="https://undanganwebkami.id/wp-content/uploads/2025/12/RAN_4182--682x1024.jpg"
+                      src={template.heroImage || "https://images.unsplash.com/photo-1576233475048-55f08b53a8bd?auto=format&fit=crop&w=1200&q=85"}
                       alt={`${groom.shortName} & ${bride.shortName}`}
+                      loading="eager"
+                      fetchPriority="high"
+                      decoding="async"
                       className="w-full h-[380px] sm:h-[440px] object-cover object-top hover:scale-105 transition-transform duration-700"
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-[#1F0A0A]/60 via-transparent to-transparent" />
@@ -274,8 +277,10 @@ export const AdatBanjarTemplate: React.FC<TemplateViewProps> = ({
                 <Reveal3D delay={100} interactive className="p-7 sm:p-9 rounded-3xl bg-white/95 backdrop-blur-md border border-[#D7BB83]/60 shadow-xl flex flex-col items-center">
                   <div className="w-36 h-48 sm:w-44 sm:h-56 rounded-t-[80px] rounded-b-2xl overflow-hidden border-2 border-[#D7BB83] mb-5 shadow-lg bg-[#1F0A0A]">
                     <img
-                      src="https://undanganwebkami.id/wp-content/uploads/2025/12/cpp-1-17-1.jpg"
+                      src={groom.photo || template.sampleCouple?.groomPhoto || "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?auto=format&fit=crop&w=800&q=80"}
                       alt={groom.fullName}
+                      loading="lazy"
+                      decoding="async"
                       className="w-full h-full object-cover object-top hover:scale-105 transition-transform duration-500"
                     />
                   </div>
@@ -300,8 +305,10 @@ export const AdatBanjarTemplate: React.FC<TemplateViewProps> = ({
                 <Reveal3D delay={200} interactive className="p-7 sm:p-9 rounded-3xl bg-white/95 backdrop-blur-md border border-[#D7BB83]/60 shadow-xl flex flex-col items-center">
                   <div className="w-36 h-48 sm:w-44 sm:h-56 rounded-t-[80px] rounded-b-2xl overflow-hidden border-2 border-[#D7BB83] mb-5 shadow-lg bg-[#1F0A0A]">
                     <img
-                      src="https://undanganwebkami.id/wp-content/uploads/2025/12/cpw-1-17-1.jpg"
+                      src={bride.photo || template.sampleCouple?.bridePhoto || "https://images.unsplash.com/photo-1517841905240-472988babdf9?auto=format&fit=crop&w=800&q=80"}
                       alt={bride.fullName}
+                      loading="lazy"
+                      decoding="async"
                       className="w-full h-full object-cover object-top hover:scale-105 transition-transform duration-500"
                     />
                   </div>
@@ -608,15 +615,15 @@ export const AdatBanjarTemplate: React.FC<TemplateViewProps> = ({
                     Nomor Rekening
                   </p>
                   <p className="font-mono text-xl sm:text-2xl font-bold tracking-wider text-amber-100">
-                    1234567890
+                    {weddingData.gift.accounts[0]?.accountNumber || '1234567890'}
                   </p>
                   <p className="text-xs text-stone-200 font-serif mt-1 uppercase">
-                    a.n. Syahril Rendra Backhtiar
+                    a.n. {weddingData.gift.accounts[0]?.accountHolder || weddingData.gift.accounts[0]?.holderName || 'Syahril Rendra Backhtiar'}
                   </p>
                   <div className="pt-4 mt-4 border-t border-white/10 flex justify-end">
                     <button
-                      onClick={() => handleCopy('1234567890', 'bca', 'BCA')}
-                      className="inline-flex items-center gap-1.5 px-4 py-2 rounded-full bg-amber-400/20 hover:bg-amber-400/30 text-amber-200 text-xs font-sans font-medium transition-all cursor-pointer border border-amber-400/30"
+                      onClick={() => handleCopy(weddingData.gift.accounts[0]?.accountNumber || '1234567890', 'bca', weddingData.gift.accounts[0]?.bank || 'BCA')}
+                      className="min-h-[44px] inline-flex items-center gap-1.5 px-4 py-2 rounded-full bg-amber-400/20 hover:bg-amber-400/30 text-amber-200 text-xs font-sans font-medium transition-all cursor-pointer border border-amber-400/30"
                     >
                       {copiedBank === 'bca' ? (
                         <>
@@ -637,7 +644,7 @@ export const AdatBanjarTemplate: React.FC<TemplateViewProps> = ({
                 <Reveal3D delay={200} interactive className="p-6 sm:p-7 rounded-3xl bg-gradient-to-br from-[#1c3144] via-[#0b1622] to-[#1e3a5f] text-white shadow-2xl border border-white/20 relative overflow-hidden">
                   <div className="flex items-center justify-between mb-6">
                     <span className="font-serif font-bold text-lg sm:text-xl text-amber-200 tracking-wider">
-                      BANK MANDIRI
+                      {weddingData.gift.accounts[1]?.bank || 'BANK MANDIRI'}
                     </span>
                     <Wifi className="w-5 h-5 text-amber-300/80 rotate-90" />
                   </div>
@@ -646,15 +653,15 @@ export const AdatBanjarTemplate: React.FC<TemplateViewProps> = ({
                     Nomor Rekening
                   </p>
                   <p className="font-mono text-xl sm:text-2xl font-bold tracking-wider text-amber-100">
-                    9876543210
+                    {weddingData.gift.accounts[1]?.accountNumber || '9876543210'}
                   </p>
                   <p className="text-xs text-stone-200 font-serif mt-1 uppercase">
-                    a.n. Elyana Azkiya Nur
+                    a.n. {weddingData.gift.accounts[1]?.accountHolder || weddingData.gift.accounts[1]?.holderName || 'Elyana Azkiya Nur'}
                   </p>
                   <div className="pt-4 mt-4 border-t border-white/10 flex justify-end">
                     <button
-                      onClick={() => handleCopy('9876543210', 'mandiri', 'Mandiri')}
-                      className="inline-flex items-center gap-1.5 px-4 py-2 rounded-full bg-amber-400/20 hover:bg-amber-400/30 text-amber-200 text-xs font-sans font-medium transition-all cursor-pointer border border-amber-400/30"
+                      onClick={() => handleCopy(weddingData.gift.accounts[1]?.accountNumber || '9876543210', 'mandiri', weddingData.gift.accounts[1]?.bank || 'Mandiri')}
+                      className="min-h-[44px] inline-flex items-center gap-1.5 px-4 py-2 rounded-full bg-amber-400/20 hover:bg-amber-400/30 text-amber-200 text-xs font-sans font-medium transition-all cursor-pointer border border-amber-400/30"
                     >
                       {copiedBank === 'mandiri' ? (
                         <>
@@ -682,14 +689,26 @@ export const AdatBanjarTemplate: React.FC<TemplateViewProps> = ({
                   Alamat pengiriman tanda kasih berupa bingkisan fisik:
                 </p>
                 <div className="p-4 rounded-2xl bg-stone-50 border border-stone-200 text-xs space-y-1 mb-4 font-sans">
-                  <p className="font-bold text-stone-900">Penerima: Elyana Azkiya &amp; Syahril</p>
-                  <p className="text-stone-600">No. HP: 0812-9876-5432</p>
-                  <p className="text-stone-600">Alamat: Jl. Ahmad Yani Km. 5, Komplek Mahligai No. 12, Banjarmasin, Kalimantan Selatan 70249</p>
+                  <p className="font-bold text-stone-900">
+                    Penerima: {weddingData.gift.giftAddress?.recipient || `${bride.shortName} & ${groom.shortName}`}
+                  </p>
+                  <p className="text-stone-600">
+                    No. HP: {weddingData.gift.giftAddress?.phone || '0812-9876-5432'}
+                  </p>
+                  <p className="text-stone-600">
+                    Alamat: {weddingData.gift.giftAddress?.address || 'Jl. Ahmad Yani Km. 5, Komplek Mahligai No. 12, Banjarmasin, Kalimantan Selatan 70249'}
+                  </p>
                 </div>
                 <div className="flex justify-end">
                   <button
-                    onClick={() => handleCopy('Jl. Ahmad Yani Km. 5, Komplek Mahligai No. 12, Banjarmasin, Kalimantan Selatan 70249 (Penerima: Elyana Azkiya - 081298765432)', 'address', 'Alamat')}
-                    className="inline-flex items-center gap-1.5 px-5 py-2.5 rounded-full bg-[#1F0A0A] text-white hover:bg-[#722C2C] text-xs font-sans font-medium transition-colors"
+                    onClick={() =>
+                      handleCopy(
+                        `${weddingData.gift.giftAddress?.address || 'Jl. Ahmad Yani Km. 5, Komplek Mahligai No. 12, Banjarmasin, Kalimantan Selatan 70249'} (Penerima: ${weddingData.gift.giftAddress?.recipient || `${bride.shortName} & ${groom.shortName}`} - ${weddingData.gift.giftAddress?.phone || '081298765432'})`,
+                        'address',
+                        'Alamat'
+                      )
+                    }
+                    className="min-h-[44px] inline-flex items-center gap-1.5 px-5 py-2.5 rounded-full bg-[#1F0A0A] text-white hover:bg-[#722C2C] text-xs font-sans font-medium transition-colors cursor-pointer"
                   >
                     <Copy className="w-3.5 h-3.5" />
                     <span>{copiedAddress ? 'Alamat Tersalin!' : 'Salin Alamat Lengkap'}</span>

@@ -28,7 +28,7 @@ export const FallingPetals: React.FC<{ active?: boolean }> = ({ active = true })
       {petals.map((petal) => (
         <div
           key={petal.id}
-          className="petal-fall absolute"
+          className="petal-fall absolute motion-reduce:hidden"
           style={{
             left: petal.left,
             animationDuration: petal.animationDuration,

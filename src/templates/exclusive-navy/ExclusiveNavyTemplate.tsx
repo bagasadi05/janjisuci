@@ -29,13 +29,13 @@ import { useToast } from '../../components/Toast'
 
 // Real authentic wedding photography curated collection
 const WEDDING_PHOTOS = {
-  cover: 'https://images.unsplash.com/photo-1583939003579-730e3918a45a?auto=format&fit=crop&w=1200&q=85',
-  bride: 'https://images.unsplash.com/photo-1693074445833-0fdce5f1f29f?auto=format&fit=crop&w=800&q=85', // Authentic smiling bride in wedding veil
-  groom: 'https://images.unsplash.com/photo-1766104798125-314e9659cf5a?auto=format&fit=crop&w=800&q=85', // Authentic smiling groom in formal suit
+  cover: 'https://images.unsplash.com/photo-1519225421980-715cb0215aed?auto=format&fit=crop&w=1200&q=85',
+  bride: 'https://images.unsplash.com/photo-1524504388940-b1c1722653e1?auto=format&fit=crop&w=800&q=85', // Authentic smiling bride in wedding veil
+  groom: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=800&q=85', // Authentic smiling groom in formal suit
   gallery: [
     {
       id: 1,
-      src: 'https://images.unsplash.com/photo-1583939003579-730e3918a45a?auto=format&fit=crop&w=1200&q=85',
+      src: 'https://images.unsplash.com/photo-1519225421980-715cb0215aed?auto=format&fit=crop&w=1200&q=85',
       caption: 'The Wedding Ceremony - Ikrar Suci di Pelaminan'
     },
     {
@@ -80,11 +80,17 @@ export const ExclusiveNavyTemplate: React.FC<TemplateViewProps> = ({
   onToggleAudio,
   activeTrack
 }) => {
-  const { data: weddingData } = useInvitationData()
+  const { data: weddingData, activeTemplate } = useInvitationData()
   const { showToast } = useToast()
 
+  const groom = weddingData.couple.groom
+  const bride = weddingData.couple.bride
+  const coupleNames = `${bride.shortName} & ${groom.shortName}`
+  const dateText = weddingData.events.akad.date
+  const venueText = weddingData.events.akad.venue
+  const targetDateStr = weddingData.countdownDate || '2027-12-19T09:00:00+07:00'
+
   // Countdown timer state
-  const targetDateStr = '2027-12-19T09:00:00+07:00'
   const [timeLeft, setTimeLeft] = useState({ days: 0, hours: 0, minutes: 0, seconds: 0 })
 
   useEffect(() => {
@@ -200,8 +206,8 @@ export const ExclusiveNavyTemplate: React.FC<TemplateViewProps> = ({
         isOpen={isOpened}
         onOpenWithAudio={onOpenWithAudio}
         guestName={guestName}
-        coupleNames="Nabilah & Yoga"
-        dateText="20 . 12 . 2025"
+        coupleNames={coupleNames}
+        dateText={dateText}
       />
 
       {/* Floating Particles Ambiance */}
@@ -209,9 +215,9 @@ export const ExclusiveNavyTemplate: React.FC<TemplateViewProps> = ({
 
       {/* 2. Left Column: Desktop Showcase */}
       <ExclusiveNavyDesktopShowcase
-        coupleNames="Nabilah & Yoga"
-        dateText="Sabtu, 20 Desember 2025"
-        venueText="Grand Ballroom Margonda, Depok"
+        coupleNames={coupleNames}
+        dateText={dateText}
+        venueText={venueText}
         isPlayingAudio={isPlayingAudio}
         onToggleAudio={onToggleAudio}
         activeTrack={activeTrack}
@@ -224,7 +230,7 @@ export const ExclusiveNavyTemplate: React.FC<TemplateViewProps> = ({
         <div className="fixed bottom-6 right-6 z-40 lg:hidden">
           <button
             onClick={onToggleAudio}
-            className="w-12 h-12 rounded-full bg-gradient-to-tr from-amber-400 to-amber-200 text-slate-950 flex items-center justify-center shadow-[0_0_20px_rgba(245,158,11,0.5)] active:scale-95 transition-transform"
+            className="w-12 h-12 min-w-[48px] min-h-[48px] rounded-full bg-gradient-to-tr from-amber-400 to-amber-200 text-slate-950 flex items-center justify-center shadow-[0_0_20px_rgba(245,158,11,0.5)] active:scale-95 transition-transform cursor-pointer"
             aria-label={isPlayingAudio ? 'Jeda Musik' : 'Putar Musik'}
           >
             {isPlayingAudio ? (
@@ -246,11 +252,11 @@ export const ExclusiveNavyTemplate: React.FC<TemplateViewProps> = ({
           </div>
 
           <h1 className="font-serif text-4xl sm:text-5xl md:text-6xl text-transparent bg-clip-text bg-gradient-to-r from-amber-100 via-amber-200 to-amber-300 font-normal tracking-wide drop-shadow-md">
-            Nabilah &amp; Yoga
+            {coupleNames}
           </h1>
 
           <p className="text-sm font-mono tracking-widest text-blue-200/80 mt-2">
-            20 . 12 . 2025
+            {dateText}
           </p>
 
           {/* Arch Frame Wedding Photo */}
@@ -258,8 +264,13 @@ export const ExclusiveNavyTemplate: React.FC<TemplateViewProps> = ({
             <div className="w-56 sm:w-64 h-80 sm:h-92 rounded-t-full rounded-b-2xl overflow-hidden p-1.5 bg-gradient-to-b from-amber-300/40 via-amber-400/20 to-transparent shadow-2xl shadow-black/80">
               <div className="w-full h-full rounded-t-full rounded-b-xl overflow-hidden relative">
                 <img
-                  src={template?.coverImage || WEDDING_PHOTOS.cover}
-                  alt="Wedding Couple Nabilah & Yoga"
+                  src={activeTemplate.heroImage || template?.coverImage || WEDDING_PHOTOS.cover}
+                  alt={`Foto Pernikahan ${coupleNames}`}
+                  width={256}
+                  height={368}
+                  loading="eager"
+                  fetchPriority="high"
+                  decoding="async"
                   className="w-full h-full object-cover object-top filter brightness-95 contrast-105"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-[#07101E]/80 via-transparent to-transparent" />
@@ -319,8 +330,12 @@ export const ExclusiveNavyTemplate: React.FC<TemplateViewProps> = ({
               <div className="relative">
                 <div className="w-44 h-56 rounded-t-full rounded-b-xl overflow-hidden p-1 bg-gradient-to-b from-amber-300/50 via-amber-400/20 to-transparent shadow-xl">
                   <img
-                    src={WEDDING_PHOTOS.bride}
-                    alt="Nabilah Putri Kusuma"
+                    src={bride.photo || WEDDING_PHOTOS.bride}
+                    alt={bride.fullName}
+                    width={176}
+                    height={224}
+                    loading="lazy"
+                    decoding="async"
                     className="w-full h-full object-cover object-top filter brightness-95 contrast-105"
                   />
                 </div>
@@ -331,20 +346,22 @@ export const ExclusiveNavyTemplate: React.FC<TemplateViewProps> = ({
 
               <div className="space-y-1 pt-2">
                 <h3 className="text-2xl font-serif text-amber-100 font-medium">
-                  Nabilah Putri Kusuma, S.Pd.
+                  {bride.fullName}
                 </h3>
                 <p className="text-xs text-blue-200/80">
-                  Putri tercinta dari Bapak Ichsan &amp; Ibu Susilowati
+                  {bride.childOrder} Bpk. {bride.fatherName} &amp; Ibu {bride.motherName}
                 </p>
-                <a
-                  href="https://instagram.com/nabilah_ptr"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/5 hover:bg-white/10 border border-white/10 text-xs text-blue-200 hover:text-white transition-colors mt-2"
-                >
-                  <InstagramIcon className="w-3.5 h-3.5 text-amber-300" />
-                  <span>@nabilah_ptr</span>
-                </a>
+                {bride.instagram && (
+                  <a
+                    href={`https://instagram.com/${bride.instagram}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-1.5 px-3 py-1.5 min-h-[44px] rounded-full bg-white/5 hover:bg-white/10 border border-white/10 text-xs text-blue-200 hover:text-white transition-colors mt-2"
+                  >
+                    <InstagramIcon className="w-3.5 h-3.5 text-amber-300" />
+                    <span>@{bride.instagram}</span>
+                  </a>
+                )}
               </div>
             </div>
 
@@ -360,8 +377,12 @@ export const ExclusiveNavyTemplate: React.FC<TemplateViewProps> = ({
               <div className="relative">
                 <div className="w-44 h-56 rounded-t-full rounded-b-xl overflow-hidden p-1 bg-gradient-to-b from-amber-300/50 via-amber-400/20 to-transparent shadow-xl">
                   <img
-                    src={WEDDING_PHOTOS.groom}
-                    alt="Yoga Ardiansyah"
+                    src={groom.photo || WEDDING_PHOTOS.groom}
+                    alt={groom.fullName}
+                    width={176}
+                    height={224}
+                    loading="lazy"
+                    decoding="async"
                     className="w-full h-full object-cover object-top filter brightness-95 contrast-105"
                   />
                 </div>
@@ -372,20 +393,22 @@ export const ExclusiveNavyTemplate: React.FC<TemplateViewProps> = ({
 
               <div className="space-y-1 pt-2">
                 <h3 className="text-2xl font-serif text-amber-100 font-medium">
-                  Yoga Ardiansyah, S.Kom.
+                  {groom.fullName}
                 </h3>
                 <p className="text-xs text-blue-200/80">
-                  Putra tercinta dari Bapak Ichsan &amp; Ibu Susilowati
+                  {groom.childOrder} Bpk. {groom.fatherName} &amp; Ibu {groom.motherName}
                 </p>
-                <a
-                  href="https://instagram.com/yogaaa_"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/5 hover:bg-white/10 border border-white/10 text-xs text-blue-200 hover:text-white transition-colors mt-2"
-                >
-                  <InstagramIcon className="w-3.5 h-3.5 text-amber-300" />
-                  <span>@yogaaa_</span>
-                </a>
+                {groom.instagram && (
+                  <a
+                    href={`https://instagram.com/${groom.instagram}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-1.5 px-3 py-1.5 min-h-[44px] rounded-full bg-white/5 hover:bg-white/10 border border-white/10 text-xs text-blue-200 hover:text-white transition-colors mt-2"
+                  >
+                    <InstagramIcon className="w-3.5 h-3.5 text-amber-300" />
+                    <span>@{groom.instagram}</span>
+                  </a>
+                )}
               </div>
             </div>
           </div>
@@ -400,7 +423,7 @@ export const ExclusiveNavyTemplate: React.FC<TemplateViewProps> = ({
               <span className="text-xs font-serif tracking-widest uppercase text-amber-300/80">
                 Waktu &amp; Tempat
               </span>
-              <h2 className="text-3xl font-serif text-white">Wedding Event</h2>
+              <h2 className="text-3xl font-serif text-white">{weddingData.events.akad.title} &amp; {weddingData.events.resepsi.title}</h2>
             </div>
 
             <div className="grid grid-cols-1 gap-6">
@@ -413,9 +436,9 @@ export const ExclusiveNavyTemplate: React.FC<TemplateViewProps> = ({
                     </div>
                     <div>
                       <h3 className="text-xl font-serif text-amber-100 font-semibold">
-                        Akad Nikah
+                        {weddingData.events.akad.title}
                       </h3>
-                      <p className="text-[11px] text-blue-200/70 font-mono">Prosesi Ijab Kabul</p>
+                      <p className="text-[11px] text-blue-200/70 font-mono">Prosesi Utama</p>
                     </div>
                   </div>
                   <span className="text-xs px-2.5 py-1 rounded bg-amber-400/10 text-amber-300 font-medium border border-amber-400/20">
@@ -427,17 +450,17 @@ export const ExclusiveNavyTemplate: React.FC<TemplateViewProps> = ({
                   <div className="flex items-start gap-2.5">
                     <Calendar className="w-4 h-4 text-amber-300 mt-0.5 shrink-0" />
                     <div>
-                      <p className="font-semibold text-white">Sabtu, 20 Desember 2025</p>
-                      <p className="text-blue-200/70 text-xs">Pukul 09.00 WIB – Selesai</p>
+                      <p className="font-semibold text-white">{weddingData.events.akad.date}</p>
+                      <p className="text-blue-200/70 text-xs">{weddingData.events.akad.time}</p>
                     </div>
                   </div>
 
                   <div className="flex items-start gap-2.5">
                     <MapPin className="w-4 h-4 text-amber-300 mt-0.5 shrink-0" />
                     <div>
-                      <p className="font-semibold text-white">Masjid Al-Barkah Margonda</p>
+                      <p className="font-semibold text-white">{weddingData.events.akad.venue}</p>
                       <p className="text-blue-200/70 text-xs leading-relaxed">
-                        Jl. Margonda Raya No. 230A, Kemiri Muka, Kec. Beji, Kota Depok, Jawa Barat 16423
+                        {weddingData.events.akad.address}
                       </p>
                     </div>
                   </div>
@@ -445,19 +468,19 @@ export const ExclusiveNavyTemplate: React.FC<TemplateViewProps> = ({
 
                 <div className="pt-2 flex flex-wrap gap-2.5">
                   <a
-                    href="https://maps.google.com/?q=Jl.+Margonda+Raya+No.230A+Kemiri+Muka+Beji+Kota+Depok"
+                    href={weddingData.events.akad.mapsUrl || `https://maps.google.com/?q=${encodeURIComponent(weddingData.events.akad.address || weddingData.events.akad.venue)}`}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="flex-1 min-w-[130px] inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-blue-600/30 hover:bg-blue-600/50 border border-blue-400/30 text-xs text-white font-medium transition-all"
+                    className="flex-1 min-w-[130px] min-h-[44px] inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-blue-600/30 hover:bg-blue-600/50 border border-blue-400/30 text-xs text-white font-medium transition-all cursor-pointer"
                   >
                     <Navigation className="w-3.5 h-3.5 text-amber-300" />
-                    <span>Klik Maps</span>
+                    <span>Buka Maps</span>
                   </a>
                   <a
-                    href="https://calendar.google.com/calendar/render?action=TEMPLATE&text=Akad+Nikah+Nabilah+%26+Yoga&dates=20251220T020000Z/20251220T040000Z&details=Pernikahan+Nabilah+Putri+Kusuma+%26+Yoga+Ardiansyah&location=Jl.+Margonda+Raya+No.230A+Depok"
+                    href={`https://calendar.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent(`${weddingData.events.akad.title} ${coupleNames}`)}&location=${encodeURIComponent(weddingData.events.akad.address)}&details=${encodeURIComponent(`Undangan ${weddingData.events.akad.title} ${coupleNames}`)}`}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-white/5 hover:bg-white/10 border border-white/15 text-xs text-blue-200 hover:text-white transition-all"
+                    className="inline-flex items-center justify-center gap-2 px-4 py-2.5 min-h-[44px] rounded-xl bg-white/5 hover:bg-white/10 border border-white/15 text-xs text-blue-200 hover:text-white transition-all cursor-pointer"
                   >
                     <Clock className="w-3.5 h-3.5 text-amber-300" />
                     <span>Simpan Kalender</span>
@@ -474,7 +497,7 @@ export const ExclusiveNavyTemplate: React.FC<TemplateViewProps> = ({
                     </div>
                     <div>
                       <h3 className="text-xl font-serif text-amber-100 font-semibold">
-                        Resepsi Pernikahan
+                        {weddingData.events.resepsi.title}
                       </h3>
                       <p className="text-[11px] text-blue-200/70 font-mono">Perayaan &amp; Ramah Tamah</p>
                     </div>
@@ -488,17 +511,17 @@ export const ExclusiveNavyTemplate: React.FC<TemplateViewProps> = ({
                   <div className="flex items-start gap-2.5">
                     <Calendar className="w-4 h-4 text-amber-300 mt-0.5 shrink-0" />
                     <div>
-                      <p className="font-semibold text-white">Sabtu, 20 Desember 2025</p>
-                      <p className="text-blue-200/70 text-xs">Pukul 11.00 – 14.00 WIB</p>
+                      <p className="font-semibold text-white">{weddingData.events.resepsi.date}</p>
+                      <p className="text-blue-200/70 text-xs">{weddingData.events.resepsi.time}</p>
                     </div>
                   </div>
 
                   <div className="flex items-start gap-2.5">
                     <MapPin className="w-4 h-4 text-amber-300 mt-0.5 shrink-0" />
                     <div>
-                      <p className="font-semibold text-white">Grand Ballroom Margonda</p>
+                      <p className="font-semibold text-white">{weddingData.events.resepsi.venue}</p>
                       <p className="text-blue-200/70 text-xs leading-relaxed">
-                        Jl. Margonda Raya No. 230A, Kemiri Muka, Kec. Beji, Kota Depok, Jawa Barat 16423
+                        {weddingData.events.resepsi.address}
                       </p>
                     </div>
                   </div>
@@ -506,10 +529,10 @@ export const ExclusiveNavyTemplate: React.FC<TemplateViewProps> = ({
 
                 <div className="pt-2 flex flex-wrap gap-2.5">
                   <a
-                    href="https://maps.google.com/?q=Jl.+Margonda+Raya+No.230A+Kemiri+Muka+Beji+Kota+Depok"
+                    href={weddingData.events.resepsi.mapsUrl || `https://maps.google.com/?q=${encodeURIComponent(weddingData.events.resepsi.address || weddingData.events.resepsi.venue)}`}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="w-full inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-blue-600/30 hover:bg-blue-600/50 border border-blue-400/30 text-xs text-white font-medium transition-all"
+                    className="w-full inline-flex items-center justify-center gap-2 px-4 py-2.5 min-h-[44px] rounded-xl bg-blue-600/30 hover:bg-blue-600/50 border border-blue-400/30 text-xs text-white font-medium transition-all cursor-pointer"
                   >
                     <Navigation className="w-3.5 h-3.5 text-amber-300" />
                     <span>Klik Maps &amp; Panduan Rute</span>
@@ -552,10 +575,10 @@ export const ExclusiveNavyTemplate: React.FC<TemplateViewProps> = ({
             </div>
 
             <a
-              href="https://calendar.google.com/calendar/render?action=TEMPLATE&text=Pernikahan+Nabilah+%26+Yoga&dates=20251220T020000Z/20251220T070000Z&details=Akad+dan+Resepsi+Pernikahan+Nabilah+Putri+Kusuma+%26+Yoga+Ardiansyah&location=Jl.+Margonda+Raya+No.230A+Depok"
+              href={`https://calendar.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent(`Pernikahan ${coupleNames}`)}&location=${encodeURIComponent(weddingData.events.akad.address)}&details=${encodeURIComponent(`Undangan Pernikahan ${coupleNames}`)}`}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 px-6 py-2.5 rounded-full bg-white/10 hover:bg-white/20 border border-amber-300/30 text-xs text-amber-200 hover:text-white transition-all shadow-md"
+              className="inline-flex items-center gap-2 px-6 py-2.5 min-h-[44px] rounded-full bg-white/10 hover:bg-white/20 border border-amber-300/30 text-xs text-amber-200 hover:text-white transition-all shadow-md cursor-pointer"
             >
               <Calendar className="w-4 h-4 text-amber-300" />
               <span>Save to Google Calendar</span>
@@ -707,145 +730,125 @@ export const ExclusiveNavyTemplate: React.FC<TemplateViewProps> = ({
 
             {/* Bank Transfer Cards */}
             <div className="space-y-4">
-              {/* BCA */}
-              <div className="rounded-2xl bg-gradient-to-tr from-[#0F243E] to-[#122A48] border border-blue-400/20 p-5 shadow-lg relative overflow-hidden">
-                <div className="flex items-center justify-between mb-3">
-                  <div className="px-3 py-1 rounded-md bg-blue-600/40 border border-blue-400/30 text-white font-bold text-xs tracking-wider">
-                    BANK BCA
-                  </div>
-                  <CreditCard className="w-5 h-5 text-amber-300/80" />
-                </div>
-                <p className="text-[11px] text-blue-200/70 font-mono uppercase">Nomor Rekening</p>
-                <p className="text-lg sm:text-xl font-mono font-bold text-amber-200 tracking-wider">
-                  8961977411
-                </p>
-                <p className="text-xs text-blue-100/80 mt-0.5">a.n. Nabilah Putri Kusuma</p>
-                <button
-                  onClick={() => handleCopy('8961977411', 'Rekening BCA')}
-                  className="mt-3 w-full py-2 rounded-xl bg-white/10 hover:bg-white/20 border border-white/15 text-xs text-white font-medium flex items-center justify-center gap-2 transition-colors"
-                >
-                  {copiedBank === 'Rekening BCA' ? (
-                    <>
-                      <Check className="w-3.5 h-3.5 text-emerald-400" />
-                      <span className="text-emerald-400">Tersalin!</span>
-                    </>
-                  ) : (
-                    <>
-                      <Copy className="w-3.5 h-3.5 text-amber-300" />
-                      <span>Salin Nomor Rekening</span>
-                    </>
-                  )}
-                </button>
-              </div>
-
-              {/* Mandiri */}
-              <div className="rounded-2xl bg-gradient-to-tr from-[#0F243E] to-[#122A48] border border-blue-400/20 p-5 shadow-lg relative overflow-hidden">
-                <div className="flex items-center justify-between mb-3">
-                  <div className="px-3 py-1 rounded-md bg-amber-600/40 border border-amber-400/30 text-amber-100 font-bold text-xs tracking-wider">
-                    BANK MANDIRI
-                  </div>
-                  <CreditCard className="w-5 h-5 text-amber-300/80" />
-                </div>
-                <p className="text-[11px] text-blue-200/70 font-mono uppercase">Nomor Rekening</p>
-                <p className="text-lg sm:text-xl font-mono font-bold text-amber-200 tracking-wider">
-                  1570008961977
-                </p>
-                <p className="text-xs text-blue-100/80 mt-0.5">a.n. Yoga Ardiansyah</p>
-                <button
-                  onClick={() => handleCopy('1570008961977', 'Rekening Mandiri')}
-                  className="mt-3 w-full py-2 rounded-xl bg-white/10 hover:bg-white/20 border border-white/15 text-xs text-white font-medium flex items-center justify-center gap-2 transition-colors"
-                >
-                  {copiedBank === 'Rekening Mandiri' ? (
-                    <>
-                      <Check className="w-3.5 h-3.5 text-emerald-400" />
-                      <span className="text-emerald-400">Tersalin!</span>
-                    </>
-                  ) : (
-                    <>
-                      <Copy className="w-3.5 h-3.5 text-amber-300" />
-                      <span>Salin Nomor Rekening</span>
-                    </>
-                  )}
-                </button>
-              </div>
-
-              {/* DANA E-Wallet */}
-              <div className="rounded-2xl bg-gradient-to-tr from-[#0F243E] to-[#122A48] border border-blue-400/20 p-5 shadow-lg relative overflow-hidden">
-                <div className="flex items-center justify-between mb-3">
-                  <div className="px-3 py-1 rounded-md bg-sky-600/40 border border-sky-400/30 text-white font-bold text-xs tracking-wider">
-                    DANA / E-WALLET
-                  </div>
-                  <CreditCard className="w-5 h-5 text-amber-300/80" />
-                </div>
-                <p className="text-[11px] text-blue-200/70 font-mono uppercase">Nomor Akun DANA</p>
-                <p className="text-lg sm:text-xl font-mono font-bold text-amber-200 tracking-wider">
-                  0896 1977 4116
-                </p>
-                <p className="text-xs text-blue-100/80 mt-0.5">a.n. Nabilah Putri Kusuma</p>
-                <button
-                  onClick={() => handleCopy('089619774116', 'Nomor DANA')}
-                  className="mt-3 w-full py-2 rounded-xl bg-white/10 hover:bg-white/20 border border-white/15 text-xs text-white font-medium flex items-center justify-center gap-2 transition-colors"
-                >
-                  {copiedBank === 'Nomor DANA' ? (
-                    <>
-                      <Check className="w-3.5 h-3.5 text-emerald-400" />
-                      <span className="text-emerald-400">Tersalin!</span>
-                    </>
-                  ) : (
-                    <>
-                      <Copy className="w-3.5 h-3.5 text-amber-300" />
-                      <span>Salin Nomor E-Wallet</span>
-                    </>
-                  )}
-                </button>
-              </div>
-
-              {/* Kirim Hadiah Fisik */}
-              <div className="rounded-2xl bg-gradient-to-b from-[#0F223A] to-[#0A182A] border border-blue-400/20 p-5 shadow-lg space-y-3">
-                <div className="flex items-center gap-2">
-                  <Package className="w-5 h-5 text-amber-300" />
-                  <h4 className="text-base font-serif text-white font-semibold">Kirim Kado Fisik</h4>
-                </div>
-                <div className="text-xs text-blue-100/80 space-y-1">
-                  <p className="font-semibold text-white">Penerima: Nabilah &amp; Yoga (0896-1977-4116)</p>
-                  <p className="leading-relaxed">
-                    Jl. Margonda Raya No. 230A Kemiri Muka, Kecamatan Beji, Kota Depok, Jawa Barat 16423
-                  </p>
-                </div>
-                <div className="flex flex-col sm:flex-row gap-2 pt-1">
-                  <button
-                    onClick={() =>
-                      handleCopy(
-                        'Jl. Margonda Raya No. 230A Kemiri Muka, Kecamatan Beji, Kota Depok, Jawa Barat 16423 (Penerima: Nabilah & Yoga - 089619774116)',
-                        'Alamat Pengiriman',
-                        true
-                      )
-                    }
-                    className="flex-1 py-2 rounded-xl bg-white/10 hover:bg-white/20 border border-white/15 text-xs text-white font-medium flex items-center justify-center gap-2 transition-colors"
+              {weddingData.gift.accounts && weddingData.gift.accounts.length > 0 ? (
+                weddingData.gift.accounts.map((acc, idx) => (
+                  <div
+                    key={idx}
+                    className="rounded-2xl bg-gradient-to-tr from-[#0F243E] to-[#122A48] border border-blue-400/20 p-5 shadow-lg relative overflow-hidden"
                   >
-                    {copiedAddress ? (
+                    <div className="flex items-center justify-between mb-3">
+                      <div className="px-3 py-1 rounded-md bg-blue-600/40 border border-blue-400/30 text-white font-bold text-xs tracking-wider">
+                        {acc.bank}
+                      </div>
+                      <CreditCard className="w-5 h-5 text-amber-300/80" />
+                    </div>
+                    <p className="text-[11px] text-blue-200/70 font-mono uppercase">Nomor Rekening</p>
+                    <p className="text-lg sm:text-xl font-mono font-bold text-amber-200 tracking-wider">
+                      {acc.accountNumber}
+                    </p>
+                    <p className="text-xs text-blue-100/80 mt-0.5">a.n. {acc.accountHolder || acc.holderName}</p>
+                    <button
+                      onClick={() => handleCopy(acc.accountNumber, `Rekening ${acc.bank}`)}
+                      className="mt-3 w-full min-h-[44px] py-2 rounded-xl bg-white/10 hover:bg-white/20 border border-white/15 text-xs text-white font-medium flex items-center justify-center gap-2 transition-colors cursor-pointer"
+                    >
+                      {copiedBank === `Rekening ${acc.bank}` ? (
+                        <>
+                          <Check className="w-3.5 h-3.5 text-emerald-400" />
+                          <span className="text-emerald-400">Tersalin!</span>
+                        </>
+                      ) : (
+                        <>
+                          <Copy className="w-3.5 h-3.5 text-amber-300" />
+                          <span>Salin Nomor Rekening</span>
+                        </>
+                      )}
+                    </button>
+                  </div>
+                ))
+              ) : (
+                <div className="rounded-2xl bg-gradient-to-tr from-[#0F243E] to-[#122A48] border border-blue-400/20 p-5 shadow-lg relative overflow-hidden">
+                  <div className="flex items-center justify-between mb-3">
+                    <div className="px-3 py-1 rounded-md bg-blue-600/40 border border-blue-400/30 text-white font-bold text-xs tracking-wider">
+                      BANK BCA
+                    </div>
+                    <CreditCard className="w-5 h-5 text-amber-300/80" />
+                  </div>
+                  <p className="text-[11px] text-blue-200/70 font-mono uppercase">Nomor Rekening</p>
+                  <p className="text-lg sm:text-xl font-mono font-bold text-amber-200 tracking-wider">
+                    8961977411
+                  </p>
+                  <p className="text-xs text-blue-100/80 mt-0.5">a.n. {bride.fullName}</p>
+                  <button
+                    onClick={() => handleCopy('8961977411', 'Rekening BCA')}
+                    className="mt-3 w-full min-h-[44px] py-2 rounded-xl bg-white/10 hover:bg-white/20 border border-white/15 text-xs text-white font-medium flex items-center justify-center gap-2 transition-colors cursor-pointer"
+                  >
+                    {copiedBank === 'Rekening BCA' ? (
                       <>
                         <Check className="w-3.5 h-3.5 text-emerald-400" />
-                        <span className="text-emerald-400">Alamat Tersalin!</span>
+                        <span className="text-emerald-400">Tersalin!</span>
                       </>
                     ) : (
                       <>
                         <Copy className="w-3.5 h-3.5 text-amber-300" />
-                        <span>Salin Alamat Lengkap</span>
+                        <span>Salin Nomor Rekening</span>
                       </>
                     )}
                   </button>
-                  <a
-                    href="https://wa.me/6289619774116?text=Halo%20Nabilah%20%26%20Yoga,%20saya%20sudah%20mengirimkan%20kado%20pernikahan%20untuk%20kalian"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="flex-1 py-2 rounded-xl bg-emerald-600/30 hover:bg-emerald-600/50 border border-emerald-400/30 text-xs text-white font-medium flex items-center justify-center gap-2 transition-colors"
-                  >
-                    <Send className="w-3.5 h-3.5 text-emerald-300" />
-                    <span>Konfirmasi via WhatsApp</span>
-                  </a>
                 </div>
-              </div>
+              )}
+
+              {/* Kirim Hadiah Fisik */}
+              {weddingData.gift.giftAddress && (
+                <div className="rounded-2xl bg-gradient-to-b from-[#0F223A] to-[#0A182A] border border-blue-400/20 p-5 shadow-lg space-y-3">
+                  <div className="flex items-center gap-2">
+                    <Package className="w-5 h-5 text-amber-300" />
+                    <h4 className="text-base font-serif text-white font-semibold">Kirim Kado Fisik</h4>
+                  </div>
+                  <div className="text-xs text-blue-100/80 space-y-1">
+                    <p className="font-semibold text-white">
+                      Penerima: {weddingData.gift.giftAddress.recipient || coupleNames} ({weddingData.gift.giftAddress.phone})
+                    </p>
+                    <p className="leading-relaxed">
+                      {weddingData.gift.giftAddress.address}
+                    </p>
+                  </div>
+                  <div className="flex flex-col sm:flex-row gap-2 pt-1">
+                    <button
+                      onClick={() =>
+                        handleCopy(
+                          `${weddingData.gift.giftAddress.recipient || coupleNames} - ${weddingData.gift.giftAddress.address} (${weddingData.gift.giftAddress.phone})`,
+                          'Alamat Pengiriman',
+                          true
+                        )
+                      }
+                      className="flex-1 min-h-[44px] py-2 rounded-xl bg-white/10 hover:bg-white/20 border border-white/15 text-xs text-white font-medium flex items-center justify-center gap-2 transition-colors cursor-pointer"
+                    >
+                      {copiedAddress ? (
+                        <>
+                          <Check className="w-3.5 h-3.5 text-emerald-400" />
+                          <span className="text-emerald-400">Alamat Tersalin!</span>
+                        </>
+                      ) : (
+                        <>
+                          <Copy className="w-3.5 h-3.5 text-amber-300" />
+                          <span>Salin Alamat Lengkap</span>
+                        </>
+                      )}
+                    </button>
+                    {weddingData.gift.giftAddress.phone && (
+                      <a
+                        href={`https://wa.me/${weddingData.gift.giftAddress.phone.replace(/[^0-9]/g, '')}?text=${encodeURIComponent(`Halo ${coupleNames}, saya ingin mengonfirmasi pengiriman tanda kasih / kado pernikahan.`)}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="flex-1 min-h-[44px] py-2 rounded-xl bg-emerald-600/30 hover:bg-emerald-600/50 border border-emerald-400/30 text-xs text-white font-medium flex items-center justify-center gap-2 transition-colors cursor-pointer"
+                      >
+                        <Send className="w-3.5 h-3.5 text-emerald-300" />
+                        <span>Konfirmasi via WhatsApp</span>
+                      </a>
+                    )}
+                  </div>
+                </div>
+              )}
             </div>
           </div>
         </section>
@@ -1009,16 +1012,16 @@ export const ExclusiveNavyTemplate: React.FC<TemplateViewProps> = ({
         <footer className="px-6 pt-12 pb-16 text-center space-y-6">
           <div className="max-w-md mx-auto space-y-3">
             <h3 className="text-2xl sm:text-3xl font-serif text-transparent bg-clip-text bg-gradient-to-r from-amber-100 via-amber-200 to-amber-300">
-              Nabilah &amp; Yoga
+              {coupleNames}
             </h3>
-            <p className="text-xs font-mono tracking-widest text-blue-200/70">20 . 12 . 2025</p>
+            <p className="text-xs font-mono tracking-widest text-blue-200/70">{dateText}</p>
 
             <p className="text-xs text-blue-100/80 leading-relaxed font-sans">
               Atas kehadiran dan doa restu Bapak/Ibu/Saudara/i sekalian, kami mengucapkan terima kasih yang tulus dari lubuk hati kami yang terdalam.
             </p>
 
             <p className="text-xs text-amber-200/90 italic font-serif">
-              Kami yang berbahagia: Nabilah &amp; Yoga beserta kedua keluarga besar.
+              Kami yang berbahagia: {bride.fullName} &amp; {groom.fullName} beserta kedua keluarga besar.
             </p>
           </div>
 
@@ -1036,7 +1039,8 @@ export const ExclusiveNavyTemplate: React.FC<TemplateViewProps> = ({
         <div className="fixed inset-0 z-50 bg-black/95 backdrop-blur-md flex items-center justify-center p-4">
           <button
             onClick={() => setSelectedPhotoIdx(null)}
-            className="absolute top-5 right-5 w-10 h-10 rounded-full bg-white/10 hover:bg-white/20 text-white flex items-center justify-center transition-colors z-50"
+            className="absolute top-5 right-5 w-11 h-11 min-w-[44px] min-h-[44px] rounded-full bg-white/10 hover:bg-white/20 text-white flex items-center justify-center transition-colors z-50 cursor-pointer"
+            aria-label="Tutup Pratinjau Foto"
           >
             <X className="w-5 h-5" />
           </button>
@@ -1048,7 +1052,8 @@ export const ExclusiveNavyTemplate: React.FC<TemplateViewProps> = ({
                   WEDDING_PHOTOS.gallery.length
               )
             }
-            className="absolute left-4 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-white/10 hover:bg-white/20 text-white flex items-center justify-center transition-colors z-50"
+            className="absolute left-4 top-1/2 -translate-y-1/2 w-11 h-11 min-w-[44px] min-h-[44px] rounded-full bg-white/10 hover:bg-white/20 text-white flex items-center justify-center transition-colors z-50 cursor-pointer"
+            aria-label="Foto Sebelumnya"
           >
             <ChevronLeft className="w-6 h-6" />
           </button>
@@ -1057,7 +1062,8 @@ export const ExclusiveNavyTemplate: React.FC<TemplateViewProps> = ({
             onClick={() =>
               setSelectedPhotoIdx((selectedPhotoIdx + 1) % WEDDING_PHOTOS.gallery.length)
             }
-            className="absolute right-4 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-white/10 hover:bg-white/20 text-white flex items-center justify-center transition-colors z-50"
+            className="absolute right-4 top-1/2 -translate-y-1/2 w-11 h-11 min-w-[44px] min-h-[44px] rounded-full bg-white/10 hover:bg-white/20 text-white flex items-center justify-center transition-colors z-50 cursor-pointer"
+            aria-label="Foto Selanjutnya"
           >
             <ChevronRight className="w-6 h-6" />
           </button>

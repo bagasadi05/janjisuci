@@ -80,7 +80,7 @@ export const RusticTerracottaTemplate: React.FC<TemplateViewProps> = ({
   }
 
   return (
-    <div className="min-h-screen bg-[#FAF6F0] flex justify-center text-[#3D2C24] selection:bg-[#C06C54] selection:text-white overflow-x-hidden pt-12">
+    <div className="min-h-screen bg-[#FAF6F0] flex justify-center text-[#3D2C24] selection:bg-[#C06C54] selection:text-white overflow-x-hidden pt-16">
       {/* Cover Gate: Vintage Airmail Envelope with Twine String */}
       <RusticTerracottaCoverScreen isOpen={isOpened} onOpenWithAudio={onOpenWithAudio} />
 

@@ -50,6 +50,7 @@ export const DesktopShowcase: React.FC<DesktopShowcaseProps> = ({
         <img
           src={activeTemplate.coverImage}
           alt="Showcase Ambient"
+          decoding="async"
           className="w-full h-full object-cover object-center filter brightness-[0.24] blur-[1px] scale-105"
         />
         <div className="absolute inset-0 bg-gradient-to-t from-stone-950 via-stone-950/70 to-stone-950/85" />
@@ -79,6 +80,9 @@ export const DesktopShowcase: React.FC<DesktopShowcaseProps> = ({
             <img
               src={activeTemplate.heroImage}
               alt={`Mempelai ${weddingData.couple.groom.shortName} & ${weddingData.couple.bride.shortName}`}
+              loading="eager"
+              fetchPriority="high"
+              decoding="async"
               className="w-full h-[310px] xl:h-[370px] object-cover object-center"
             />
             <div className="absolute inset-0 bg-gradient-to-t from-stone-950/85 via-transparent to-transparent" />

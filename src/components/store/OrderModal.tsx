@@ -18,7 +18,15 @@ import {
   GraduationCap,
   Cake,
   Baby,
-  Scissors
+  Scissors,
+  QrCode,
+  Clock,
+  ArrowRight,
+  ExternalLink,
+  Info,
+  Gift,
+  MapPin,
+  Camera
 } from 'lucide-react'
 import {
   storeConfig,
@@ -35,6 +43,7 @@ interface OrderModalProps {
   initialTemplate: TemplateItem
   initialPackage?: PricingTier
   onApplyCustomPreview: (template: TemplateItem, customData: CustomOrderData) => void
+  onOpenPortal?: () => void
 }
 
 export const OrderModal: React.FC<OrderModalProps> = ({
@@ -42,19 +51,28 @@ export const OrderModal: React.FC<OrderModalProps> = ({
   onClose,
   initialTemplate,
   initialPackage,
-  onApplyCustomPreview
+  onApplyCustomPreview,
+  onOpenPortal
 }) => {
   const { showToast } = useToast()
-  const [step, setStep] = useState<1 | 2 | 3>(1)
-  const [dataMode, setDataMode] = useState<'full' | 'later'>('full')
+  const [step, setStep] = useState<1 | 2 | 3 | 4>(1)
+  const [dataSubTab, setDataSubTab] = useState<'couple' | 'event' | 'gift'>('couple')
+  const [dataMode, setDataMode] = useState<'full' | 'later'>('later')
   const [copiedPayment, setCopiedPayment] = useState(false)
+  const [copiedPrice, setCopiedPrice] = useState(false)
   const [buyerNameError, setBuyerNameError] = useState(false)
+  const [qrisTimer, setQrisTimer] = useState(900) // 15 minutes countdown
   const modalRef = useRef<HTMLDivElement>(null)
   const triggerRef = useRef<HTMLElement | null>(null)
 
   const invoiceCode = useMemo(() => {
     const randomNum = Math.floor(1000 + Math.random() * 9000)
     return `INV-JS-${randomNum}`
+  }, [isOpen])
+
+  // Unique 3-digit nominal code for automated reconciliation simulator
+  const uniqueCode = useMemo(() => {
+    return Math.floor(100 + Math.random() * 900)
   }, [isOpen])
 
   const getDefaultPackageId = (tpl: TemplateItem, pkg?: PricingTier) => {
@@ -103,7 +121,7 @@ export const OrderModal: React.FC<OrderModalProps> = ({
       musicChoice: 'Payung Teduh - Akad',
       giftBankInfo: '',
       photoDriveLink: '',
-      paymentMethodId: 'gopay'
+      paymentMethodId: 'qris'
     }
   })
 
@@ -124,7 +142,16 @@ export const OrderModal: React.FC<OrderModalProps> = ({
     }))
   }, [initialTemplate, initialPackage])
 
-  // WAI-ARIA Dialog focus trap, autofocus, scroll locking, and focus restoration
+  // QRIS Countdown Timer
+  useEffect(() => {
+    if (step !== 3) return
+    const interval = setInterval(() => {
+      setQrisTimer((prev) => (prev > 0 ? prev - 1 : 0))
+    }, 1000)
+    return () => clearInterval(interval)
+  }, [step])
+
+  // WAI-ARIA Dialog focus trap & autofocus
   useEffect(() => {
     if (!isOpen) return
     triggerRef.current = document.activeElement as HTMLElement
@@ -146,30 +173,6 @@ export const OrderModal: React.FC<OrderModalProps> = ({
       if (e.key === 'Escape') {
         onClose()
         return
-      }
-      if (e.key === 'Tab' && modalRef.current) {
-        const focusable = Array.from(
-          modalRef.current.querySelectorAll<HTMLElement>(
-            'button:not([disabled]), [href], input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])'
-          )
-        ).filter((el) => el.offsetParent !== null)
-
-        if (focusable.length === 0) return
-
-        const first = focusable[0]
-        const last = focusable[focusable.length - 1]
-
-        if (e.shiftKey) {
-          if (document.activeElement === first) {
-            e.preventDefault()
-            last.focus()
-          }
-        } else {
-          if (document.activeElement === last) {
-            e.preventDefault()
-            first.focus()
-          }
-        }
       }
     }
 
@@ -195,8 +198,13 @@ export const OrderModal: React.FC<OrderModalProps> = ({
   const selectedPayment =
     storeConfig.paymentMethods.find((m) => m.id === formData.paymentMethodId) || storeConfig.paymentMethods[0]
 
-  // Total price uses the chosen package price
-  const finalPrice = selectedPackage.price
+  const finalPrice = selectedPackage.price + uniqueCode
+
+  const formatTimer = (seconds: number) => {
+    const mins = Math.floor(seconds / 60)
+    const secs = seconds % 60
+    return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`
+  }
 
   const handleSelectTemplate = (tplId: string) => {
     const tpl = storeConfig.templates.find((t) => t.id === tplId) || storeConfig.templates[0]
@@ -219,11 +227,46 @@ export const OrderModal: React.FC<OrderModalProps> = ({
     setFormData((prev) => ({ ...prev, [field]: value }))
   }
 
+  const handleFillSampleData = () => {
+    setFormData((prev) => ({
+      ...prev,
+      buyerName: prev.buyerName || 'Bagas Pratama',
+      buyerPhone: prev.buyerPhone || '081234567890',
+      groomFullName: 'Bagas Pratama, S.T.',
+      groomShortName: 'Bagas',
+      groomParents: 'Putra pertama dari Bpk. Bambang & Ibu Sri',
+      groomIg: '@bagaspratama',
+      brideFullName: 'Anindita Kirana, S.Ked.',
+      brideShortName: 'Anin',
+      brideParents: 'Putri kedua dari Bpk. H. Sukarno & Ibu Hj. Ratna',
+      brideIg: '@aninditakirana',
+      akadDate: 'Sabtu, 28 November 2026',
+      akadTime: '08:00 - 10:00 WIB',
+      akadVenue: 'Masjid Agung Jawa Tengah, Semarang',
+      resepsiDate: 'Sabtu, 28 November 2026',
+      resepsiTime: '11:00 - 14:00 WIB',
+      resepsiVenue: 'Grand Ball Room Hotel Tentrem Semarang',
+      mapsAddress: 'Jl. Gajah Raya, Sambirejo, Kec. Gayamsari, Kota Semarang',
+      mapsLink: 'https://maps.google.com',
+      musicChoice: 'Nadhif Basalamah - Penjaga Hati',
+      giftBankInfo: 'BCA 1234567890 a.n Bagas Pratama | Mandiri 9876543210 a.n Anindita Kirana',
+      photoDriveLink: 'https://drive.google.com/sample-prewedding-photos'
+    }))
+    showToast('Data contoh pernikahan berhasil diisikan!', 'success')
+  }
+
   const handleCopyPaymentNumber = () => {
     navigator.clipboard.writeText(selectedPayment.number)
     setCopiedPayment(true)
     showToast(`Nomor ${selectedPayment.name} (${selectedPayment.number}) berhasil disalin!`, 'success')
     setTimeout(() => setCopiedPayment(false), 2500)
+  }
+
+  const handleCopyFinalPrice = () => {
+    navigator.clipboard.writeText(finalPrice.toString())
+    setCopiedPrice(true)
+    showToast(`Nominal transfer ${formatRupiah(finalPrice)} berhasil disalin!`, 'success')
+    setTimeout(() => setCopiedPrice(false), 2500)
   }
 
   const handlePreviewWithMyData = () => {
@@ -236,6 +279,7 @@ export const OrderModal: React.FC<OrderModalProps> = ({
     if (!formData.buyerName.trim()) {
       showToast('Mohon isi Nama Pemesan terlebih dahulu pada Langkah 1', 'info')
       setStep(1)
+      setBuyerNameError(true)
       return
     }
 
@@ -244,139 +288,61 @@ export const OrderModal: React.FC<OrderModalProps> = ({
     if (eventType === 'khitan') eventTitle = 'Undangan Digital Tasyakuran Khitan! ✂️'
     else if (eventType === 'birthday') eventTitle = 'Undangan Digital Ulang Tahun! 🎂'
     else if (eventType === 'aqiqah') eventTitle = 'Undangan Digital Tasyakuran Aqiqah! 👶'
-    else if (eventType === 'graduation') eventTitle = 'Undangan Digital Wisuda / Kelulusan! 🎓'
+    else if (eventType === 'graduation') eventTitle = 'Undangan Digital Wisuda! 🎓'
 
     const lines = [
-      `Halo Admin *${storeConfig.brand.name}*, saya ingin memesan ${eventTitle}`,
+      `Halo Admin *${storeConfig.brand.name}*, saya ingin konfirmasi pemesanan ${eventTitle}`,
       ``,
-      `🧾 *DETAIL PEMESANAN & PEMBAYARAN*`,
+      `🧾 *FAKTUR RESMI PEMESANAN*`,
       `• No. Invoice: *#${invoiceCode}*`,
       `• Desain Template: *${selectedTemplate.name}*`,
       `• Paket Layanan: *${selectedPackage.name}*`,
-      `• Total Tagihan: *${formatRupiah(finalPrice)}*`,
+      `• Total Transfer: *${formatRupiah(finalPrice)}* (Termasuk Kode Unik)`,
       `• Metode Pembayaran: *${selectedPayment.name} (${selectedPayment.number})*`,
-      `• Nama Pemesan: ${formData.buyerName}`,
+      `• Nama Pemesan: *${formData.buyerName}*`,
       `• No. WA Pemesan: ${formData.buyerPhone || '-'}`,
-      `• Mode Pengisian Data: *${dataMode === 'later' ? '⚡ Booking Promo (Data Menyusul di WA)' : '📝 Data Lengkap Terlampir'}*`,
+      `• Mode Pengisian: *${dataMode === 'later' ? '⚡ Booking Kilat Promo (Data Acara Menyusul)' : '📝 Data Acara Terlampir Lengkap'}*`,
       ``
     ]
 
     if (dataMode === 'later') {
       lines.push(
         `📌 *STATUS DATA ACARA:*`,
-        `Saya memilih *Booking Slot Promo Terlebih Dahulu*. Seluruh data lengkap acara, jadwal, rekening tanda kasih, dan foto akan segera saya kirimkan menyusul di ruang chat WhatsApp ini.`,
+        `Saya memilih *Booking Slot Promo Kilat Terlebih Dahulu*. Data lengkap mempelai, waktu, tempat, dan foto akan saya lengkapi menyusul via chat ini atau Portal Pelanggan.`,
         ``
       )
     } else {
-      if (eventType === 'khitan') {
-        lines.push(
-          `✂️ *DATA ANAK & KELUARGA (KHITAN)*`,
-          `• Nama Lengkap Anak: ${formData.celebrantName || formData.groomFullName || '(Menyusul)'} (${formData.celebrantNickname || formData.groomShortName || '-'})`,
-          `• Orang Tua: ${formData.parentsName || formData.groomParents || '-'}`,
-          ``,
-          `📅 *JADWAL & LOKASI TASYAKURAN*`,
-          `• Hari & Tanggal: ${formData.eventDate || formData.akadDate || '-'} | Jam: ${formData.eventTime || formData.akadTime || '-'}`,
-          `• Tempat Acara: ${formData.eventVenue || formData.akadVenue || '-'}`,
-          `• Alamat Lengkap: ${formData.mapsAddress || '-'}`,
-          `• Link Google Maps: ${formData.mapsLink || '-'}`,
-          ``,
-          `🎁 *TABUNGAN/KADO ANAK & FOTO*`,
-          `• Rekening Kado: ${formData.giftBankInfo || '-'}`,
-          `• Link Foto: ${formData.photoDriveLink || 'Kirim menyusul via WA'}`,
-          `• Catatan Tambahan: ${formData.buyerNotes || '-'}`,
-          ``
-        )
-      } else if (eventType === 'birthday') {
-        lines.push(
-          `🎂 *DATA ULANG TAHUN (BIRTHDAY)*`,
-          `• Nama yang Berulang Tahun: ${formData.celebrantName || formData.groomFullName || '(Menyusul)'} (${formData.celebrantNickname || formData.groomShortName || '-'})`,
-          `• Ulang Tahun Ke-: ${formData.celebrantAge || '-'} Tahun`,
-          `• Orang Tua / Penyelenggara: ${formData.parentsName || formData.groomParents || '-'}`,
-          ``,
-          `📅 *WAKTU & TEMPAT PESTA*`,
-          `• Hari & Tanggal: ${formData.eventDate || formData.akadDate || '-'} | Jam: ${formData.eventTime || formData.akadTime || '-'}`,
-          `• Lokasi Pesta: ${formData.eventVenue || formData.akadVenue || '-'}`,
-          `• Alamat: ${formData.mapsAddress || '-'}`,
-          `• Link Google Maps: ${formData.mapsLink || '-'}`,
-          ``,
-          `🎁 *KADO, HADIAH & FOTO*`,
-          `• Rekening / Wishlist Hadiah: ${formData.giftBankInfo || '-'}`,
-          `• Link Foto: ${formData.photoDriveLink || 'Kirim menyusul via WA'}`,
-          `• Catatan: ${formData.buyerNotes || '-'}`,
-          ``
-        )
-      } else if (eventType === 'aqiqah') {
-        lines.push(
-          `👶 *DATA BAYI & TASYAKURAN AQIQAH*`,
-          `• Nama Bayi: ${formData.celebrantName || formData.groomFullName || '(Menyusul)'} (${formData.celebrantNickname || formData.groomShortName || '-'})`,
-          `• Orang Tua: ${formData.parentsName || formData.groomParents || '-'}`,
-          ``,
-          `📅 *JADWAL ACARA AQIQAH*`,
-          `• Hari & Tanggal: ${formData.eventDate || formData.akadDate || '-'} | Jam: ${formData.eventTime || formData.akadTime || '-'}`,
-          `• Tempat Acara: ${formData.eventVenue || formData.akadVenue || '-'}`,
-          `• Alamat: ${formData.mapsAddress || '-'}`,
-          `• Link Google Maps: ${formData.mapsLink || '-'}`,
-          ``,
-          `🎁 *TANDA KASIH & FOTO BAYI*`,
-          `• Rekening Hadiah: ${formData.giftBankInfo || '-'}`,
-          `• Link Foto: ${formData.photoDriveLink || 'Kirim menyusul via WA'}`,
-          `• Catatan: ${formData.buyerNotes || '-'}`,
-          ``
-        )
-      } else if (eventType === 'graduation') {
-        lines.push(
-          `🎓 *DATA WISUDAWAN & KELULUSAN*`,
-          `• Nama Wisudawan: ${formData.celebrantName || formData.groomFullName || '(Menyusul)'}`,
-          `• Gelar & Fakultas: ${formData.degreeTitle || '-'}`,
-          `• Universitas / Kampus: ${formData.institutionName || '-'}`,
-          `• Orang Tua: ${formData.parentsName || formData.groomParents || '-'}`,
-          ``,
-          `📅 *JADWAL SIDANG TERBUKA SENAT*`,
-          `• Hari & Tanggal: ${formData.eventDate || formData.akadDate || '-'} | Jam: ${formData.eventTime || formData.akadTime || '-'}`,
-          `• Balairung / Gedung: ${formData.eventVenue || formData.akadVenue || '-'}`,
-          `• Alamat: ${formData.mapsAddress || '-'}`,
-          `• Link Google Maps: ${formData.mapsLink || '-'}`,
-          ``,
-          `🎁 *KADO WISUDA & FOTO*`,
-          `• Rekening Kado Wisuda: ${formData.giftBankInfo || '-'}`,
-          `• Link Foto: ${formData.photoDriveLink || 'Kirim menyusul via WA'}`,
-          `• Catatan: ${formData.buyerNotes || '-'}`,
-          ``
-        )
-      } else {
-        lines.push(
-          `🤵👰 *DATA MEMPELAI PENGANTIN*`,
-          `• Mempelai Pria: ${formData.groomFullName || '(Menyusul)'} (${formData.groomShortName || '-'})`,
-          `  Ortu Pria: ${formData.groomParents || '-'} | IG: ${formData.groomIg || '-'}`,
-          `• Mempelai Wanita: ${formData.brideFullName || '(Menyusul)'} (${formData.brideShortName || '-'})`,
-          `  Ortu Wanita: ${formData.brideParents || '-'} | IG: ${formData.brideIg || '-'}`,
-          ``,
-          `📅 *JADWAL & LOKASI ACARA*`,
-          `• Akad Nikah: ${formData.akadDate || '-'} | ${formData.akadTime || '-'}`,
-          `  Tempat Akad: ${formData.akadVenue || '-'}`,
-          `• Resepsi: ${formData.resepsiDate || formData.akadDate || '-'} | ${formData.resepsiTime || '-'}`,
-          `  Tempat Resepsi: ${formData.resepsiVenue || '-'}`,
-          `• Alamat Lengkap: ${formData.mapsAddress || '-'}`,
-          `• Link Google Maps: ${formData.mapsLink || '-'}`,
-          ``,
-          `🎵 *MUSIK, AMPLOP & GALERI FOTO*`,
-          `• Lagu Backsound: ${formData.musicChoice || 'Payung Teduh - Akad'}`,
-          `• Rekening Amplop Digital: ${formData.giftBankInfo || '-'}`,
-          `• Link Foto Prewedding: ${formData.photoDriveLink || 'Kirim menyusul via chat WA'}`,
-          `• Catatan Tambahan: ${formData.buyerNotes || '-'}`,
-          ``
-        )
-      }
+      lines.push(
+        `🤵👰 *DATA MEMPELAI:*`,
+        `• Pria: ${formData.groomFullName || formData.groomShortName || '(Menyusul)'} (${formData.groomShortName || '-'})`,
+        `  Orang Tua: ${formData.groomParents || '-'} | IG: ${formData.groomIg || '-'}`,
+        `• Wanita: ${formData.brideFullName || formData.brideShortName || '(Menyusul)'} (${formData.brideShortName || '-'})`,
+        `  Orang Tua: ${formData.brideParents || '-'} | IG: ${formData.brideIg || '-'}`,
+        ``,
+        `📅 *JADWAL & LOKASI ACARA:*`,
+        `• Akad: ${formData.akadDate || '-'} (${formData.akadTime || '-'}) @ ${formData.akadVenue || '-'}`,
+        `• Resepsi: ${formData.resepsiDate || formData.akadDate || '-'} (${formData.resepsiTime || '-'}) @ ${formData.resepsiVenue || '-'}`,
+        `• Alamat: ${formData.mapsAddress || '-'}`,
+        `• Link Maps: ${formData.mapsLink || '-'}`,
+        ``,
+        `🎁 *AMPLOP, LAGU & FOTO:*`,
+        `• Lagu: ${formData.musicChoice || 'Payung Teduh - Akad'}`,
+        `• Rekening Kado: ${formData.giftBankInfo || '-'}`,
+        `• Link Foto Prewedding: ${formData.photoDriveLink || 'Kirim menyusul di WA'}`,
+        `• Catatan Khusus: ${formData.buyerNotes || '-'}`,
+        ``
+      )
     }
 
     lines.push(
-      `Berikut saya konfirmasi pesanan saya & lampirkan bukti pembayarannya ke *${selectedPayment.name} ${selectedPayment.number}*. Terima kasih! 🙏`
+      `Saya lampirkan bukti transfer pembayarannya. Mohon segera diproses ya Admin. Terima kasih banyak! 🙏`
     )
 
     const waUrl = `https://wa.me/${storeConfig.brand.whatsappNumber}?text=${encodeURIComponent(
       lines.join('\n')
     )}`
     window.open(waUrl, '_blank', 'noopener,noreferrer')
+    setStep(4)
   }
 
   return (
@@ -385,42 +351,46 @@ export const OrderModal: React.FC<OrderModalProps> = ({
       role="dialog"
       aria-modal="true"
       aria-labelledby="order-modal-title"
-      className="fixed inset-0 z-[70] flex items-center justify-center bg-black/80 backdrop-blur-md p-2 sm:p-4 overflow-y-auto"
+      className="fixed inset-0 z-[70] flex items-center justify-center bg-black/85 backdrop-blur-md p-2 sm:p-4 overflow-y-auto animate-fade-in"
     >
       <div
         ref={modalRef}
         onClick={(e) => e.stopPropagation()}
-        className="relative w-full max-w-3xl rounded-3xl bg-white text-stone-800 shadow-2xl border border-amber-500/30 overflow-hidden my-auto max-h-[94dvh] flex flex-col"
+        className="relative w-full max-w-3xl rounded-3xl bg-stone-900 text-stone-100 shadow-[0_25px_80px_rgba(0,0,0,0.9)] border border-amber-500/30 overflow-hidden my-auto max-h-[94dvh] flex flex-col"
       >
-        {/* Modal Header */}
-        <div className="px-5 sm:px-8 py-4 sm:py-5 bg-gradient-to-r from-stone-950 via-stone-900 to-amber-950 text-white flex items-center justify-between shrink-0">
+        {/* Header */}
+        <div className="px-5 sm:px-8 py-4 bg-gradient-to-r from-stone-950 via-stone-900 to-stone-950 text-white flex items-center justify-between border-b border-white/10 shrink-0">
           <div>
-            <div className="flex items-center gap-2 text-amber-300 text-xs font-sans uppercase tracking-widest">
+            <div className="flex items-center gap-2 text-amber-300 text-xs font-mono uppercase tracking-widest">
               <Sparkles className="w-3.5 h-3.5" />
-              <span>Formulir Pemesanan & Setor Data</span>
+              <span>Pendaftaran &amp; Pemesanan Cepat</span>
             </div>
-            <h2 id="order-modal-title" className="font-serif text-xl sm:text-2xl font-bold text-white mt-0.5">
-              {selectedTemplate.name} — {formatRupiah(finalPrice)}
+            <h2 id="order-modal-title" className="font-serif text-lg sm:text-2xl font-bold text-white mt-0.5 flex items-center gap-2">
+              <span>{selectedTemplate.name}</span>
+              <span className="text-amber-400 font-mono text-base sm:text-xl font-bold">
+                • {formatRupiah(finalPrice)}
+              </span>
             </h2>
           </div>
 
           <button
             type="button"
             onClick={onClose}
-            aria-label="Tutup formulir pemesanan"
-            className="min-w-[44px] min-h-[44px] flex items-center justify-center rounded-full bg-white/10 hover:bg-white/20 text-stone-300 hover:text-white transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-300"
+            aria-label="Tutup formulir"
+            className="w-10 h-10 flex items-center justify-center rounded-xl bg-white/10 hover:bg-white/20 text-stone-300 hover:text-white transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-400"
           >
             <X className="w-5 h-5" />
           </button>
         </div>
 
-        {/* Stepper Progress Bar */}
-        <div className="bg-stone-100 px-4 sm:px-8 py-3 border-b border-stone-200 shrink-0">
-          <div className="grid grid-cols-3 gap-2">
+        {/* Stepper Wizard Progress */}
+        <div className="bg-stone-950/70 px-4 sm:px-8 py-2.5 border-b border-white/10 shrink-0">
+          <div className="grid grid-cols-4 gap-1.5 sm:gap-2">
             {[
-              { num: 1, label: '1. Pilih Paket' },
-              { num: 2, label: '2. Setor Data' },
-              { num: 3, label: '3. Bayar & WA' }
+              { num: 1, label: '1. Paket' },
+              { num: 2, label: '2. Data Acara' },
+              { num: 3, label: '3. QRIS / Bayar' },
+              { num: 4, label: '4. Selesai' }
             ].map((item) => {
               const active = step === item.num
               const completed = step > item.num
@@ -428,1061 +398,679 @@ export const OrderModal: React.FC<OrderModalProps> = ({
                 <button
                   key={item.num}
                   type="button"
-                  onClick={() => setStep(item.num as 1 | 2 | 3)}
-                  aria-current={active ? 'step' : undefined}
-                  className={`min-h-[44px] flex items-center justify-center gap-1.5 py-2 px-2 rounded-xl text-xs font-sans font-semibold transition-all cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-700 ${
+                  onClick={() => setStep(item.num as 1 | 2 | 3 | 4)}
+                  className={`min-h-[38px] flex items-center justify-center gap-1.5 py-1.5 px-2 rounded-xl text-xs font-semibold transition-all cursor-pointer ${
                     active
-                      ? 'bg-amber-800 text-white shadow-sm'
+                      ? 'bg-amber-500 text-stone-950 shadow-md font-bold'
                       : completed
-                      ? 'bg-emerald-100 text-emerald-800'
-                      : 'bg-white text-stone-500 border border-stone-200'
+                      ? 'bg-emerald-950/60 text-emerald-300 border border-emerald-500/30'
+                      : 'bg-stone-900 text-stone-400 border border-white/5'
                   }`}
                 >
-                  {completed && <Check className="w-3.5 h-3.5 text-emerald-600 shrink-0" />}
-                  <span className="truncate">{item.label}</span>
+                  {completed ? (
+                    <Check className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
+                  ) : (
+                    <span className="w-4 h-4 rounded-full bg-white/10 flex items-center justify-center text-[10px]">
+                      {item.num}
+                    </span>
+                  )}
+                  <span className="hidden sm:inline truncate">{item.label}</span>
                 </button>
               )
             })}
           </div>
         </div>
 
-        {/* Modal Body (Scrollable) */}
+        {/* Modal Body */}
         <div className="p-5 sm:p-8 overflow-y-auto space-y-6 flex-1">
-          {/* STEP 1: PILIH TEMPLATE, PAKET & IDENTITAS PEMESAN */}
+          {/* STEP 1: PAKET & MODE PEMESANAN */}
           {step === 1 && (
-            <div className="space-y-6 animate-in fade-in duration-200">
-              {/* Template Choice */}
+            <div className="space-y-6">
+              {/* Mode Selection */}
               <div>
-                <label className="block text-xs font-bold uppercase tracking-wider text-stone-700 mb-2">
-                  Desain Template Pilihan Anda
+                <label className="text-xs font-bold uppercase tracking-wider text-amber-300 block mb-2">
+                  Pilih Cara Pemesanan:
                 </label>
-                <div role="radiogroup" aria-label="Desain Template Pilihan" className="grid grid-cols-2 sm:grid-cols-3 gap-2.5">
-                  {storeConfig.templates.map((tpl) => {
-                    const isSelected = formData.templateId === tpl.id
-                    return (
-                      <button
-                        key={tpl.id}
-                        type="button"
-                        role="radio"
-                        aria-checked={isSelected}
-                        onClick={() => handleSelectTemplate(tpl.id)}
-                        className={`p-2.5 rounded-2xl border text-left transition-all cursor-pointer flex items-center gap-2.5 ${
-                          isSelected
-                            ? 'border-amber-700 bg-amber-50/70 ring-2 ring-amber-700/20'
-                            : 'border-stone-200 hover:border-stone-300 bg-white'
-                        }`}
-                      >
-                        <img
-                          src={tpl.thumbnail}
-                          alt={tpl.name}
-                          className="w-11 h-11 rounded-xl object-cover shrink-0"
-                        />
-                        <div className="min-w-0">
-                          <p className="font-serif font-bold text-xs text-stone-900 truncate">
-                            {tpl.name}
-                          </p>
-                          <p className="text-[11px] font-sans text-amber-800 font-semibold">
-                            {formatRupiah(tpl.price)}
-                          </p>
-                        </div>
-                      </button>
-                    )
-                  })}
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  <div
+                    onClick={() => setDataMode('later')}
+                    className={`p-4 rounded-2xl border-2 transition-all cursor-pointer flex items-start gap-3 ${
+                      dataMode === 'later'
+                        ? 'border-amber-400 bg-amber-500/10 shadow-lg'
+                        : 'border-white/10 bg-stone-950/50 hover:border-white/20'
+                    }`}
+                  >
+                    <div className="w-9 h-9 rounded-xl bg-amber-500 text-stone-950 flex items-center justify-center font-bold text-base shrink-0 shadow-md">
+                      ⚡
+                    </div>
+                    <div>
+                      <div className="flex items-center gap-2">
+                        <span className="font-bold text-sm text-white">Booking Kilat Promo</span>
+                        <span className="px-2 py-0.5 rounded-full bg-amber-400 text-stone-950 text-[10px] font-extrabold uppercase">
+                          Populer
+                        </span>
+                      </div>
+                      <p className="text-xs text-stone-300 mt-1 leading-relaxed">
+                        Cukup isi Nama &amp; No. WhatsApp. Amankan slot diskon sekarang, data acara bisa dikirimkan menyusul kapan saja via WA/Portal.
+                      </p>
+                    </div>
+                  </div>
+
+                  <div
+                    onClick={() => setDataMode('full')}
+                    className={`p-4 rounded-2xl border-2 transition-all cursor-pointer flex items-start gap-3 ${
+                      dataMode === 'full'
+                        ? 'border-amber-400 bg-amber-500/10 shadow-lg'
+                        : 'border-white/10 bg-stone-950/50 hover:border-white/20'
+                    }`}
+                  >
+                    <div className="w-9 h-9 rounded-xl bg-stone-800 text-amber-300 flex items-center justify-center font-bold text-base shrink-0 border border-white/10">
+                      📝
+                    </div>
+                    <div>
+                      <span className="font-bold text-sm text-white">Kustomisasi Lengkap</span>
+                      <p className="text-xs text-stone-300 mt-1 leading-relaxed">
+                        Isi langsung data kedua mempelai, jadwal acara akad &amp; resepsi, dan coba lihat langsung hasilnya di pratinjau live.
+                      </p>
+                    </div>
+                  </div>
                 </div>
               </div>
 
-              {/* Package Tier Choice */}
-              <div>
-                <label className="block text-xs font-bold uppercase tracking-wider text-stone-700 mb-2">
-                  {isNonWedding
-                    ? 'Pilih Paket Layanan Syukuran / Acara (Mulai Rp 59.000)'
-                    : 'Pilih Paket Layanan Pernikahan (Rp 75.000 – Rp 149.000)'}
-                </label>
-                <div role="radiogroup" aria-label="Pilihan Paket Layanan" className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-                  {availablePackages.map((pkg) => {
-                    const isSelected = selectedPackage.id === pkg.id
-                    return (
-                      <button
-                        type="button"
-                        role="radio"
-                        aria-checked={isSelected}
-                        key={pkg.id}
-                        onClick={() => updateField('packageId', pkg.id)}
-                        className={`p-4 rounded-2xl border cursor-pointer transition-all relative text-left w-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-700 ${
-                          isSelected
-                            ? 'border-amber-700 bg-amber-50/60 ring-2 ring-amber-700/20 shadow-md'
-                            : 'border-stone-200 hover:border-stone-300 bg-white'
-                        }`}
-                      >
-                        {pkg.badge && (
-                          <span className="inline-block px-2 py-0.5 rounded-full bg-amber-800 text-white text-[10px] font-semibold mb-1.5">
-                            {pkg.badge}
-                          </span>
-                        )}
-                        <h4 className="font-serif font-bold text-base text-stone-900">
-                          {pkg.name}
-                        </h4>
-                        <div className="flex items-baseline gap-1.5 my-1">
-                          <span className="text-lg font-bold text-amber-900">
-                            {formatRupiah(pkg.price)}
-                          </span>
-                          <span className="text-[11px] text-stone-400 line-through">
-                            {formatRupiah(pkg.originalPrice)}
-                          </span>
-                        </div>
-                        <p className="text-[11px] text-stone-600 leading-relaxed">
-                          {pkg.description}
-                        </p>
-                      </button>
-                    )
-                  })}
-                </div>
-              </div>
+              {/* Data Pemesan Ringkas */}
+              <div className="p-4 rounded-2xl bg-stone-950/70 border border-white/10 space-y-3">
+                <h3 className="text-xs font-bold text-white uppercase tracking-wider flex items-center gap-2">
+                  <UserCheck className="w-4 h-4 text-amber-400" />
+                  <span>Data Kontak Pemesan</span>
+                </h3>
 
-              {/* Rincian Harga All-In Transparan */}
-              <div className="p-4 rounded-2xl bg-gradient-to-r from-amber-50 via-amber-100/40 to-amber-50 border border-amber-300 text-stone-800 space-y-2 shadow-sm">
-                <div className="flex items-center gap-2 text-amber-900 font-bold text-xs uppercase tracking-wide">
-                  <Sparkles className="w-3.5 h-3.5 text-amber-700" />
-                  <span>Sistem Harga All-In (100% Transparan Tanpa Biaya Tersembunyi)</span>
-                </div>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs pt-1">
-                  <div className="flex items-center justify-between p-2.5 rounded-xl bg-white border border-amber-200">
-                    <span className="text-stone-600 font-medium">Desain Template:</span>
-                    <span className="font-serif font-bold text-stone-900">{selectedTemplate.name} <span className="text-emerald-700 font-sans font-bold text-[10px]">(Gratis Termasuk)</span></span>
-                  </div>
-                  <div className="flex items-center justify-between p-2.5 rounded-xl bg-white border border-amber-200">
-                    <span className="text-stone-600 font-medium">Paket Layanan:</span>
-                    <span className="font-bold text-amber-900">{selectedPackage.name}</span>
-                  </div>
-                </div>
-                <div className="flex items-center justify-between pt-2 border-t border-amber-200">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                   <div>
-                    <span className="text-xs font-bold text-stone-900 block">Total Tagihan Final:</span>
-                    <span className="text-[11px] text-stone-600">Sudah all-in lisensi template, domain aktif, dan revisi</span>
-                  </div>
-                  <span className="font-serif text-2xl font-extrabold text-amber-900">{formatRupiah(finalPrice)}</span>
-                </div>
-              </div>
-
-              {/* Buyer Contact Details */}
-              <div className="p-4 sm:p-5 rounded-2xl bg-stone-50 border border-stone-200 space-y-4">
-                <div className="flex items-center gap-2 text-stone-800 font-serif font-bold text-base">
-                  <UserCheck className="w-4 h-4 text-amber-800" />
-                  <span>Identitas Pemesan</span>
-                </div>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  <div>
-                    <label htmlFor="buyer-name" className="block text-xs font-semibold text-stone-700 mb-1">
-                      Nama Pemesan *
+                    <label htmlFor="order-buyer-name" className="text-xs font-semibold text-stone-300 block mb-1">
+                      Nama Pemesan / Calon Pengantin <span className="text-rose-400">*</span>
                     </label>
                     <input
-                      id="buyer-name"
+                      id="order-buyer-name"
                       type="text"
-                      required
+                      autoComplete="name"
+                      enterKeyHint="next"
+                      aria-invalid={buyerNameError}
                       value={formData.buyerName}
                       onChange={(e) => {
                         updateField('buyerName', e.target.value)
-                        if (e.target.value.trim()) setBuyerNameError(false)
+                        setBuyerNameError(false)
                       }}
-                      placeholder="Contoh: Rian Mahendra"
-                      aria-invalid={buyerNameError}
-                      aria-describedby={buyerNameError ? "buyer-name-error" : undefined}
-                      className={`w-full px-3.5 py-2.5 rounded-xl border bg-white text-sm focus:outline-none focus:ring-2 ${
-                        buyerNameError
-                          ? 'border-rose-500 focus:ring-rose-500/30'
-                          : 'border-stone-300 focus:ring-amber-600/30'
+                      placeholder="Contoh: Bagas Pratama"
+                      className={`w-full bg-stone-900 border rounded-xl px-3.5 py-2.5 text-xs sm:text-sm text-white placeholder-stone-400 focus:outline-none transition-all ${
+                        buyerNameError ? 'border-rose-500 ring-2 ring-rose-500/30' : 'border-white/15 focus:border-amber-400'
                       }`}
                     />
                     {buyerNameError && (
-                      <p id="buyer-name-error" className="text-[11px] text-rose-600 font-medium mt-1">
-                        Nama Pemesan wajib diisi untuk melanjutkan pemesanan.
-                      </p>
+                      <p className="text-[11px] text-rose-400 mt-1">Nama pemesan wajib diisi.</p>
                     )}
                   </div>
+
                   <div>
-                    <label htmlFor="buyer-phone" className="block text-xs font-semibold text-stone-700 mb-1">
-                      Nomor WhatsApp Aktif *
+                    <label htmlFor="order-buyer-phone" className="text-xs font-semibold text-stone-300 block mb-1">
+                      Nomor WhatsApp Aktif <span className="text-rose-400">*</span>
                     </label>
-                    <input id="buyer-phone"
+                    <input
+                      id="order-buyer-phone"
                       type="tel"
-                      required
+                      inputMode="tel"
+                      autoComplete="tel"
+                      enterKeyHint="done"
                       value={formData.buyerPhone}
                       onChange={(e) => updateField('buyerPhone', e.target.value)}
-                      placeholder="Contoh: 081234567890"
-                      className="w-full px-3.5 py-2.5 rounded-xl border border-stone-300 bg-white text-sm focus:outline-none focus:ring-2 focus:ring-amber-600/30"
+                      placeholder="Contoh: 0812-3456-7890"
+                      className="w-full bg-stone-900 border border-white/15 focus:border-amber-400 rounded-xl px-3.5 py-2.5 text-xs sm:text-sm text-white placeholder-stone-400 focus:outline-none transition-all"
                     />
                   </div>
                 </div>
               </div>
-            </div>
-          )}
 
-          {/* STEP 2: SETOR DATA PENGANTIN & ACARA */}
-          {step === 2 && (
-            <div className="space-y-6 animate-in fade-in duration-200">
-              {/* Data Mode Selector */}
-              <div role="tablist" aria-label="Mode Pengisian Data" className="bg-stone-100 p-1.5 rounded-2xl flex gap-1.5 border border-stone-200">
-                <button role="tab" aria-selected={dataMode === 'full'}
-                  type="button"
-                  onClick={() => setDataMode('full')}
-                  className={`flex-1 py-2.5 px-3 rounded-xl text-xs font-sans font-bold transition-all cursor-pointer flex items-center justify-center gap-1.5 ${
-                    dataMode === 'full'
-                      ? 'bg-white text-stone-900 shadow-sm border border-stone-200'
-                      : 'text-stone-600 hover:text-stone-900'
-                  }`}
-                >
-                  <span>📝 Isi Data Lengkap Sekarang</span>
-                </button>
-                <button role="tab" aria-selected={dataMode === 'later'}
-                  type="button"
-                  onClick={() => setDataMode('later')}
-                  className={`flex-1 py-2.5 px-3 rounded-xl text-xs font-sans font-bold transition-all cursor-pointer flex items-center justify-center gap-1.5 ${
-                    dataMode === 'later'
-                      ? 'bg-amber-800 text-white shadow-sm'
-                      : 'text-stone-600 hover:text-amber-800'
-                  }`}
-                >
-                  <Sparkles className="w-3.5 h-3.5" />
-                  <span>⚡ Booking Dulu (Data Menyusul di WA)</span>
-                </button>
-              </div>
-
-              {dataMode === 'later' ? (
-                /* Fast-Track Mode: Data menyusul */
-                <div className="p-6 rounded-3xl bg-amber-50/80 border-2 border-dashed border-amber-400 text-center space-y-4">
-                  <div className="w-12 h-12 rounded-2xl bg-amber-100 text-amber-800 flex items-center justify-center mx-auto text-2xl shadow-inner">
-                    ⚡
-                  </div>
-                  <div className="max-w-md mx-auto space-y-1.5">
-                    <h3 className="font-serif text-lg font-bold text-stone-900">
-                      Amankan Slot Diskon & Promo Spesial
-                    </h3>
-                    <p className="text-xs text-stone-600 leading-relaxed">
-                      Sedang terburu-buru atau data pernikahan belum fiks? Tidak masalah! Anda bisa langsung melanjutkan ke proses pembayaran untuk mengunci harga promo. Seluruh rincian foto, jadwal, dan nama mempelai bisa Anda kirimkan santai di WhatsApp Admin kami.
-                    </p>
-                  </div>
-
-                  <div className="pt-2">
-                    <button
-                      type="button"
-                      onClick={() => setStep(3)}
-                      className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-amber-800 hover:bg-amber-900 text-white text-xs sm:text-sm font-sans font-bold shadow-md cursor-pointer transition-all active:scale-95"
-                    >
-                      <span>Lanjut ke Pembayaran & WA</span>
-                      <ChevronRight className="w-4 h-4" />
-                    </button>
-                  </div>
-                </div>
-              ) : (
-                /* Full Mode: Isi Form Lengkap */
-                <>
-                  <div className="p-3.5 rounded-2xl bg-amber-50 border border-amber-200 text-xs text-amber-900 flex items-center justify-between gap-3 flex-wrap">
-                    <span>
-                      💡 <strong>Petunjuk:</strong> Isi data di bawah ini untuk langsung dicoba di Pratinjau atau dikirim ke WhatsApp Admin. Jika ada yang belum pasti, boleh dikosongkan dan menyusul via WA!
-                    </span>
-                    <button
-                      type="button"
-                      onClick={handlePreviewWithMyData}
-                      className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-amber-800 text-white font-semibold text-xs hover:bg-amber-900 cursor-pointer shrink-0 shadow-sm"
-                    >
-                      <Eye className="w-3.5 h-3.5" />
-                      <span>Coba Pratinjau Data Saya</span>
-                    </button>
-                  </div>
-
-                  {/* Dynamic Form: Multi-Event vs Wedding */}
-                  {selectedTemplate.eventType && selectedTemplate.eventType !== 'wedding' ? (
-                    <div className="space-y-4">
-                      {/* Section 1: Profil Tokoh Utama & Keluarga */}
-                      <div className="p-4 rounded-2xl bg-stone-50 border border-stone-200 space-y-3">
-                        <div className="flex items-center gap-1.5 font-serif font-bold text-stone-800 text-sm border-b border-stone-200 pb-2">
-                          {selectedTemplate.eventType === 'khitan' && <Scissors className="w-4 h-4 text-emerald-600" />}
-                          {selectedTemplate.eventType === 'birthday' && <Cake className="w-4 h-4 text-pink-600" />}
-                          {selectedTemplate.eventType === 'aqiqah' && <Baby className="w-4 h-4 text-sky-600" />}
-                          {selectedTemplate.eventType === 'graduation' && <GraduationCap className="w-4 h-4 text-amber-600" />}
-                          <span>
-                            {selectedTemplate.eventType === 'khitan' && 'Data Anak & Orang Tua'}
-                            {selectedTemplate.eventType === 'birthday' && 'Data Yang Berulang Tahun'}
-                            {selectedTemplate.eventType === 'aqiqah' && 'Data Bayi & Orang Tua'}
-                            {selectedTemplate.eventType === 'graduation' && 'Data Wisudawan & Institusi'}
-                          </span>
-                        </div>
-
-                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                          <div>
-                            <label htmlFor="order-celebrant-name" className="block text-[11px] font-semibold text-stone-600 mb-1">
-                              {selectedTemplate.eventType === 'khitan' && 'Nama Lengkap Anak'}
-                              {selectedTemplate.eventType === 'birthday' && 'Nama Lengkap Yang Berulang Tahun'}
-                              {selectedTemplate.eventType === 'aqiqah' && 'Nama Lengkap Bayi'}
-                              {selectedTemplate.eventType === 'graduation' && 'Nama Lengkap Wisudawan & Gelar'}
-                            </label>
-                            <input
-                              id="order-celebrant-name"
-                              type="text"
-                              value={formData.celebrantName || formData.groomFullName}
-                              onChange={(e) => {
-                                updateField('celebrantName', e.target.value)
-                                updateField('groomFullName', e.target.value)
-                              }}
-                              placeholder={
-                                selectedTemplate.eventType === 'khitan'
-                                  ? 'Contoh: Muhammad Rizky Pratama'
-                                  : selectedTemplate.eventType === 'birthday'
-                                  ? 'Contoh: Clarissa Aurelia Putri'
-                                  : selectedTemplate.eventType === 'aqiqah'
-                                  ? 'Contoh: Arkan Malik Al-Fatih'
-                                  : 'Contoh: Faris Alamsyah, S.Kom., M.T.'
-                              }
-                              className="w-full px-3 py-2 rounded-xl border border-stone-300 bg-white text-sm"
-                            />
-                          </div>
-
-                          <div>
-                            <label htmlFor="order-celebrant-extra" className="block text-[11px] font-semibold text-stone-600 mb-1">
-                              {selectedTemplate.eventType === 'graduation'
-                                ? 'Fakultas / Program Studi'
-                                : selectedTemplate.eventType === 'birthday'
-                                ? 'Ulang Tahun Ke- (Usia)'
-                                : 'Nama Panggilan'}
-                            </label>
-                            <input
-                              id="order-celebrant-extra"
-                              type="text"
-                              value={
-                                selectedTemplate.eventType === 'graduation'
-                                  ? formData.degreeTitle || ''
-                                  : selectedTemplate.eventType === 'birthday'
-                                  ? formData.celebrantAge || ''
-                                  : formData.celebrantNickname || formData.groomShortName || ''
-                              }
-                              onChange={(e) => {
-                                if (selectedTemplate.eventType === 'graduation') {
-                                  updateField('degreeTitle', e.target.value)
-                                } else if (selectedTemplate.eventType === 'birthday') {
-                                  updateField('celebrantAge', e.target.value)
-                                } else {
-                                  updateField('celebrantNickname', e.target.value)
-                                  updateField('groomShortName', e.target.value)
-                                }
-                              }}
-                              placeholder={
-                                selectedTemplate.eventType === 'graduation'
-                                  ? 'Contoh: Magister Ilmu Komputer (FASILKOM)'
-                                  : selectedTemplate.eventType === 'birthday'
-                                  ? 'Contoh: 17 Tahun (Sweet Seventeen)'
-                                  : 'Contoh: Kiki / Malik'
-                              }
-                              className="w-full px-3 py-2 rounded-xl border border-stone-300 bg-white text-sm"
-                            />
-                          </div>
-                        </div>
-
-                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1">
-                          <div>
-                            <label htmlFor="order-parents-inst" className="block text-[11px] font-semibold text-stone-600 mb-1">
-                              {selectedTemplate.eventType === 'graduation'
-                                ? 'Nama Universitas / Institut'
-                                : 'Nama Orang Tua / Penyelenggara'}
-                            </label>
-                            <input
-                              id="order-parents-inst"
-                              type="text"
-                              value={
-                                selectedTemplate.eventType === 'graduation'
-                                  ? formData.institutionName || ''
-                                  : formData.parentsName || formData.groomParents || ''
-                              }
-                              onChange={(e) => {
-                                if (selectedTemplate.eventType === 'graduation') {
-                                  updateField('institutionName', e.target.value)
-                                } else {
-                                  updateField('parentsName', e.target.value)
-                                  updateField('groomParents', e.target.value)
-                                }
-                              }}
-                              placeholder={
-                                selectedTemplate.eventType === 'graduation'
-                                  ? 'Contoh: Universitas Indonesia (UI Depok)'
-                                  : 'Contoh: Bpk. Ir. Hendra & Ibu Hj. Ratna'
-                              }
-                              className="w-full px-3 py-2 rounded-xl border border-stone-300 bg-white text-sm"
-                            />
-                          </div>
-
-                          <div>
-                            <label htmlFor="order-parents-extra" className="block text-[11px] font-semibold text-stone-600 mb-1">
-                              {selectedTemplate.eventType === 'graduation'
-                                ? 'Nama Kedua Orang Tua'
-                                : selectedTemplate.eventType === 'aqiqah'
-                                ? 'Tanggal & Jam Lahir (atau BB/PB)'
-                                : 'Instagram / Panggilan Keluarga (Opsional)'}
-                            </label>
-                            <input
-                              id="order-parents-extra"
-                              type="text"
-                              value={
-                                selectedTemplate.eventType === 'graduation'
-                                  ? formData.parentsName || formData.groomParents || ''
-                                  : formData.groomIg || ''
-                              }
-                              onChange={(e) => {
-                                if (selectedTemplate.eventType === 'graduation') {
-                                  updateField('parentsName', e.target.value)
-                                  updateField('groomParents', e.target.value)
-                                } else {
-                                  updateField('groomIg', e.target.value)
-                                }
-                              }}
-                              placeholder={
-                                selectedTemplate.eventType === 'graduation'
-                                  ? 'Contoh: Bpk. Ir. Hendra & Ibu Hj. Ratna'
-                                  : selectedTemplate.eventType === 'aqiqah'
-                                  ? 'Contoh: 14 Mei 2026, BB: 3.4 kg, PB: 50 cm'
-                                  : 'Contoh: @clarissa.putri'
-                              }
-                              className="w-full px-3 py-2 rounded-xl border border-stone-300 bg-white text-sm"
-                            />
-                          </div>
-                        </div>
-                      </div>
-
-                      {/* Section 2: Waktu & Lokasi Acara */}
-                      <div className="p-4 rounded-2xl bg-stone-50 border border-stone-200 space-y-3">
-                        <div className="flex items-center gap-1.5 font-serif font-bold text-stone-800 text-sm border-b border-stone-200 pb-2">
-                          <Calendar className="w-4 h-4 text-amber-800" />
-                          <span>Jadwal & Lokasi Acara</span>
-                        </div>
-                        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-                          <div>
-                            <label htmlFor="order-event-date" className="block text-[11px] font-semibold text-stone-600 mb-1">
-                              Hari & Tanggal Acara
-                            </label>
-                            <input
-                              id="order-event-date"
-                              type="text"
-                              value={formData.eventDate || formData.akadDate || ''}
-                              onChange={(e) => {
-                                updateField('eventDate', e.target.value)
-                                updateField('akadDate', e.target.value)
-                              }}
-                              placeholder="Contoh: Sabtu, 19 September 2026"
-                              className="w-full px-3 py-2 rounded-xl border border-stone-300 bg-white text-sm"
-                            />
-                          </div>
-                          <div>
-                            <label htmlFor="order-event-time" className="block text-[11px] font-semibold text-stone-600 mb-1">
-                              Jam Pelaksanaan
-                            </label>
-                            <input
-                              id="order-event-time"
-                              type="text"
-                              value={formData.eventTime || formData.akadTime || ''}
-                              onChange={(e) => {
-                                updateField('eventTime', e.target.value)
-                                updateField('akadTime', e.target.value)
-                              }}
-                              placeholder="Contoh: 09:00 - 13:00 WIB"
-                              className="w-full px-3 py-2 rounded-xl border border-stone-300 bg-white text-sm"
-                            />
-                          </div>
-                          <div>
-                            <label htmlFor="order-event-venue" className="block text-[11px] font-semibold text-stone-600 mb-1">
-                              Nama Tempat / Gedung
-                            </label>
-                            <input
-                              id="order-event-venue"
-                              type="text"
-                              value={formData.eventVenue || formData.akadVenue || ''}
-                              onChange={(e) => {
-                                updateField('eventVenue', e.target.value)
-                                updateField('akadVenue', e.target.value)
-                              }}
-                              placeholder="Contoh: Balairung UI / Gedung Pertemuan"
-                              className="w-full px-3 py-2 rounded-xl border border-stone-300 bg-white text-sm"
-                            />
-                          </div>
-                        </div>
-
-                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1">
-                          <div>
-                            <label htmlFor="order-maps-address" className="block text-[11px] font-semibold text-stone-600 mb-1">
-                              Alamat Lengkap Lokasi
-                            </label>
-                            <input
-                              id="order-maps-address"
-                              type="text"
-                              value={formData.mapsAddress}
-                              onChange={(e) => updateField('mapsAddress', e.target.value)}
-                              placeholder="Jl. Raya Utama No. 123..."
-                              className="w-full px-3 py-2 rounded-xl border border-stone-300 bg-white text-sm"
-                            />
-                          </div>
-                          <div>
-                            <label htmlFor="order-maps-link" className="block text-[11px] font-semibold text-stone-600 mb-1">
-                              Link Titik Google Maps (Opsional)
-                            </label>
-                            <input
-                              id="order-maps-link"
-                              type="text"
-                              value={formData.mapsLink}
-                              onChange={(e) => updateField('mapsLink', e.target.value)}
-                              placeholder="https://maps.app.goo.gl/..."
-                              className="w-full px-3 py-2 rounded-xl border border-stone-300 bg-white text-sm"
-                            />
-                          </div>
-                        </div>
-                      </div>
-
-                      {/* Section 3: Rekening Hadiah / Kado & Foto */}
-                      <div className="p-4 rounded-2xl bg-stone-50 border border-stone-200 space-y-3">
-                        <div className="flex items-center gap-1.5 font-serif font-bold text-stone-800 text-sm border-b border-stone-200 pb-2">
-                          <Music className="w-4 h-4 text-amber-800" />
-                          <span>Tanda Kasih, Kado & Foto</span>
-                        </div>
-                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                          <div>
-                            <label htmlFor="order-gift-bank" className="block text-[11px] font-semibold text-stone-600 mb-1">
-                              No. Rekening Kado / Amplop Digital
-                            </label>
-                            <input
-                              id="order-gift-bank"
-                              type="text"
-                              value={formData.giftBankInfo}
-                              onChange={(e) => updateField('giftBankInfo', e.target.value)}
-                              placeholder="Contoh: BCA 12345678 a.n Nama Rekening"
-                              className="w-full px-3 py-2 rounded-xl border border-stone-300 bg-white text-sm"
-                            />
-                          </div>
-                          <div>
-                            <label htmlFor="order-photo-drive" className="block text-[11px] font-semibold text-stone-600 mb-1">
-                              Link Google Drive Foto / Portofolio (Atau Kirim di WA)
-                            </label>
-                            <input
-                              id="order-photo-drive"
-                              type="text"
-                              value={formData.photoDriveLink}
-                              onChange={(e) => updateField('photoDriveLink', e.target.value)}
-                              placeholder="Contoh: https://drive.google.com/... atau 'Kirim di WA'"
-                              className="w-full px-3 py-2 rounded-xl border border-stone-300 bg-white text-sm"
-                            />
-                          </div>
-                        </div>
-                        <div>
-                          <label htmlFor="order-buyer-notes" className="block text-[11px] font-semibold text-stone-600 mb-1">
-                            Catatan Tambahan (Dress Code, Protokol, dll)
-                          </label>
-                          <input
-                            id="order-buyer-notes"
-                            type="text"
-                            value={formData.buyerNotes}
-                            onChange={(e) => updateField('buyerNotes', e.target.value)}
-                            placeholder="Contoh: Dress Code Pastel / Maksimal 2 Pendamping"
-                            className="w-full px-3 py-2 rounded-xl border border-stone-300 bg-white text-sm"
-                          />
-                        </div>
-                      </div>
-                    </div>
-                  ) : (
-                    <>
-                      {/* Data Mempelai Pria & Wanita */}
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        {/* Mempelai Pria */}
-                        <div className="p-4 rounded-2xl bg-stone-50 border border-stone-200 space-y-3">
-                          <div className="flex items-center gap-1.5 font-serif font-bold text-stone-800 text-sm border-b border-stone-200 pb-2">
-                            <Heart className="w-4 h-4 text-amber-700" />
-                            <span>Data Mempelai Pria</span>
-                          </div>
-                          <div>
-                            <label htmlFor="order-groom-short" className="block text-[11px] font-semibold text-stone-600 mb-1">
-                              Nama Panggilan Pria
-                            </label>
-                            <input
-                              id="order-groom-short"
-                              type="text"
-                              value={formData.groomShortName}
-                              onChange={(e) => updateField('groomShortName', e.target.value)}
-                              placeholder="Contoh: Rian"
-                              className="w-full px-3 py-2 rounded-xl border border-stone-300 bg-white text-sm"
-                            />
-                          </div>
-                          <div>
-                            <label htmlFor="order-groom-full" className="block text-[11px] font-semibold text-stone-600 mb-1">
-                              Nama Lengkap & Gelar
-                            </label>
-                            <input
-                              id="order-groom-full"
-                              type="text"
-                              value={formData.groomFullName}
-                              onChange={(e) => updateField('groomFullName', e.target.value)}
-                              placeholder="Contoh: M. Arrian Mahendra, S.T."
-                              className="w-full px-3 py-2 rounded-xl border border-stone-300 bg-white text-sm"
-                            />
-                          </div>
-                          <div>
-                            <label htmlFor="order-groom-parents" className="block text-[11px] font-semibold text-stone-600 mb-1">
-                              Nama Kedua Orang Tua Pria
-                            </label>
-                            <input
-                              id="order-groom-parents"
-                              type="text"
-                              value={formData.groomParents}
-                              onChange={(e) => updateField('groomParents', e.target.value)}
-                              placeholder="Bpk. Hendra & Ibu Siti"
-                              className="w-full px-3 py-2 rounded-xl border border-stone-300 bg-white text-sm"
-                            />
-                          </div>
-                          <div>
-                            <label htmlFor="order-groom-ig" className="block text-[11px] font-semibold text-stone-600 mb-1">
-                              Username Instagram (Opsional)
-                            </label>
-                            <input
-                              id="order-groom-ig"
-                              type="text"
-                              value={formData.groomIg}
-                              onChange={(e) => updateField('groomIg', e.target.value)}
-                              placeholder="@rian.mahendra"
-                              className="w-full px-3 py-2 rounded-xl border border-stone-300 bg-white text-sm"
-                            />
-                          </div>
-                        </div>
-
-                        {/* Mempelai Wanita */}
-                        <div className="p-4 rounded-2xl bg-stone-50 border border-stone-200 space-y-3">
-                          <div className="flex items-center gap-1.5 font-serif font-bold text-stone-800 text-sm border-b border-stone-200 pb-2">
-                            <Heart className="w-4 h-4 text-rose-600" />
-                            <span>Data Mempelai Wanita</span>
-                          </div>
-                          <div>
-                            <label htmlFor="order-bride-short" className="block text-[11px] font-semibold text-stone-600 mb-1">
-                              Nama Panggilan Wanita
-                            </label>
-                            <input
-                              id="order-bride-short"
-                              type="text"
-                              value={formData.brideShortName}
-                              onChange={(e) => updateField('brideShortName', e.target.value)}
-                              placeholder="Contoh: Sarah"
-                              className="w-full px-3 py-2 rounded-xl border border-stone-300 bg-white text-sm"
-                            />
-                          </div>
-                          <div>
-                            <label htmlFor="order-bride-full" className="block text-[11px] font-semibold text-stone-600 mb-1">
-                              Nama Lengkap & Gelar
-                            </label>
-                            <input
-                              id="order-bride-full"
-                              type="text"
-                              value={formData.brideFullName}
-                              onChange={(e) => updateField('brideFullName', e.target.value)}
-                              placeholder="Contoh: Sarah Az-Zahra, S.Psi."
-                              className="w-full px-3 py-2 rounded-xl border border-stone-300 bg-white text-sm"
-                            />
-                          </div>
-                          <div>
-                            <label htmlFor="order-bride-parents" className="block text-[11px] font-semibold text-stone-600 mb-1">
-                              Nama Kedua Orang Tua Wanita
-                            </label>
-                            <input
-                              id="order-bride-parents"
-                              type="text"
-                              value={formData.brideParents}
-                              onChange={(e) => updateField('brideParents', e.target.value)}
-                              placeholder="Bpk. Ahmad & Ibu Fatimah"
-                              className="w-full px-3 py-2 rounded-xl border border-stone-300 bg-white text-sm"
-                            />
-                          </div>
-                          <div>
-                            <label htmlFor="order-bride-ig" className="block text-[11px] font-semibold text-stone-600 mb-1">
-                              Username Instagram (Opsional)
-                            </label>
-                            <input
-                              id="order-bride-ig"
-                              type="text"
-                              value={formData.brideIg}
-                              onChange={(e) => updateField('brideIg', e.target.value)}
-                              placeholder="@sarah.azzahra"
-                              className="w-full px-3 py-2 rounded-xl border border-stone-300 bg-white text-sm"
-                            />
-                          </div>
-                        </div>
-                      </div>
-
-                      {/* Detail Waktu & Lokasi Acara */}
-                      <div className="p-4 rounded-2xl bg-stone-50 border border-stone-200 space-y-3">
-                        <div className="flex items-center gap-1.5 font-serif font-bold text-stone-800 text-sm border-b border-stone-200 pb-2">
-                          <Calendar className="w-4 h-4 text-amber-800" />
-                          <span>Jadwal & Lokasi Acara</span>
-                        </div>
-                        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-                          <div>
-                            <label htmlFor="order-akad-date" className="block text-[11px] font-semibold text-stone-600 mb-1">
-                              Hari & Tanggal Akad
-                            </label>
-                            <input
-                              id="order-akad-date"
-                              type="text"
-                              value={formData.akadDate}
-                              onChange={(e) => updateField('akadDate', e.target.value)}
-                              placeholder="Minggu, 20 Oktober 2026"
-                              className="w-full px-3 py-2 rounded-xl border border-stone-300 bg-white text-sm"
-                            />
-                          </div>
-                          <div>
-                            <label htmlFor="order-akad-time" className="block text-[11px] font-semibold text-stone-600 mb-1">
-                              Jam Akad Nikah
-                            </label>
-                            <input
-                              id="order-akad-time"
-                              type="text"
-                              value={formData.akadTime}
-                              onChange={(e) => updateField('akadTime', e.target.value)}
-                              placeholder="08:00 - 10:00 WIB"
-                              className="w-full px-3 py-2 rounded-xl border border-stone-300 bg-white text-sm"
-                            />
-                          </div>
-                          <div>
-                            <label htmlFor="order-akad-venue" className="block text-[11px] font-semibold text-stone-600 mb-1">
-                              Tempat / Gedung Akad
-                            </label>
-                            <input
-                              id="order-akad-venue"
-                              type="text"
-                              value={formData.akadVenue}
-                              onChange={(e) => updateField('akadVenue', e.target.value)}
-                              placeholder="Masjid Agung / Kediaman"
-                              className="w-full px-3 py-2 rounded-xl border border-stone-300 bg-white text-sm"
-                            />
-                          </div>
-                        </div>
-
-                        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-2">
-                          <div>
-                            <label htmlFor="order-resepsi-date" className="block text-[11px] font-semibold text-stone-600 mb-1">
-                              Hari & Tanggal Resepsi
-                            </label>
-                            <input
-                              id="order-resepsi-date"
-                              type="text"
-                              value={formData.resepsiDate}
-                              onChange={(e) => updateField('resepsiDate', e.target.value)}
-                              placeholder="Minggu, 20 Oktober 2026"
-                              className="w-full px-3 py-2 rounded-xl border border-stone-300 bg-white text-sm"
-                            />
-                          </div>
-                          <div>
-                            <label htmlFor="order-resepsi-time" className="block text-[11px] font-semibold text-stone-600 mb-1">
-                              Jam Resepsi
-                            </label>
-                            <input
-                              id="order-resepsi-time"
-                              type="text"
-                              value={formData.resepsiTime}
-                              onChange={(e) => updateField('resepsiTime', e.target.value)}
-                              placeholder="11:00 - 14:00 WIB"
-                              className="w-full px-3 py-2 rounded-xl border border-stone-300 bg-white text-sm"
-                            />
-                          </div>
-                          <div>
-                            <label htmlFor="order-resepsi-venue" className="block text-[11px] font-semibold text-stone-600 mb-1">
-                              Tempat / Gedung Resepsi
-                            </label>
-                            <input
-                              id="order-resepsi-venue"
-                              type="text"
-                              value={formData.resepsiVenue}
-                              onChange={(e) => updateField('resepsiVenue', e.target.value)}
-                              placeholder="Ballroom Hotel Ciputra"
-                              className="w-full px-3 py-2 rounded-xl border border-stone-300 bg-white text-sm"
-                            />
-                          </div>
-                        </div>
-
-                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2">
-                          <div>
-                            <label htmlFor="order-wedding-maps-address" className="block text-[11px] font-semibold text-stone-600 mb-1">
-                              Alamat Lengkap Lokasi
-                            </label>
-                            <input
-                              id="order-wedding-maps-address"
-                              type="text"
-                              value={formData.mapsAddress}
-                              onChange={(e) => updateField('mapsAddress', e.target.value)}
-                              placeholder="Jl. Simpang Lima No. 1, Kota Semarang"
-                              className="w-full px-3 py-2 rounded-xl border border-stone-300 bg-white text-sm"
-                            />
-                          </div>
-                          <div>
-                            <label htmlFor="order-wedding-maps-link" className="block text-[11px] font-semibold text-stone-600 mb-1">
-                              Link Titik Google Maps (Opsional)
-                            </label>
-                            <input
-                              id="order-wedding-maps-link"
-                              type="text"
-                              value={formData.mapsLink}
-                              onChange={(e) => updateField('mapsLink', e.target.value)}
-                              placeholder="https://maps.app.goo.gl/..."
-                              className="w-full px-3 py-2 rounded-xl border border-stone-300 bg-white text-sm"
-                            />
-                          </div>
-                        </div>
-                      </div>
-
-                      {/* Musik, Amplop Digital & Foto */}
-                      <div className="p-4 rounded-2xl bg-stone-50 border border-stone-200 space-y-3">
-                        <div className="flex items-center gap-1.5 font-serif font-bold text-stone-800 text-sm border-b border-stone-200 pb-2">
-                          <Music className="w-4 h-4 text-amber-800" />
-                          <span>Lagu Backsound, Amplop Digital & Foto</span>
-                        </div>
-                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                          <div>
-                            <label htmlFor="order-music-choice" className="block text-[11px] font-semibold text-stone-600 mb-1">
-                              Pilihan Lagu Latar Indonesia
-                            </label>
-                            <select
-                              id="order-music-choice"
-                              value={formData.musicChoice}
-                              onChange={(e) => updateField('musicChoice', e.target.value)}
-                              className="w-full px-3 py-2 rounded-xl border border-stone-300 bg-white text-sm"
-                            >
-                              <option value="Payung Teduh - Akad">Payung Teduh - Akad</option>
-                              <option value="Payung Teduh - Berdua Saja">Payung Teduh - Berdua Saja</option>
-                              <option value="Tulus - Teman Hidup">Tulus - Teman Hidup (Request)</option>
-                              <option value="Yovie & Nuno - Janji Suci">Yovie & Nuno - Janji Suci (Request)</option>
-                              <option value="Tiara Andini & Arsy - Lagu Pernikahan Kita">Lagu Pernikahan Kita (Request)</option>
-                              <option value="Gending Jawa Keraton Klasik">Gending Jawa Keraton Klasik</option>
-                            </select>
-                          </div>
-                          <div>
-                            <label htmlFor="order-wedding-gift-bank" className="block text-[11px] font-semibold text-stone-600 mb-1">
-                              No. Rekening Amplop Digital Pengantin
-                            </label>
-                            <input
-                              id="order-wedding-gift-bank"
-                              type="text"
-                              value={formData.giftBankInfo}
-                              onChange={(e) => updateField('giftBankInfo', e.target.value)}
-                              placeholder="Contoh: BCA 84650192 a.n Rian"
-                              className="w-full px-3 py-2 rounded-xl border border-stone-300 bg-white text-sm"
-                            />
-                          </div>
-                        </div>
-                        <div>
-                          <label htmlFor="order-wedding-photo-drive" className="block text-[11px] font-semibold text-stone-600 mb-1">
-                            Link Google Drive Foto Prewedding / Catatan Tambahan (Atau Kirim langsung di WA)
-                          </label>
-                          <input
-                            id="order-wedding-photo-drive"
-                            type="text"
-                            value={formData.photoDriveLink}
-                            onChange={(e) => updateField('photoDriveLink', e.target.value)}
-                            placeholder="Contoh: https://drive.google.com/... atau 'Foto saya kirim menyusul di chat WA'"
-                            className="w-full px-3 py-2 rounded-xl border border-stone-300 bg-white text-sm"
-                          />
-                        </div>
-                      </div>
-                    </>
-                  )}
-                </>
-              )}
-            </div>
-          )}
-
-          {/* STEP 3: PEMBAYARAN E-WALLET (GOPAY / SHOPEEPAY / DANA) & KONFIRMASI WA */}
-          {step === 3 && (
-            <div className="space-y-6 animate-in fade-in duration-200">
-              {/* Invoice Banner */}
-              <div className="p-5 rounded-3xl bg-gradient-to-br from-stone-900 via-stone-900 to-amber-950 text-white shadow-xl border border-amber-500/30">
-                <div className="flex flex-wrap items-center justify-between gap-2 pb-4 border-b border-white/10">
-                  <div>
-                    <span className="text-[11px] uppercase tracking-widest text-amber-300 font-sans">
-                      Nomor Invoice Pesanan
-                    </span>
-                    <h3 className="font-mono text-xl font-bold text-white">
-                      #{invoiceCode}
-                    </h3>
-                  </div>
-                  <div className="text-right">
-                    <span className="text-[11px] uppercase tracking-widest text-stone-300 font-sans">
-                      Total Pembayaran
-                    </span>
-                    <p className="font-serif text-2xl sm:text-3xl font-bold text-amber-300">
-                      {formatRupiah(finalPrice)}
-                    </p>
-                  </div>
-                </div>
-
-                <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 pt-4 text-xs">
-                  <div>
-                    <span className="text-stone-400 block">Template Pilihan:</span>
-                    <strong className="text-amber-100">{selectedTemplate.name}</strong>
-                  </div>
-                  <div>
-                    <span className="text-stone-400 block">Paket Layanan:</span>
-                    <strong className="text-amber-100">{selectedPackage.name}</strong>
-                  </div>
-                  <div>
-                    <span className="text-stone-400 block">Pemesan:</span>
-                    <strong className="text-amber-100">{formData.buyerName || '-'}</strong>
-                  </div>
-                </div>
-              </div>
-
-              {/* Pilih Metode Pembayaran E-Wallet (GoPay / ShopeePay / DANA) */}
+              {/* Pilihan Paket Harga */}
               <div>
-                <label className="block text-xs font-bold uppercase tracking-wider text-stone-700 mb-2.5">
-                  Pilih Metode Pembayaran (GoPay / ShopeePay / DANA)
+                <label className="text-xs font-bold uppercase tracking-wider text-amber-300 block mb-2">
+                  Pilih Paket Layanan:
                 </label>
-                <div role="radiogroup" aria-label="Metode Pembayaran" className="grid grid-cols-3 gap-3 mb-4">
-                  {storeConfig.paymentMethods.map((method) => {
-                    const active = formData.paymentMethodId === method.id
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                  {availablePackages.map((pkg) => {
+                    const isSelected = formData.packageId === pkg.id
                     return (
-                      <button
-                        key={method.id}
-                        type="button" role="radio" aria-checked={active}
-                        onClick={() => updateField('paymentMethodId', method.id)}
-                        className={`p-3.5 rounded-2xl border text-center transition-all cursor-pointer flex flex-col items-center gap-1 ${
-                          active
-                            ? 'border-amber-700 bg-amber-50 ring-2 ring-amber-700/20 font-bold text-stone-900 shadow-sm'
-                            : 'border-stone-200 bg-white text-stone-600 hover:bg-stone-50'
+                      <div
+                        key={pkg.id}
+                        onClick={() => updateField('packageId', pkg.id)}
+                        className={`p-4 rounded-2xl border-2 transition-all cursor-pointer flex flex-col justify-between ${
+                          isSelected
+                            ? 'border-amber-400 bg-amber-500/10 shadow-lg'
+                            : 'border-white/10 bg-stone-950/50 hover:border-white/20'
                         }`}
                       >
-                        <Wallet className={`w-5 h-5 ${active ? 'text-amber-800' : 'text-stone-400'}`} />
-                        <span className="text-xs sm:text-sm">{method.name}</span>
-                      </button>
+                        <div>
+                          <div className="flex items-center justify-between">
+                            <span className="font-bold text-sm text-white">{pkg.name}</span>
+                            {pkg.badge && (
+                              <span className="px-2 py-0.5 rounded-full bg-amber-400 text-stone-950 text-[9px] font-extrabold uppercase">
+                                {pkg.badge}
+                              </span>
+                            )}
+                          </div>
+                          <div className="mt-2">
+                            <span className="text-[10px] text-stone-400 line-through block">
+                              {formatRupiah(pkg.originalPrice)}
+                            </span>
+                            <span className="font-serif text-xl font-bold text-amber-300">
+                              {formatRupiah(pkg.price)}
+                            </span>
+                          </div>
+                          <p className="text-[11px] text-stone-300 mt-1">{pkg.description}</p>
+                        </div>
+                        <ul className="mt-3 space-y-1 border-t border-white/10 pt-2 text-[10px] text-stone-300">
+                          {pkg.features.slice(0, 3).map((f, i) => (
+                            <li key={i} className="flex items-center gap-1.5">
+                              <Check className="w-3 h-3 text-amber-400 shrink-0" />
+                              <span className="truncate">{f}</span>
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
                     )
                   })}
                 </div>
+              </div>
 
-                {/* Payment Destination Card */}
-                <div className="p-5 rounded-2xl bg-stone-50 border-2 border-dashed border-amber-600/40 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-                  <div className="space-y-1">
-                    <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-amber-100 text-amber-900 text-xs font-bold">
-                      <span>Transfer {selectedPayment.name}</span>
+              {/* Next Step Action */}
+              <div className="flex items-center justify-between pt-4 border-t border-white/10">
+                <button
+                  type="button"
+                  onClick={onClose}
+                  className="px-4 py-2.5 rounded-xl text-xs font-semibold text-stone-400 hover:text-white transition-colors cursor-pointer"
+                >
+                  Kembali ke Katalog
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => {
+                    if (!formData.buyerName.trim()) {
+                      setBuyerNameError(true)
+                      showToast('Mohon isi Nama Pemesan terlebih dahulu', 'info')
+                      return
+                    }
+                    if (dataMode === 'later') {
+                      setStep(3) // Langsung lompat ke Pembayaran & QRIS
+                    } else {
+                      setStep(2) // Masuk ke Pengisian Data Lengkap
+                    }
+                  }}
+                  className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-gradient-to-r from-amber-500 via-amber-400 to-amber-600 text-stone-950 font-bold text-xs shadow-lg hover:brightness-110 active:scale-95 transition-all cursor-pointer"
+                >
+                  <span>Lanjut ke {dataMode === 'later' ? 'Pembayaran & QRIS' : 'Data Acara'}</span>
+                  <ArrowRight className="w-4 h-4" />
+                </button>
+              </div>
+            </div>
+          )}
+
+          {/* STEP 2: DATA ACARA & PRATINJAU LANGSUNG */}
+          {step === 2 && (
+            <div className="space-y-6">
+              {/* Quick Helper Bar */}
+              <div className="p-3.5 rounded-2xl bg-amber-500/10 border border-amber-500/30 flex items-center justify-between gap-3 flex-wrap">
+                <div className="flex items-center gap-2 text-xs text-amber-200">
+                  <Sparkles className="w-4 h-4 text-amber-400" />
+                  <span>Ingin coba pratinjau kilat tanpa ketik satu per satu?</span>
+                </div>
+                <button
+                  type="button"
+                  onClick={handleFillSampleData}
+                  className="px-3.5 py-1.5 rounded-xl bg-amber-400 text-stone-950 font-bold text-xs hover:bg-amber-300 transition-colors cursor-pointer shadow-sm"
+                >
+                  ✨ Isi Data Contoh
+                </button>
+              </div>
+
+              {/* Sub-tabs for Data Entry */}
+              <div className="flex items-center gap-2 border-b border-white/10 pb-2">
+                <button
+                  type="button"
+                  onClick={() => setDataSubTab('couple')}
+                  className={`px-4 py-2 rounded-xl text-xs font-semibold flex items-center gap-1.5 transition-all cursor-pointer ${
+                    dataSubTab === 'couple' ? 'bg-amber-500 text-stone-950 font-bold' : 'bg-stone-800 text-stone-300'
+                  }`}
+                >
+                  <Heart className="w-3.5 h-3.5" />
+                  <span>Data Mempelai</span>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setDataSubTab('event')}
+                  className={`px-4 py-2 rounded-xl text-xs font-semibold flex items-center gap-1.5 transition-all cursor-pointer ${
+                    dataSubTab === 'event' ? 'bg-amber-500 text-stone-950 font-bold' : 'bg-stone-800 text-stone-300'
+                  }`}
+                >
+                  <Calendar className="w-3.5 h-3.5" />
+                  <span>Jadwal &amp; Lokasi</span>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setDataSubTab('gift')}
+                  className={`px-4 py-2 rounded-xl text-xs font-semibold flex items-center gap-1.5 transition-all cursor-pointer ${
+                    dataSubTab === 'gift' ? 'bg-amber-500 text-stone-950 font-bold' : 'bg-stone-800 text-stone-300'
+                  }`}
+                >
+                  <Gift className="w-3.5 h-3.5" />
+                  <span>Amplop &amp; Musik</span>
+                </button>
+              </div>
+
+              {/* Sub-tab 1: Couple Data */}
+              {dataSubTab === 'couple' && (
+                <div className="space-y-4">
+                  <div className="p-4 rounded-2xl bg-stone-950/70 border border-white/10 space-y-3">
+                    <p className="text-xs font-bold text-amber-300 uppercase tracking-wider">Mempelai Pria</p>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                      <div>
+                        <label className="text-[11px] text-stone-300 block mb-1">Nama Lengkap &amp; Gelar</label>
+                        <input
+                          type="text"
+                          value={formData.groomFullName}
+                          onChange={(e) => updateField('groomFullName', e.target.value)}
+                          placeholder="Bagas Pratama, S.T."
+                          className="w-full bg-stone-900 border border-white/15 focus:border-amber-400 rounded-xl px-3 py-2 text-xs text-white placeholder-stone-400 focus:outline-none"
+                        />
+                      </div>
+                      <div>
+                        <label className="text-[11px] text-stone-300 block mb-1">Nama Panggilan</label>
+                        <input
+                          type="text"
+                          value={formData.groomShortName}
+                          onChange={(e) => updateField('groomShortName', e.target.value)}
+                          placeholder="Bagas"
+                          className="w-full bg-stone-900 border border-white/15 focus:border-amber-400 rounded-xl px-3 py-2 text-xs text-white placeholder-stone-400 focus:outline-none"
+                        />
+                      </div>
                     </div>
-                    <p className="font-mono text-2xl sm:text-3xl font-extrabold text-stone-900 tracking-wider pt-1">
-                      {selectedPayment.number}
-                    </p>
-                    <p className="text-xs text-stone-600">
-                      a.n. <strong>{selectedPayment.holder}</strong> • Sebesar{' '}
-                      <strong className="text-amber-900">{formatRupiah(finalPrice)}</strong>
-                    </p>
+                    <div>
+                      <label className="text-[11px] text-stone-300 block mb-1">Nama Orang Tua Mempelai Pria</label>
+                      <input
+                        type="text"
+                        value={formData.groomParents}
+                        onChange={(e) => updateField('groomParents', e.target.value)}
+                        placeholder="Putra pertama dari Bpk. Bambang & Ibu Sri"
+                        className="w-full bg-stone-900 border border-white/15 focus:border-amber-400 rounded-xl px-3 py-2 text-xs text-white placeholder-stone-400 focus:outline-none"
+                      />
+                    </div>
                   </div>
+
+                  <div className="p-4 rounded-2xl bg-stone-950/70 border border-white/10 space-y-3">
+                    <p className="text-xs font-bold text-amber-300 uppercase tracking-wider">Mempelai Wanita</p>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                      <div>
+                        <label className="text-[11px] text-stone-300 block mb-1">Nama Lengkap &amp; Gelar</label>
+                        <input
+                          type="text"
+                          value={formData.brideFullName}
+                          onChange={(e) => updateField('brideFullName', e.target.value)}
+                          placeholder="Anindita Kirana, S.Ked."
+                          className="w-full bg-stone-900 border border-white/15 focus:border-amber-400 rounded-xl px-3 py-2 text-xs text-white placeholder-stone-400 focus:outline-none"
+                        />
+                      </div>
+                      <div>
+                        <label className="text-[11px] text-stone-300 block mb-1">Nama Panggilan</label>
+                        <input
+                          type="text"
+                          value={formData.brideShortName}
+                          onChange={(e) => updateField('brideShortName', e.target.value)}
+                          placeholder="Anin"
+                          className="w-full bg-stone-900 border border-white/15 focus:border-amber-400 rounded-xl px-3 py-2 text-xs text-white placeholder-stone-400 focus:outline-none"
+                        />
+                      </div>
+                    </div>
+                    <div>
+                      <label className="text-[11px] text-stone-300 block mb-1">Nama Orang Tua Mempelai Wanita</label>
+                      <input
+                        type="text"
+                        value={formData.brideParents}
+                        onChange={(e) => updateField('brideParents', e.target.value)}
+                        placeholder="Putri kedua dari Bpk. H. Sukarno & Ibu Hj. Ratna"
+                        className="w-full bg-stone-900 border border-white/15 focus:border-amber-400 rounded-xl px-3 py-2 text-xs text-white placeholder-stone-400 focus:outline-none"
+                      />
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {/* Sub-tab 2: Event Schedule */}
+              {dataSubTab === 'event' && (
+                <div className="space-y-4">
+                  <div className="p-4 rounded-2xl bg-stone-950/70 border border-white/10 space-y-3">
+                    <p className="text-xs font-bold text-amber-300 uppercase tracking-wider">Akad Nikah / Pemberkatan</p>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                      <div>
+                        <label className="text-[11px] text-stone-300 block mb-1">Hari &amp; Tanggal</label>
+                        <input
+                          type="text"
+                          value={formData.akadDate}
+                          onChange={(e) => updateField('akadDate', e.target.value)}
+                          placeholder="Sabtu, 28 November 2026"
+                          className="w-full bg-stone-900 border border-white/15 focus:border-amber-400 rounded-xl px-3 py-2 text-xs text-white placeholder-stone-400 focus:outline-none"
+                        />
+                      </div>
+                      <div>
+                        <label className="text-[11px] text-stone-300 block mb-1">Waktu</label>
+                        <input
+                          type="text"
+                          value={formData.akadTime}
+                          onChange={(e) => updateField('akadTime', e.target.value)}
+                          placeholder="08:00 - 10:00 WIB"
+                          className="w-full bg-stone-900 border border-white/15 focus:border-amber-400 rounded-xl px-3 py-2 text-xs text-white placeholder-stone-400 focus:outline-none"
+                        />
+                      </div>
+                    </div>
+                    <div>
+                      <label className="text-[11px] text-stone-300 block mb-1">Nama Tempat / Gedung</label>
+                      <input
+                        type="text"
+                        value={formData.akadVenue}
+                        onChange={(e) => updateField('akadVenue', e.target.value)}
+                        placeholder="Masjid Agung Jawa Tengah"
+                        className="w-full bg-stone-900 border border-white/15 focus:border-amber-400 rounded-xl px-3 py-2 text-xs text-white placeholder-stone-400 focus:outline-none"
+                      />
+                    </div>
+                  </div>
+
+                  <div className="p-4 rounded-2xl bg-stone-950/70 border border-white/10 space-y-3">
+                    <p className="text-xs font-bold text-amber-300 uppercase tracking-wider">Resepsi Pernikahan</p>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                      <div>
+                        <label className="text-[11px] text-stone-300 block mb-1">Hari &amp; Tanggal</label>
+                        <input
+                          type="text"
+                          value={formData.resepsiDate}
+                          onChange={(e) => updateField('resepsiDate', e.target.value)}
+                          placeholder="Sabtu, 28 November 2026"
+                          className="w-full bg-stone-900 border border-white/15 focus:border-amber-400 rounded-xl px-3 py-2 text-xs text-white placeholder-stone-400 focus:outline-none"
+                        />
+                      </div>
+                      <div>
+                        <label className="text-[11px] text-stone-300 block mb-1">Waktu</label>
+                        <input
+                          type="text"
+                          value={formData.resepsiTime}
+                          onChange={(e) => updateField('resepsiTime', e.target.value)}
+                          placeholder="11:00 - 14:00 WIB"
+                          className="w-full bg-stone-900 border border-white/15 focus:border-amber-400 rounded-xl px-3 py-2 text-xs text-white placeholder-stone-400 focus:outline-none"
+                        />
+                      </div>
+                    </div>
+                    <div>
+                      <label className="text-[11px] text-stone-300 block mb-1">Alamat Lengkap &amp; Link Google Maps</label>
+                      <input
+                        type="text"
+                        value={formData.mapsAddress}
+                        onChange={(e) => updateField('mapsAddress', e.target.value)}
+                        placeholder="Jl. Gajah Raya, Sambirejo, Gayamsari, Semarang"
+                        className="w-full bg-stone-900 border border-white/15 focus:border-amber-400 rounded-xl px-3 py-2 text-xs text-white placeholder-stone-400 focus:outline-none"
+                      />
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {/* Sub-tab 3: Gift & Media */}
+              {dataSubTab === 'gift' && (
+                <div className="space-y-4">
+                  <div className="p-4 rounded-2xl bg-stone-950/70 border border-white/10 space-y-3">
+                    <label className="text-xs font-bold text-amber-300 uppercase tracking-wider block">
+                      Rekening Amplop Digital &amp; Kado
+                    </label>
+                    <textarea
+                      rows={2}
+                      value={formData.giftBankInfo}
+                      onChange={(e) => updateField('giftBankInfo', e.target.value)}
+                      placeholder="BCA: 1234567890 a.n Bagas Pratama&#10;DANA: 081234567890 a.n Anindita Kirana"
+                      className="w-full bg-stone-900 border border-white/15 focus:border-amber-400 rounded-xl px-3 py-2 text-xs text-white placeholder-stone-400 focus:outline-none"
+                    />
+                  </div>
+
+                  <div className="p-4 rounded-2xl bg-stone-950/70 border border-white/10 space-y-3">
+                    <label className="text-xs font-bold text-amber-300 uppercase tracking-wider block">
+                      Pilihan Lagu Backsound
+                    </label>
+                    <select
+                      value={formData.musicChoice}
+                      onChange={(e) => updateField('musicChoice', e.target.value)}
+                      className="w-full bg-stone-900 border border-white/15 focus:border-amber-400 rounded-xl px-3 py-2 text-xs text-white focus:outline-none"
+                    >
+                      <option value="Payung Teduh - Akad">Payung Teduh - Akad</option>
+                      <option value="Payung Teduh - Berdua Saja">Payung Teduh - Berdua Saja</option>
+                      <option value="Nadhif Basalamah - Penjaga Hati">Nadhif Basalamah - Penjaga Hati</option>
+                      <option value="Maher Zain - For The Rest of My Life">Maher Zain - For The Rest of My Life (Religi)</option>
+                    </select>
+                  </div>
+
+                  <div className="p-4 rounded-2xl bg-stone-950/70 border border-white/10 space-y-3">
+                    <label className="text-xs font-bold text-amber-300 uppercase tracking-wider block">
+                      Link Google Drive Foto Prewedding
+                    </label>
+                    <input
+                      type="url"
+                      value={formData.photoDriveLink}
+                      onChange={(e) => updateField('photoDriveLink', e.target.value)}
+                      placeholder="https://drive.google.com/... (atau kirimkan via WhatsApp)"
+                      className="w-full bg-stone-900 border border-white/15 focus:border-amber-400 rounded-xl px-3 py-2 text-xs text-white placeholder-stone-400 focus:outline-none"
+                    />
+                  </div>
+                </div>
+              )}
+
+              {/* Action Bar */}
+              <div className="flex items-center justify-between pt-4 border-t border-white/10 flex-wrap gap-2">
+                <button
+                  type="button"
+                  onClick={() => setStep(1)}
+                  className="px-4 py-2.5 rounded-xl text-xs font-semibold text-stone-400 hover:text-white transition-colors cursor-pointer"
+                >
+                  ← Kembali ke Paket
+                </button>
+
+                <div className="flex items-center gap-2">
+                  <button
+                    type="button"
+                    onClick={handlePreviewWithMyData}
+                    className="inline-flex items-center gap-1.5 px-4 py-2.5 rounded-xl bg-white/10 hover:bg-white/20 border border-amber-400/30 text-amber-300 text-xs font-bold transition-all cursor-pointer"
+                  >
+                    <Eye className="w-3.5 h-3.5" />
+                    <span>Coba di Pratinjau</span>
+                  </button>
 
                   <button
                     type="button"
-                    onClick={handleCopyPaymentNumber}
-                    aria-label={`Salin nomor transfer ${selectedPayment.name} ${selectedPayment.number}`}
-                    className="min-h-[44px] w-full sm:w-auto inline-flex items-center justify-center gap-2 px-5 py-3 rounded-xl bg-stone-900 hover:bg-stone-800 text-white text-xs font-sans font-semibold transition-all cursor-pointer active:scale-95 shadow-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-500"
+                    onClick={() => setStep(3)}
+                    className="inline-flex items-center gap-1.5 px-6 py-2.5 rounded-xl bg-gradient-to-r from-amber-500 via-amber-400 to-amber-600 text-stone-950 font-bold text-xs shadow-lg hover:brightness-110 active:scale-95 transition-all cursor-pointer"
                   >
-                    {copiedPayment ? (
-                      <>
-                        <Check className="w-4 h-4 text-emerald-400" />
-                        <span className="text-emerald-400">Nomor Tersalin!</span>
-                      </>
-                    ) : (
-                      <>
-                        <Copy className="w-4 h-4" />
-                        <span>Salin Nomor {selectedPayment.name}</span>
-                      </>
-                    )}
+                    <span>Lanjut ke Pembayaran</span>
+                    <ArrowRight className="w-4 h-4" />
                   </button>
-                </div>
-              </div>
-
-              {/* Petunjuk Konfirmasi */}
-              <div className="p-4 rounded-2xl bg-emerald-50/80 border border-emerald-200 text-xs text-emerald-950 space-y-1.5">
-                <div className="flex items-center gap-2 font-bold text-emerald-900">
-                  <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
-                  <span>Langkah Terakhir (Sangat Mudah):</span>
-                </div>
-                <ol className="list-decimal list-inside space-y-1 text-emerald-800 pl-1">
-                  <li>
-                    Salin nomor <strong>{selectedPayment.name} ({selectedPayment.number})</strong> di atas dan lakukan pembayaran sejumlah <strong>{formatRupiah(finalPrice)}</strong>.
-                  </li>
-                  <li>
-                    Klik tombol hijau <strong>"Konfirmasi & Kirim Data ke WhatsApp"</strong> di bawah ini.
-                  </li>
-                  <li>
-                    Seluruh data undangan yang sudah Anda isi akan otomatis tertulis rapi di chat WhatsApp Admin <strong>({storeConfig.brand.whatsappDisplay})</strong>.
-                  </li>
-                </ol>
-              </div>
-
-              {/* Trust & Guarantee Box */}
-              <div className="p-4 rounded-2xl bg-stone-100 border border-stone-200 text-xs text-stone-600 space-y-1.5">
-                <div className="flex items-center gap-2 font-bold text-stone-800">
-                  <ShieldCheck className="w-4 h-4 text-emerald-600 shrink-0" />
-                  <span>Garansi Resmi & Keamanan JanjiSuci Digital Studio</span>
-                </div>
-                <p className="text-[11px] text-stone-600 leading-relaxed">
-                  Semua transaksi dilindungi <strong>Garansi 100% Uang Kembali</strong> jika pengerjaan tidak selesai sesuai komitmen waktu. Data pribadi dan foto Anda dijamin aman serta tidak akan pernah dibagikan kepada pihak manapun.
-                </p>
-                <div className="pt-1 text-[10px] text-stone-500 flex flex-wrap gap-x-4 gap-y-1 border-t border-stone-200/60">
-                  <span>🏢 Kantor: Jl. Pandanaran No. 88, Semarang</span>
-                  <span>✉️ halo@janjisuci.web.id</span>
-                  <span>👤 Rekening: Bagas Adi (Founder JanjiSuci)</span>
                 </div>
               </div>
             </div>
           )}
-        </div>
 
-        {/* Modal Footer Navigation */}
-        <div className="px-5 sm:px-8 py-4 bg-stone-50 border-t border-stone-200 flex items-center justify-between gap-3 shrink-0">
-          {step > 1 ? (
-            <button
-              type="button"
-              onClick={() => setStep((prev) => (prev - 1) as 1 | 2 | 3)}
-              className="min-h-[44px] inline-flex items-center gap-1.5 px-4 py-2.5 rounded-xl border border-stone-300 bg-white hover:bg-stone-100 text-xs font-sans font-semibold text-stone-700 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-stone-400"
-            >
-              <ChevronLeft className="w-4 h-4" />
-              <span>Sebelumnya</span>
-            </button>
-          ) : (
-            <div />
+          {/* STEP 3: DYNAMIC QRIS & PEMBAYARAN */}
+          {step === 3 && (
+            <div className="space-y-6">
+              {/* Dynamic QRIS Card Showcase */}
+              <div className="p-5 rounded-3xl bg-gradient-to-b from-stone-950 via-stone-900 to-stone-950 border border-amber-500/40 shadow-2xl relative overflow-hidden text-center">
+                <div className="flex items-center justify-between mb-4">
+                  <span className="px-3 py-1 rounded-full bg-rose-500/20 text-rose-300 border border-rose-500/30 text-[10px] font-mono flex items-center gap-1">
+                    <Clock className="w-3 h-3 animate-spin" />
+                    <span>Batas Pembayaran: {formatTimer(qrisTimer)}</span>
+                  </span>
+                  <span className="font-mono text-xs text-amber-300 font-bold">
+                    Invoice: #{invoiceCode}
+                  </span>
+                </div>
+
+                {/* QRIS Code Box */}
+                <div className="w-48 h-48 sm:w-56 sm:h-56 mx-auto bg-white p-3.5 rounded-2xl shadow-xl flex flex-col items-center justify-between border-4 border-amber-400/50">
+                  <div className="flex items-center justify-between w-full px-1">
+                    <span className="text-[10px] font-black text-rose-600 tracking-tighter">QRIS</span>
+                    <span className="text-[8px] font-bold text-stone-500 uppercase tracking-widest">NSP INDONESIA</span>
+                  </div>
+
+                  {/* QR Pattern Representation */}
+                  <div className="w-full flex-1 flex items-center justify-center relative p-1">
+                    <div className="w-full h-full bg-stone-900 rounded-lg flex flex-col items-center justify-center p-2 text-amber-400">
+                      <QrCode className="w-24 h-24 sm:w-28 sm:h-28 text-white" />
+                      <span className="text-[9px] text-amber-300 font-mono mt-1 font-bold">
+                        JANJISUCI STUDIOS
+                      </span>
+                    </div>
+                  </div>
+
+                  <p className="text-[9px] text-stone-600 font-bold">
+                    Scan via BCA, Mandiri, GoPay, OVO, ShopeePay &amp; DANA
+                  </p>
+                </div>
+
+                {/* Total Payment Details */}
+                <div className="mt-5 p-4 rounded-2xl bg-stone-950/80 border border-white/10 max-w-md mx-auto">
+                  <p className="text-xs text-stone-400">Total Tagihan (Termasuk Kode Unik Verifikasi):</p>
+                  <div className="flex items-center justify-center gap-2 mt-1">
+                    <span className="font-serif text-3xl font-bold text-amber-300 tracking-tight">
+                      {formatRupiah(finalPrice)}
+                    </span>
+                    <button
+                      type="button"
+                      onClick={handleCopyFinalPrice}
+                      aria-label="Salin total tagihan"
+                      className="p-1.5 rounded-lg bg-white/10 hover:bg-white/20 text-stone-300 transition-colors cursor-pointer"
+                    >
+                      <Copy className="w-4 h-4" />
+                    </button>
+                  </div>
+                  <p className="text-[10px] text-amber-300/80 mt-1">
+                    3 digit terakhir ({uniqueCode}) adalah kode unik agar pembayaran terverifikasi otomatis.
+                  </p>
+                </div>
+              </div>
+
+              {/* Alternative E-Wallets & Bank Accounts */}
+              <div>
+                <label className="text-xs font-bold uppercase tracking-wider text-stone-300 block mb-2">
+                  Atau Transfer Manual Melalui E-Wallet / Bank:
+                </label>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+                  {storeConfig.paymentMethods.map((m) => (
+                    <div
+                      key={m.id}
+                      onClick={() => updateField('paymentMethodId', m.id)}
+                      className={`p-3.5 rounded-2xl border transition-all cursor-pointer flex items-center justify-between ${
+                        formData.paymentMethodId === m.id
+                          ? 'border-amber-400 bg-amber-500/10'
+                          : 'border-white/10 bg-stone-950/50 hover:border-white/20'
+                      }`}
+                    >
+                      <div>
+                        <span className="text-xs font-bold text-white block">{m.name}</span>
+                        <span className="text-xs text-amber-300 font-mono">{m.number}</span>
+                        <span className="text-[10px] text-stone-400 block -mt-0.5">a.n {m.holder}</span>
+                      </div>
+                      <button
+                        type="button"
+                        onClick={(e) => {
+                          e.stopPropagation()
+                          navigator.clipboard.writeText(m.number)
+                          showToast(`Nomor ${m.name} berhasil disalin!`, 'success')
+                        }}
+                        className="px-2.5 py-1.5 rounded-lg bg-white/10 hover:bg-white/20 text-xs text-stone-200 transition-colors"
+                      >
+                        Salin
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Action Buttons */}
+              <div className="flex items-center justify-between pt-4 border-t border-white/10 flex-wrap gap-2">
+                <button
+                  type="button"
+                  onClick={() => setStep(dataMode === 'later' ? 1 : 2)}
+                  className="px-4 py-2.5 rounded-xl text-xs font-semibold text-stone-400 hover:text-white transition-colors cursor-pointer"
+                >
+                  ← Kembali
+                </button>
+
+                <button
+                  type="button"
+                  onClick={handleSendToWhatsApp}
+                  className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-gradient-to-r from-emerald-600 via-emerald-500 to-emerald-600 text-white font-bold text-xs shadow-lg hover:brightness-110 active:scale-95 transition-all cursor-pointer"
+                >
+                  <Send className="w-4 h-4" />
+                  <span>Kirim Konfirmasi Pesanan ke WhatsApp</span>
+                </button>
+              </div>
+            </div>
           )}
 
-          <div className="flex items-center gap-2.5">
-            {step === 2 && (
-              <button
-                type="button"
-                onClick={handlePreviewWithMyData}
-                className="min-h-[44px] hidden sm:inline-flex items-center gap-1.5 px-4 py-2.5 rounded-xl border border-amber-700/40 bg-amber-50 hover:bg-amber-100 text-amber-900 text-xs font-sans font-semibold cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-500"
-              >
-                <Eye className="w-4 h-4" />
-                <span>Lihat di Pratinjau</span>
-              </button>
-            )}
+          {/* STEP 4: INVOICE SUKSES & PORTAL AKSES */}
+          {step === 4 && (
+            <div className="space-y-6 text-center py-4">
+              <div className="w-16 h-16 rounded-full bg-emerald-500/20 text-emerald-400 flex items-center justify-center mx-auto border border-emerald-500/30">
+                <CheckCircle2 className="w-8 h-8" />
+              </div>
 
-            {step < 3 ? (
-              <button
-                type="button"
-                onClick={() => {
-                  if (step === 1 && !formData.buyerName.trim()) {
-                    setBuyerNameError(true)
-                    showToast('Mohon isi Nama Pemesan terlebih dahulu', 'info')
-                    const el = document.getElementById('buyer-name')
-                    el?.focus()
-                    return
-                  }
-                  setStep((prev) => (prev + 1) as 1 | 2 | 3)
-                }}
-                className="min-h-[44px] inline-flex items-center gap-1.5 px-6 py-3 rounded-xl bg-amber-800 hover:bg-amber-900 text-white text-xs sm:text-sm font-sans font-bold shadow-md transition-all cursor-pointer active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-400"
-              >
-                <span>Lanjut ke Langkah {step + 1}</span>
-                <ChevronRight className="w-4 h-4" />
-              </button>
-            ) : (
-              <button
-                type="button"
-                onClick={handleSendToWhatsApp}
-                className="min-h-[44px] inline-flex items-center gap-2 px-6 py-3.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs sm:text-sm font-sans font-bold shadow-lg shadow-emerald-600/25 transition-all cursor-pointer active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400"
-              >
-                <Send className="w-4 h-4" />
-                <span>Konfirmasi & Setor Data via WhatsApp</span>
-              </button>
-            )}
-          </div>
+              <div>
+                <h3 className="font-serif text-2xl font-bold text-white">Pesanan Berhasil Dikirimkan!</h3>
+                <p className="text-xs text-stone-300 max-w-md mx-auto mt-1 leading-relaxed">
+                  Terima kasih, <strong>{formData.buyerName}</strong>! Pesanan Anda telah tercatat dengan nomor invoice{' '}
+                  <strong className="text-amber-300 font-mono">#{invoiceCode}</strong>. Tim JanjiSuci akan segera menyiapkan undangan Anda.
+                </p>
+              </div>
+
+              <div className="p-4 rounded-2xl bg-stone-950/80 border border-white/10 max-w-md mx-auto text-left space-y-2 text-xs">
+                <div className="flex justify-between">
+                  <span className="text-stone-400">Desain Template:</span>
+                  <span className="font-bold text-white">{selectedTemplate.name}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-stone-400">Paket:</span>
+                  <span className="font-bold text-white">{selectedPackage.name}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-stone-400">Total Tagihan:</span>
+                  <span className="font-bold text-amber-300">{formatRupiah(finalPrice)}</span>
+                </div>
+              </div>
+
+              <div className="flex items-center justify-center gap-3 pt-4">
+                {onOpenPortal && (
+                  <button
+                    type="button"
+                    onClick={() => {
+                      onClose()
+                      onOpenPortal()
+                    }}
+                    className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-amber-500 hover:bg-amber-400 text-stone-950 font-bold text-xs shadow-md transition-all cursor-pointer"
+                  >
+                    <ExternalLink className="w-4 h-4" />
+                    <span>Buka Portal Pelanggan Saya</span>
+                  </button>
+                )}
+                <button
+                  type="button"
+                  onClick={onClose}
+                  className="px-5 py-2.5 rounded-xl bg-white/10 hover:bg-white/20 text-stone-200 font-semibold text-xs transition-colors cursor-pointer"
+                >
+                  Tutup
+                </button>
+              </div>
+            </div>
+          )}
         </div>
       </div>
     </div>

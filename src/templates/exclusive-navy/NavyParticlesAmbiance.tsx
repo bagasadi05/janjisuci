@@ -19,7 +19,7 @@ export const NavyParticlesAmbiance: React.FC = () => {
         return (
           <div
             key={i}
-            className="absolute rounded-full bg-amber-200/60 animate-pulse shadow-[0_0_8px_rgba(251,191,36,0.5)]"
+            className="absolute rounded-full bg-amber-200/60 animate-pulse motion-reduce:animate-none shadow-[0_0_8px_rgba(251,191,36,0.5)]"
             style={{
               top: `${top}%`,
               left: `${left}%`,

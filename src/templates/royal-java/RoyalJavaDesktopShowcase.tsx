@@ -77,6 +77,9 @@ export const RoyalJavaDesktopShowcase: React.FC<RoyalJavaDesktopShowcaseProps> =
             <img
               src={activeTemplate.heroImage}
               alt="Mempelai Adat Jawa"
+              loading="eager"
+              fetchPriority="high"
+              decoding="async"
               className="w-full h-full object-cover object-center filter brightness-95 contrast-105"
             />
             <div className="absolute inset-0 bg-gradient-to-t from-[#120F0D] via-transparent to-transparent opacity-60" />

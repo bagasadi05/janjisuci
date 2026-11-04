@@ -67,6 +67,38 @@ export const AudioPlayer: React.FC<AudioPlayerProps> = ({
     showToast(`Mengganti lagu: ${nextTrack.title}`, "info")
   }
 
+  // Modern Web API: MediaSession integration for lock-screen & notification audio controls
+  useEffect(() => {
+    if (typeof window !== 'undefined' && 'mediaSession' in navigator) {
+      try {
+        navigator.mediaSession.metadata = new MediaMetadata({
+          title: activeTrack.title,
+          artist: activeTrack.artist || 'JanjiSuci.id',
+          album: 'Undangan Pernikahan Digital JanjiSuci',
+          artwork: [
+            {
+              src: 'https://images.unsplash.com/photo-1519741497674-611481863552?auto=format&fit=crop&w=512&q=80',
+              sizes: '512x512',
+              type: 'image/jpeg'
+            }
+          ]
+        })
+
+        navigator.mediaSession.setActionHandler('play', () => {
+          if (!isPlaying) onToggle()
+        })
+        navigator.mediaSession.setActionHandler('pause', () => {
+          if (isPlaying) onToggle()
+        })
+        navigator.mediaSession.setActionHandler('nexttrack', () => {
+          handleNextTrack()
+        })
+      } catch (err) {
+        console.warn('MediaSession initialization warning:', err)
+      }
+    }
+  }, [activeTrack, isPlaying])
+
   return (
     <>
       <audio

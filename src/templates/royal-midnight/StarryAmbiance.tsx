@@ -24,7 +24,7 @@ export const StarryAmbiance: React.FC<StarryAmbianceProps> = ({ active = true })
       {stars.map((star) => (
         <span
           key={star.id}
-          className="absolute rounded-full bg-[#D7BB83] animate-pulse"
+          className="absolute rounded-full bg-[#D7BB83] animate-pulse motion-reduce:animate-none"
           style={{
             left: `${star.x}%`,
             top: `${star.y}%`,

@@ -27,6 +27,27 @@
     outline: 2px solid #d97706;
     outline-offset: 2px;
   }
+
+  /* Modern Web Guidance: Balanced line breaking for headings */
+  h1, h2, h3, h4, h5, h6 {
+    text-wrap: balance;
+  }
+
+  /* Modern Web Guidance: Optimized typography for body text, avoiding orphaned runts */
+  p, blockquote, .pretty-text {
+    text-wrap: pretty;
+  }
+}
+
+/* Modern Web Guidance: Defer Rendering Heavy Off-Screen Content */
+.defer-render {
+  content-visibility: auto;
+  contain-intrinsic-size: auto none auto 500px;
+}
+
+.defer-render-lg {
+  content-visibility: auto;
+  contain-intrinsic-size: auto none auto 800px;
 }
 
 /* Screen reader only utility classes */

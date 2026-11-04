@@ -82,7 +82,7 @@ export const CelestialNightTemplate: React.FC<TemplateViewProps> = ({
   }
 
   return (
-    <div className="min-h-screen bg-[#0B132B] flex justify-center text-stone-200 selection:bg-[#F4D06F] selection:text-stone-950 overflow-x-hidden pt-12">
+    <div className="min-h-screen bg-[#0B132B] flex justify-center text-stone-200 selection:bg-[#F4D06F] selection:text-stone-950 overflow-x-hidden pt-16">
       {/* Cover Gate: Constellation Orbit Gate */}
       <CelestialNightCoverScreen isOpen={isOpened} onOpenWithAudio={onOpenWithAudio} />
 
