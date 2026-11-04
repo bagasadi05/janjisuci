@@ -1113,6 +1113,114 @@ export const storeConfig = {
         textDark: "#FAFAFA",
         badgeBg: "rgba(255, 255, 255, 0.15)"
       }
+    },
+    {
+      id: "retro-editorial-birthday",
+      name: "Velvet Retro & Editorial Scrapbook Birthday",
+      slug: "retro-editorial-birthday",
+      eventType: "birthday",
+      category: "luxury",
+      categoryLabel: "Editorial & Scrapbook Sweet 17",
+      price: 49000,
+      originalPrice: 89000,
+      badge: "Sweet 17 Trend 🔥",
+      isPopular: true,
+      thumbnail: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=800&q=80",
+      coverImage: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=1400&q=85",
+      heroImage: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=900&q=85",
+      description: "Desain majalah editorial retro chic & scrapbook hangat untuk Sweet 17, lengkap dengan strip foto memori masa kecil, tiket VIP rundown, panduan dresscode swatches, dan request lagu DJ di RSVP.",
+      features: [
+        "Editorial Magazine Masthead & Polaroid Cover",
+        "Strip Foto Scrapbook Masa Kecil (Zoomable)",
+        "VIP Perforated Concert Ticket Rundown",
+        "Panduan Dresscode & Color Swatches",
+        "RSVP Eksklusif dengan DJ Song Request"
+      ],
+      openingType: "gift-box",
+      particleType: "confetti",
+      defaultSongTitle: "Nadhif Basalamah - Penjaga Hati",
+      defaultSongSrc: "/audio/berdua-saja.mp3",
+      eventMeta: {
+        primaryTitle: "Aurelia Clarissa Ramadhani",
+        secondaryTitle: "Sweet Seventeen • 17th Golden Milestone",
+        parentsOrHost: "Keluarga Bpk. Irwan Pratama & Ibu Selvi Anggraeni",
+        dateText: "Sabtu, 14 Agustus 2027",
+        venueText: "The Glasshouse Bistro & Rooftop, Jakarta Selatan"
+      },
+      sampleCouple: {
+        groomShort: "Aurelia",
+        groomFull: "Aurelia Clarissa Ramadhani",
+        groomParents: "Putri tercinta Bpk. Irwan Pratama & Ibu Selvi Anggraeni",
+        groomPhoto: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=800&q=80",
+        brideShort: "Sweet 17",
+        brideFull: "The Seventeen Issue • Golden Milestone",
+        brideParents: "Dresscode: Retro Chic, Y2K Glam, or Smart Casual",
+        bridePhoto: "https://images.unsplash.com/photo-1517841905240-472988babdf9?auto=format&fit=crop&w=800&q=80",
+        dateText: "Sabtu, 14 Agustus 2027",
+        venueText: "The Glasshouse Bistro & Rooftop, Jakarta Selatan"
+      },
+      themeColors: {
+        primaryBg: "#FBF8F3",
+        cardBg: "rgba(255, 255, 255, 0.95)",
+        accentHex: "#C25E38",
+        secondaryHex: "#D97706",
+        textDark: "#1C1917",
+        badgeBg: "#FEF3C7"
+      }
+    },
+    {
+      id: "emerald-botanical-aqiqah",
+      name: "Emerald Oasis & Botanical Gold Aqiqah",
+      slug: "emerald-botanical-aqiqah",
+      eventType: "aqiqah",
+      category: "islamic",
+      categoryLabel: "Islamic Botanical Aqiqah",
+      price: 49000,
+      originalPrice: 89000,
+      badge: "Eksklusif Syariah 🌿",
+      isPopular: true,
+      thumbnail: "https://images.unsplash.com/photo-1656633702381-939966720da4?auto=format&fit=crop&w=800&q=80",
+      coverImage: "https://images.unsplash.com/photo-1656633702381-939966720da4?auto=format&fit=crop&w=1400&q=85",
+      heroImage: "https://images.unsplash.com/photo-1656633702381-939966720da4?auto=format&fit=crop&w=900&q=85",
+      description: "Kemegahan tasyakuran aqiqah & tasmiyah bertema Islamic Botanical dengan warna royal emerald gold, gerbang lengkung Andalusia 3D, sertifikat kelahiran emas, verifikasi syariah sembelihan domba, dan live streaming doa bersama.",
+      features: [
+        "Gerbang Lengkung Andalusia & Taburan Melati 3D",
+        "Sertifikat Kelahiran & Makna Filosofis Nama",
+        "Verifikasi Halal Syariah Domba Sembelihan",
+        "Rundown Prosesi Tasmiyah & Cukur Rambut",
+        "Tabungan Syariah BSI/BCA & Akses Live Streaming"
+      ],
+      openingType: "islamic-arch",
+      particleType: "petals",
+      defaultSongTitle: "Maher Zain - For The Rest of My Life (Instrumental Oud)",
+      defaultSongSrc: "/audio/berdua-saja.mp3",
+      eventMeta: {
+        primaryTitle: "Muhammad Rayyan Al-Ghifari",
+        secondaryTitle: "Tasyakuran Aqiqah & Tasmiyah",
+        parentsOrHost: "Bpk. M. Ilham Pratama & Ibu Nurul Fadhilah",
+        dateText: "Ahad, 25 Juli 2027",
+        venueText: "Kediaman Keluarga Pratama, Kebayoran Baru, Jakarta Selatan"
+      },
+      sampleCouple: {
+        groomShort: "Rayyan",
+        groomFull: "Muhammad Rayyan Al-Ghifari",
+        groomParents: "Putra tercinta dari Bpk. M. Ilham Pratama & Ibu Nurul Fadhilah",
+        groomPhoto: "https://images.unsplash.com/photo-1656633702381-939966720da4?auto=format&fit=crop&w=800&q=80",
+        brideShort: "Aqiqah",
+        brideFull: "Walimatul Aqiqah & Tasmiyah",
+        brideParents: "BB: 3.35 kg | PB: 49.5 cm | Jam: 06.30 WIB",
+        bridePhoto: "https://images.unsplash.com/photo-1641222113497-f1904803f654?auto=format&fit=crop&w=800&q=80",
+        dateText: "Ahad, 25 Juli 2027",
+        venueText: "Kediaman Keluarga Pratama, Kebayoran Baru, Jakarta Selatan"
+      },
+      themeColors: {
+        primaryBg: "#062D23",
+        cardBg: "rgba(10, 52, 41, 0.92)",
+        accentHex: "#D4AF37",
+        secondaryHex: "#849987",
+        textDark: "#F0FDF4",
+        badgeBg: "rgba(212, 175, 55, 0.2)"
+      }
     }
   ] as TemplateItem[],
 

@@ -19,6 +19,8 @@ import { SweetBlossomTemplate } from './sweet-blossom-aqiqah/SweetBlossomTemplat
 import { NusantaraKhitanTemplate } from './nusantara-khitan/NusantaraKhitanTemplate'
 import { MonochromeGradTemplate } from './monochrome-grad/MonochromeGradTemplate'
 import { AdatBanjarTemplate } from './adat-banjar/AdatBanjarTemplate'
+import { RetroEditorialTemplate } from './retro-editorial-birthday/RetroEditorialTemplate'
+import { EmeraldBotanicalTemplate } from './emerald-botanical-aqiqah/EmeraldBotanicalTemplate'
 
 interface TemplateRendererProps extends TemplateViewProps {
   template: TemplateItem
@@ -33,6 +35,12 @@ export const TemplateRenderer: React.FC<TemplateRendererProps> = (props) => {
 
   const renderTemplateContent = () => {
     switch (template.slug || template.id) {
+      case 'emerald-botanical-aqiqah':
+        return <EmeraldBotanicalTemplate {...props} />
+
+      case 'retro-editorial-birthday':
+        return <RetroEditorialTemplate {...props} />
+
       case 'adat-banjar':
         return <AdatBanjarTemplate {...props} />
 
