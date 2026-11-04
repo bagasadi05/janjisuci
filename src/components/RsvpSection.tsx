@@ -5,6 +5,8 @@ import { weddingData, WishMessage } from '../config/weddingData'
 import { useInvitationData } from '../context/InvitationContext'
 import { FloralDivider } from './Ornament'
 import { useToast } from './Toast'
+import { safeDecodeUri } from '../utils/seo'
+import { StaggerContainer, MotionItem, ScrollReveal } from './common/MotionReveal'
 
 export const RsvpSection: React.FC = () => {
   const { activeTemplate } = useInvitationData()
@@ -30,7 +32,7 @@ export const RsvpSection: React.FC = () => {
     const urlParams = new URLSearchParams(window.location.search)
     const to = urlParams.get('to') || urlParams.get('u') || urlParams.get('guest')
     if (to) {
-      setName(decodeURIComponent(to.replace(/\+/g, ' ')))
+      setName(safeDecodeUri(to))
     }
 
     // Load persisted wishes
@@ -124,29 +126,44 @@ export const RsvpSection: React.FC = () => {
   return (
     <section id="rsvp" className="relative py-12 px-4 scroll-mt-6 defer-render">
       <div className="max-w-4xl mx-auto text-center">
-        <div
-          className={`inline-flex items-center gap-1.5 px-3.5 py-1 rounded-full text-xs uppercase tracking-widest font-sans font-medium mb-3 ${
-            isDark
-              ? 'bg-amber-500/15 border border-amber-400/30 text-amber-300'
-              : 'bg-amber-900/10 border border-amber-700/20 text-amber-900'
-          }`}
-        >
-          <Sparkles className={`w-3.5 h-3.5 ${isDark ? 'text-amber-400' : 'text-amber-700'}`} />
-          <span>Doa &amp; Restu</span>
-        </div>
+        {/* Header Staggered Sequence */}
+        <StaggerContainer stagger={0.12} delayChildren={0.05} className="mb-10">
+          <MotionItem variant="pop" className="flex justify-center">
+            <div
+              className={`inline-flex items-center gap-1.5 px-3.5 py-1 rounded-full text-xs uppercase tracking-widest font-sans font-medium mb-3 ${
+                isDark
+                  ? 'bg-amber-500/15 border border-amber-400/30 text-amber-300'
+                  : 'bg-amber-900/10 border border-amber-700/20 text-amber-900'
+              }`}
+            >
+              <Sparkles className={`w-3.5 h-3.5 ${isDark ? 'text-amber-400' : 'text-amber-700'}`} />
+              <span>Doa &amp; Restu</span>
+            </div>
+          </MotionItem>
 
-        <h2 className={`font-serif text-3xl sm:text-4xl font-bold tracking-tight ${isDark ? 'text-white' : 'text-stone-800'}`}>
-          Buku Tamu &amp; RSVP
-        </h2>
-        <FloralDivider className="my-3" />
-        <p className={`font-sans text-xs sm:text-sm leading-relaxed px-4 max-w-xl mx-auto mb-10 ${isDark ? 'text-stone-300' : 'text-stone-600'}`}>
-          Merupakan suatu kehormatan bagi kami apabila Bapak/Ibu/Saudara/i berkenan memberikan konfirmasi kehadiran serta doa restu:
-        </p>
+          <MotionItem variant="fadeUp">
+            <h2 className={`font-serif text-3xl sm:text-4xl font-bold tracking-tight ${isDark ? 'text-white' : 'text-stone-800'}`}>
+              Buku Tamu &amp; RSVP
+            </h2>
+          </MotionItem>
+
+          <MotionItem variant="expand">
+            <FloralDivider className="my-3" />
+          </MotionItem>
+
+          <MotionItem variant="fadeUp">
+            <p className={`font-sans text-xs sm:text-sm leading-relaxed px-4 max-w-xl mx-auto ${isDark ? 'text-stone-300' : 'text-stone-600'}`}>
+              Merupakan suatu kehormatan bagi kami apabila Bapak/Ibu/Saudara/i berkenan memberikan konfirmasi kehadiran serta doa restu:
+            </p>
+          </MotionItem>
+        </StaggerContainer>
 
         {/* Responsive Grid */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 text-left items-start">
-          {/* Form Container */}
-          <div
+          {/* Form Container with Slide-in Entrance */}
+          <ScrollReveal
+            variant="slideLeft"
+            interactive
             className={`lg:col-span-5 p-6 sm:p-8 rounded-3xl backdrop-blur-md shadow-xl border ${
               isDark
                 ? 'bg-stone-900/85 border-amber-500/30 text-stone-100 shadow-[0_20px_50px_rgba(0,0,0,0.7)]'
@@ -268,6 +285,40 @@ export const RsvpSection: React.FC = () => {
                 <label htmlFor="rsvp-message" className={`block text-xs font-semibold uppercase tracking-wider mb-1.5 ${isDark ? 'text-stone-300' : 'text-stone-700'}`}>
                   Ucapan &amp; Doa Restu *
                 </label>
+
+                {/* Pilihan Doa Cepat Khas Indonesia */}
+                <div className="mb-2.5">
+                  <span className={`text-[10px] font-sans font-medium uppercase tracking-wider block mb-1.5 ${isDark ? 'text-amber-400/90' : 'text-amber-800'}`}>
+                    ⚡ Pilih Doa Cepat (1-Klik):
+                  </span>
+                  <div className="flex flex-wrap gap-1.5">
+                    {[
+                      "Baarakallahu laka wa baaraka 'alaika wa jama'a bainakuma fii khoir 🤲",
+                      "Selamat menempuh hidup baru! Semoga menjadi keluarga sakinah, mawaddah, warahmah 💍",
+                      "Happy Wedding! Langgeng sampai kakek nenek & bahagia selalu ✨",
+                      "Doa tulus dari kami sekeluarga, semoga acaranya lancar & penuh berkah 🤍"
+                    ].map((templateWish, idx) => (
+                      <button
+                        key={idx}
+                        type="button"
+                        onClick={() => {
+                          setMessage(templateWish)
+                          showToast('Doa berhasil dipilih!', 'info')
+                        }}
+                        className={`text-[11px] px-2.5 py-1 rounded-xl border text-left transition-all cursor-pointer ${
+                          message === templateWish
+                            ? 'bg-amber-500/25 border-amber-400 text-amber-200 font-medium shadow-sm'
+                            : isDark
+                            ? 'bg-stone-900/90 border-white/10 text-stone-300 hover:border-amber-400/40 hover:text-white'
+                            : 'bg-white border-stone-200 text-stone-700 hover:border-amber-600/30'
+                        }`}
+                      >
+                        {templateWish.slice(0, 36)}...
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
                 <textarea
                   id="rsvp-message"
                   required
@@ -294,14 +345,17 @@ export const RsvpSection: React.FC = () => {
                 <span>{isSubmitting ? 'Mengirim...' : 'Kirim Ucapan & Konfirmasi'}</span>
               </button>
             </form>
-          </div>
+          </ScrollReveal>
 
-          {/* Wishes List Feed */}
-          <div
+          {/* Wishes List Feed with Slide-in from Right */}
+          <ScrollReveal
+            variant="slideRight"
+            delay={0.15}
+            interactive
             className={`lg:col-span-7 p-6 sm:p-8 rounded-3xl backdrop-blur-md shadow-xl border ${
               isDark
-                ? 'bg-stone-900/85 border-amber-500/30 text-stone-100 shadow-[0_20px_50px_rgba(0,0,0,0.7)]'
-                : 'bg-white/95 border-amber-800/15 text-stone-800'
+                ? 'bg-stone-900/85 border border-amber-500/30 text-stone-100 shadow-[0_20px_50px_rgba(0,0,0,0.7)]'
+                : 'bg-white/95 border border-amber-800/15 text-stone-800'
             }`}
           >
             <div className={`flex items-center justify-between mb-4 pb-2 border-b ${isDark ? 'border-white/10' : 'border-stone-200/60'}`}>
@@ -417,7 +471,7 @@ export const RsvpSection: React.FC = () => {
                 })
               )}
             </div>
-          </div>
+          </ScrollReveal>
         </div>
       </div>
     </section>

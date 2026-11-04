@@ -194,10 +194,10 @@ export const storeConfig = {
   },
 
   promo: {
-    badge: "PROMO FLASH SALE HINGGA 55% 🔥",
-    title: "Promo Terbatas Minggu Ini • Diskon Langsung Mulai Rp 39.000 s/d Rp 79.000 (Hemat s/d Rp 100.000)!",
+    badge: "HARGA PERKENALAN STUDIO BARU ✨",
+    title: "Spesial Pelanggan Perdana • Paket Mulai Rp 39.000 s/d Rp 79.000 (Hemat s/d Rp 100.000)!",
     voucherCode: "JANJISUCIHEMAT",
-    expiryText: "Berlaku khusus minggu ini s/d Minggu malam",
+    expiryText: "Harga perkenalan untuk pelanggan perdana",
     discountPercent: 50
   },
 
@@ -1224,73 +1224,9 @@ export const storeConfig = {
     }
   ] as TemplateItem[],
 
-  testimonials: [
-    {
-      id: "t1",
-      coupleName: "Bagus & Ayu",
-      city: "Yogyakarta",
-      templateName: "Royal Javanese Heritage",
-      templateId: "royal-java",
-      eventDate: "14 November 2027",
-      rating: 5,
-      comment: "Awalnya bingung cari undangan adat Jawa yang modern tapi tetap sakral. Pas nemu tema Royal Java di JanjiSuci.id, langsung jatuh cinta! Tamu-tamu sepuh pada kagum sama musik dan ornamen gunungannya.",
-      date: "28 Oktober 2027",
-      avatar: "https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=150&q=80",
-      verified: true
-    },
-    {
-      id: "t2",
-      coupleName: "Kevin & Clarissa",
-      city: "Jakarta Selatan",
-      templateName: "Modern Luxury Champagne",
-      templateId: "luxury-champagne",
-      eventDate: "06 Desember 2027",
-      rating: 5,
-      comment: "Desain editorialnya beneran kayak majalah Vogue! Gak murahan sama sekali. Fitur amplop digitalnya kepake banget, tamu tinggal klik salin rekening atau scan QRIS. Adminnya juga ramah dan fast response di WhatsApp.",
-      date: "15 Oktober 2027",
-      avatar: "https://images.unsplash.com/photo-1524504388940-b1c1722653e1?auto=format&fit=crop&w=150&q=80",
-      verified: true
-    },
-    {
-      id: "t3",
-      coupleName: "Dimas & Kirana",
-      city: "Bandung",
-      templateName: "Rustic Terracotta Boho",
-      templateId: "rustic-terracotta",
-      eventDate: "24 Oktober 2027",
-      rating: 5,
-      comment: "Konsep pernikahan outdoor kami di Lembang klop banget sama tema Terracotta ini. Foto-foto polaroid miringnya estetik parah. Harga 99rb tapi kualitasnya bintang lima!",
-      date: "02 Oktober 2027",
-      avatar: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=150&q=80",
-      verified: true
-    },
-    {
-      id: "t4",
-      coupleName: "Faris Alamsyah & Keluarga",
-      city: "Depok",
-      templateName: "Academic Elegance UI",
-      templateId: "academic-elegance",
-      eventDate: "19 September 2027",
-      rating: 5,
-      comment: "Undangan wisuda kami jadi kelihatan sangat prestisius dan resmi. Fitur YouTube live streaming di dalam undangannya sangat membantu keluarga besar di luar kota untuk ikut menyaksikan sidang senat!",
-      date: "24 September 2027",
-      avatar: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=150&q=80",
-      verified: true
-    },
-    {
-      id: "t5",
-      coupleName: "dr. Zikri & Nabila",
-      city: "Jakarta Pusat",
-      templateName: "Sweet Blossom Aqiqah",
-      templateId: "sweet-blossom-aqiqah",
-      eventDate: "08 Agustus 2027",
-      rating: 5,
-      comment: "Tasyakuran tasmiyah aqiqah putri pertama kami jadi terasa sangat anggun. Font kaligrafi dan ornamen bunganya sangat manis. Rekening kado digitalnya memudahkan saudara jauh mengirimkan doa dan tanda kasih.",
-      date: "12 Agustus 2027",
-      avatar: "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=150&q=80",
-      verified: true
-    }
-  ] satisfies TestimonialItem[],
+  // CATATAN: Hanya tambahkan ulasan/testimoni asli dari pelanggan nyata dengan izin publikasi resmi.
+  // NOTE: Only add genuine reviews/testimonials from real customers who have explicitly consented to publication.
+  testimonials: [] as TestimonialItem[],
 
   faqs: [
     {

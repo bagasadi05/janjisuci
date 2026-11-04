@@ -114,6 +114,22 @@
   border-image: linear-gradient(to bottom right, #fbf0b9, #d4af37, #996515, #f3ede2) 1;
 }
 
+/* Animated luxury gold border shimmer for best-seller package */
+@keyframes border-shimmer {
+  0%, 100% {
+    border-color: rgba(245, 158, 11, 0.4);
+    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.6), 0 0 20px rgba(245, 158, 11, 0.15);
+  }
+  50% {
+    border-color: rgba(251, 191, 36, 0.85);
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.7), 0 0 35px rgba(245, 158, 11, 0.35);
+  }
+}
+
+.popular-package-shimmer {
+  animation: border-shimmer 3.5s ease-in-out infinite;
+}
+
 .text-gold-gradient {
   background: linear-gradient(135deg, #fbf0b9 0%, #d4af37 50%, #aa771c 100%);
   -webkit-background-clip: text;
@@ -237,41 +253,42 @@
   transform-style: preserve-3d;
 }
 
-/* 3D Scroll Reveal Entrance */
-.reveal-3d {
+/* ==========================================================================
+   Fluid Luxury Scroll Reveal & Cascading Entrance (60 FPS GPU-accelerated)
+   Replaces stiff mechanical 3D tilt with smooth upward float & blur de-dissolve
+   ========================================================================== */
+.reveal-3d,
+.reveal-cascade {
   opacity: 0;
-  transform: perspective(1000px) rotateX(12deg) translateY(40px) scale(0.96);
-  transform-origin: center bottom;
-  transition: opacity 0.85s cubic-bezier(0.16, 1, 0.3, 1), transform 0.85s cubic-bezier(0.16, 1, 0.3, 1);
-  will-change: opacity, transform;
+  transform: translateY(28px) scale(0.985);
+  filter: blur(4px);
+  transition: opacity 0.85s cubic-bezier(0.22, 1, 0.36, 1),
+              transform 0.85s cubic-bezier(0.22, 1, 0.36, 1),
+              filter 0.7s cubic-bezier(0.22, 1, 0.36, 1);
+  will-change: opacity, transform, filter;
   backface-visibility: hidden;
 }
 
-.reveal-3d.is-visible {
+.reveal-3d.is-visible,
+.reveal-cascade.is-visible {
   opacity: 1;
-  transform: perspective(1000px) rotateX(0deg) translateY(0) scale(1);
+  transform: translateY(0) scale(1);
+  filter: blur(0px);
 }
 
-/* Stagger Delays for Grid / Card Groups */
-.reveal-delay-100 {
-  transition-delay: 100ms;
-}
-
-.reveal-delay-200 {
-  transition-delay: 200ms;
-}
-
-.reveal-delay-300 {
-  transition-delay: 300ms;
-}
-
-.reveal-delay-400 {
-  transition-delay: 400ms;
-}
-
-.reveal-delay-500 {
-  transition-delay: 500ms;
-}
+/* Stagger Delays for Cascade Entrances (Muncul Satu-Satu) */
+.reveal-delay-50  { transition-delay: 50ms; }
+.reveal-delay-100 { transition-delay: 100ms; }
+.reveal-delay-150 { transition-delay: 150ms; }
+.reveal-delay-200 { transition-delay: 200ms; }
+.reveal-delay-250 { transition-delay: 250ms; }
+.reveal-delay-300 { transition-delay: 300ms; }
+.reveal-delay-350 { transition-delay: 350ms; }
+.reveal-delay-400 { transition-delay: 400ms; }
+.reveal-delay-450 { transition-delay: 450ms; }
+.reveal-delay-500 { transition-delay: 500ms; }
+.reveal-delay-600 { transition-delay: 600ms; }
+.reveal-delay-700 { transition-delay: 700ms; }
 
 /* Interactive 3D Card Hover & Touch Tilt */
 .card-3d-interactive {
@@ -280,11 +297,124 @@
   will-change: transform;
 }
 
+/* ==========================================================================
+   Signature Thematic Motion & 3D Gate Opening Utilities
+   ========================================================================== */
+.perspective-1200 {
+  perspective: 1200px;
+}
+
+.perspective-2000 {
+  perspective: 2000px;
+}
+
+.transform-style-3d {
+  transform-style: preserve-3d;
+}
+
+.backface-hidden {
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+}
+
+/* Silk Curtain Pleat Fabric Effect */
+.bg-satin-curtain-left {
+  background: repeating-linear-gradient(
+    90deg,
+    #1c1813 0px,
+    #2a2318 18px,
+    #13100c 36px,
+    #362e20 54px,
+    #1a150f 72px
+  );
+  box-shadow: inset -15px 0 35px rgba(0, 0, 0, 0.8), 10px 0 30px rgba(0, 0, 0, 0.7);
+}
+
+.bg-satin-curtain-right {
+  background: repeating-linear-gradient(
+    90deg,
+    #1a150f 0px,
+    #362e20 18px,
+    #13100c 36px,
+    #2a2318 54px,
+    #1c1813 72px
+  );
+  box-shadow: inset 15px 0 35px rgba(0, 0, 0, 0.8), -10px 0 30px rgba(0, 0, 0, 0.7);
+}
+
+/* Keraton Teak Wood Door Texture with Gold Filigree */
+.bg-javanese-door {
+  background: radial-gradient(circle at 50% 50%, #2a201a 0%, #17120e 75%, #0e0b08 100%);
+  box-shadow: inset 0 0 50px rgba(0, 0, 0, 0.9);
+}
+
+/* Golden Light Beam / Lens Flare */
+@keyframes lens-flare {
+  0% {
+    opacity: 0;
+    transform: scale(0.5);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.35);
+  }
+  100% {
+    opacity: 0;
+    transform: scale(2);
+  }
+}
+
+.animate-lens-flare {
+  animation: lens-flare 1.1s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+/* Cosmic Nebula Portal Zoom */
+@keyframes portal-zoom {
+  0% {
+    transform: scale(1) rotate(0deg);
+    opacity: 0.8;
+  }
+  100% {
+    transform: scale(3.5) rotate(120deg);
+    opacity: 0;
+  }
+}
+
+.animate-portal-zoom {
+  animation: portal-zoom 1.2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
 @media (hover: hover) and (pointer: fine) {
   .card-3d-interactive:hover {
     transform: perspective(1000px) translateY(-6px) rotateX(3deg) rotateY(-2deg) scale(1.015);
     box-shadow: 0 20px 35px -10px rgba(0, 0, 0, 0.25);
   }
+}
+
+/* Lenis Smooth Scroll Engine */
+html.lenis, html.lenis body {
+  height: auto;
+}
+.lenis.lenis-smooth {
+  scroll-behavior: auto !important;
+}
+.lenis.lenis-smooth [data-lenis-prevent] {
+  overscroll-behavior: contain;
+}
+.lenis.lenis-stopped {
+  overflow: hidden;
+}
+.lenis.lenis-smooth iframe {
+  pointer-events: none;
+}
+
+/* Luxury Fine-Art Cotton Paper Noise Grain Texture */
+.luxury-paper-grain {
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.045'/%3E%3C/svg%3E");
+}
+
+.perspective-1000 {
+  perspective: 1000px;
 }
 
 /* Respect user preference for reduced motion (WCAG 2.3.3) */

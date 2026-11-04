@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from 'react'
-import { Calendar, Clock, MapPin, Navigation, CalendarPlus } from 'lucide-react'
+import { Calendar, Clock, MapPin, Navigation, CalendarPlus, Download } from 'lucide-react'
 import { useInvitationData } from '../context/InvitationContext'
 import { FloralDivider, BotanicalCorner } from './Ornament'
-import { Reveal3D } from './common/Reveal3D'
+import { downloadIcsFile } from '../utils/calendar'
+import { useToast } from './Toast'
+import { StaggerContainer, MotionItem, ScrollReveal } from './common/MotionReveal'
 
 interface TimeLeft {
   days: number
@@ -13,6 +15,7 @@ interface TimeLeft {
 
 export const EventSection: React.FC = () => {
   const { data: weddingData, activeTemplate } = useInvitationData()
+  const { showToast } = useToast()
   const [timeLeft, setTimeLeft] = useState<TimeLeft>({ days: 0, hours: 0, minutes: 0, seconds: 0 })
 
   const isDark =
@@ -46,22 +49,52 @@ export const EventSection: React.FC = () => {
     )}&details=${encodeURIComponent(details)}&location=${encodeURIComponent(location)}&dates=${start}/${end}`
   }
 
+  const handleDownloadIcs = (
+    title: string,
+    details: string,
+    location: string,
+    start: string,
+    end: string,
+    filename: string
+  ) => {
+    downloadIcsFile(
+      {
+        title,
+        description: details,
+        location,
+        start,
+        end
+      },
+      filename
+    )
+    showToast('Jadwal kalender (.ics) berhasil diunduh untuk Apple/Outlook!', 'success')
+  }
+
   const { akad, resepsi } = weddingData.events
 
   return (
     <section id="events" className="relative py-12 px-4 scroll-mt-6 defer-render-lg">
       <div className="max-w-4xl mx-auto text-center">
-        <h2 className={`font-serif text-3xl sm:text-4xl font-bold tracking-tight ${isDark ? 'text-white' : 'text-stone-800'}`}>
-          Informasi &amp; Waktu Acara
-        </h2>
-        <FloralDivider className="my-3" />
-        <p className={`font-sans text-xs sm:text-sm leading-relaxed px-4 max-w-xl mx-auto mb-8 ${isDark ? 'text-stone-300' : 'text-stone-600'}`}>
-          Dengan memohon rahmat dan ridho Allah SWT, kami mengundang Bapak/Ibu/Saudara/i untuk menghadiri rangkaian acara kami:
-        </p>
+        {/* Header Staggered Sequence */}
+        <StaggerContainer stagger={0.12} delayChildren={0.05} className="mb-8">
+          <MotionItem variant="fadeUp">
+            <h2 className={`font-serif text-3xl sm:text-4xl font-bold tracking-tight ${isDark ? 'text-white' : 'text-stone-800'}`}>
+              Informasi &amp; Waktu Acara
+            </h2>
+          </MotionItem>
+          <MotionItem variant="expand">
+            <FloralDivider className="my-3" />
+          </MotionItem>
+          <MotionItem variant="fadeUp">
+            <p className={`font-sans text-xs sm:text-sm leading-relaxed px-4 max-w-xl mx-auto ${isDark ? 'text-stone-300' : 'text-stone-600'}`}>
+              Dengan memohon rahmat dan ridho Allah SWT, kami mengundang Bapak/Ibu/Saudara/i untuk menghadiri rangkaian acara kami:
+            </p>
+          </MotionItem>
+        </StaggerContainer>
 
-        {/* Live Countdown Timer Widget */}
-        <Reveal3D
-          delay={100}
+        {/* Live Countdown Timer Widget with 3D Flip Entrance */}
+        <ScrollReveal
+          variant="flipUp"
           interactive
           className="relative p-6 sm:p-8 rounded-3xl bg-gradient-to-br from-stone-900 via-stone-900 to-amber-950 text-amber-100 shadow-2xl mb-10 overflow-hidden border border-amber-500/30 max-w-2xl mx-auto"
         >
@@ -69,50 +102,58 @@ export const EventSection: React.FC = () => {
             Menghitung Hari Bahagia
           </p>
 
-          <div className="grid grid-cols-4 gap-2 sm:gap-4 max-w-md mx-auto">
-            <div className="p-3 sm:p-4 rounded-2xl bg-black/40 border border-amber-500/20 backdrop-blur-sm">
-              <span className="font-serif text-2xl sm:text-4xl font-bold text-amber-200 block">
-                {timeLeft.days}
-              </span>
-              <span className="text-[10px] sm:text-xs text-stone-300 uppercase tracking-widest font-sans mt-1 block">
-                Hari
-              </span>
-            </div>
+          <StaggerContainer stagger={0.08} delayChildren={0.15} className="grid grid-cols-4 gap-2 sm:gap-4 max-w-md mx-auto">
+            <MotionItem variant="pop">
+              <div className="p-3 sm:p-4 rounded-2xl bg-black/40 border border-amber-500/20 backdrop-blur-sm transition-transform hover:scale-105">
+                <span className="font-serif text-2xl sm:text-4xl font-bold text-amber-200 block">
+                  {timeLeft.days}
+                </span>
+                <span className="text-[10px] sm:text-xs text-stone-300 uppercase tracking-widest font-sans mt-1 block">
+                  Hari
+                </span>
+              </div>
+            </MotionItem>
 
-            <div className="p-3 sm:p-4 rounded-2xl bg-black/40 border border-amber-500/20 backdrop-blur-sm">
-              <span className="font-serif text-2xl sm:text-4xl font-bold text-amber-200 block">
-                {timeLeft.hours}
-              </span>
-              <span className="text-[10px] sm:text-xs text-stone-300 uppercase tracking-widest font-sans mt-1 block">
-                Jam
-              </span>
-            </div>
+            <MotionItem variant="pop">
+              <div className="p-3 sm:p-4 rounded-2xl bg-black/40 border border-amber-500/20 backdrop-blur-sm transition-transform hover:scale-105">
+                <span className="font-serif text-2xl sm:text-4xl font-bold text-amber-200 block">
+                  {timeLeft.hours}
+                </span>
+                <span className="text-[10px] sm:text-xs text-stone-300 uppercase tracking-widest font-sans mt-1 block">
+                  Jam
+                </span>
+              </div>
+            </MotionItem>
 
-            <div className="p-3 sm:p-4 rounded-2xl bg-black/40 border border-amber-500/20 backdrop-blur-sm">
-              <span className="font-serif text-2xl sm:text-4xl font-bold text-amber-200 block">
-                {timeLeft.minutes}
-              </span>
-              <span className="text-[10px] sm:text-xs text-stone-300 uppercase tracking-widest font-sans mt-1 block">
-                Menit
-              </span>
-            </div>
+            <MotionItem variant="pop">
+              <div className="p-3 sm:p-4 rounded-2xl bg-black/40 border border-amber-500/20 backdrop-blur-sm transition-transform hover:scale-105">
+                <span className="font-serif text-2xl sm:text-4xl font-bold text-amber-200 block">
+                  {timeLeft.minutes}
+                </span>
+                <span className="text-[10px] sm:text-xs text-stone-300 uppercase tracking-widest font-sans mt-1 block">
+                  Menit
+                </span>
+              </div>
+            </MotionItem>
 
-            <div className="p-3 sm:p-4 rounded-2xl bg-black/40 border border-amber-500/20 backdrop-blur-sm">
-              <span className="font-serif text-2xl sm:text-4xl font-bold text-amber-200 block">
-                {timeLeft.seconds}
-              </span>
-              <span className="text-[10px] sm:text-xs text-stone-300 uppercase tracking-widest font-sans mt-1 block">
-                Detik
-              </span>
-            </div>
-          </div>
-        </Reveal3D>
+            <MotionItem variant="pop">
+              <div className="p-3 sm:p-4 rounded-2xl bg-black/40 border border-amber-500/20 backdrop-blur-sm transition-transform hover:scale-105">
+                <span className="font-serif text-2xl sm:text-4xl font-bold text-amber-200 block">
+                  {timeLeft.seconds}
+                </span>
+                <span className="text-[10px] sm:text-xs text-stone-300 uppercase tracking-widest font-sans mt-1 block">
+                  Detik
+                </span>
+              </div>
+            </MotionItem>
+          </StaggerContainer>
+        </ScrollReveal>
 
         {/* Events Cards Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-stretch">
           {/* Card 1: Akad Nikah / Acara Utama */}
-          <Reveal3D
-            delay={200}
+          <ScrollReveal
+            variant="slideLeft"
             interactive
             className={`relative p-6 sm:p-8 rounded-3xl backdrop-blur-md shadow-xl flex flex-col justify-between ${
               isDark
@@ -122,71 +163,119 @@ export const EventSection: React.FC = () => {
           >
             <BotanicalCorner position="top-left" />
 
-            <div>
-              <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-amber-500/20 text-amber-300 text-xs font-serif font-bold uppercase tracking-wider mb-4 border border-amber-500/30">
-                <Calendar className="w-3.5 h-3.5" />
-                <span>{akad.title}</span>
-              </div>
-
-              <h3 className={`font-serif text-2xl sm:text-3xl font-bold mb-3 ${isDark ? 'text-white' : 'text-stone-800'}`}>
-                {akad.title}
-              </h3>
-
-              <div className="space-y-3 my-5 text-xs sm:text-sm">
-                <div className="flex items-center justify-center gap-2">
-                  <Calendar className="w-4 h-4 text-amber-400" />
-                  <span className="font-semibold">{akad.date}</span>
-                </div>
-                <div className="flex items-center justify-center gap-2">
-                  <Clock className="w-4 h-4 text-amber-400" />
-                  <span>{akad.time}</span>
-                </div>
-                <div className="flex items-start justify-center gap-2 pt-2">
-                  <MapPin className="w-4 h-4 text-amber-400 shrink-0 mt-0.5" />
-                  <div>
-                    <p className="font-bold">{akad.venue}</p>
-                    <p className={`text-xs mt-1 ${isDark ? 'text-stone-400' : 'text-stone-500'}`}>{akad.address}</p>
+            <StaggerContainer stagger={0.09} delayChildren={0.12} className="flex-1 flex flex-col justify-between">
+              <div>
+                <MotionItem variant="pop">
+                  <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-amber-500/20 text-amber-300 text-xs font-serif font-bold uppercase tracking-wider mb-4 border border-amber-500/30">
+                    <Calendar className="w-3.5 h-3.5" />
+                    <span>{akad.title}</span>
                   </div>
-                </div>
+                </MotionItem>
+
+                <MotionItem variant="fadeUp">
+                  <h3 className={`font-serif text-2xl sm:text-3xl font-bold mb-3 ${isDark ? 'text-white' : 'text-stone-800'}`}>
+                    {akad.title}
+                  </h3>
+                </MotionItem>
+
+                <MotionItem variant="fadeUp">
+                  <div className="space-y-3 my-5 text-xs sm:text-sm">
+                    <div className="flex items-center justify-center gap-2">
+                      <Calendar className="w-4 h-4 text-amber-400" />
+                      <span className="font-semibold">{akad.date}</span>
+                    </div>
+                    <div className="flex items-center justify-center gap-2">
+                      <Clock className="w-4 h-4 text-amber-400" />
+                      <span>{akad.time}</span>
+                    </div>
+                    <div className="flex items-start justify-center gap-2 pt-2">
+                      <MapPin className="w-4 h-4 text-amber-400 shrink-0 mt-0.5" />
+                      <div>
+                        <p className="font-bold">{akad.venue}</p>
+                        <p className={`text-xs mt-1 ${isDark ? 'text-stone-400' : 'text-stone-500'}`}>{akad.address}</p>
+                      </div>
+                    </div>
+                  </div>
+                </MotionItem>
               </div>
-            </div>
 
-            <div className="pt-4 border-t border-white/10 flex flex-col sm:flex-row items-center justify-center gap-2.5">
-              <a
-                href={akad.mapsUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="min-h-[44px] w-full sm:w-auto inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-full bg-amber-500 hover:bg-amber-400 text-stone-950 font-bold text-xs shadow-md transition-all cursor-pointer active:scale-95"
-              >
-                <Navigation className="w-3.5 h-3.5" />
-                <span>Petunjuk Arah (Maps)</span>
-              </a>
+              {/* Action Buttons Stagger */}
+              <MotionItem variant="pop">
+                <div className="pt-4 border-t border-white/10 flex flex-wrap items-center justify-center gap-2">
+                  <a
+                    href={akad.mapsUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="min-h-[40px] inline-flex items-center justify-center gap-1.5 px-4 py-2 rounded-full bg-amber-500 hover:bg-amber-400 text-stone-950 font-bold text-xs shadow-md transition-all cursor-pointer active:scale-95"
+                  >
+                    <Navigation className="w-3.5 h-3.5" />
+                    <span>Google Maps</span>
+                  </a>
 
-              <a
-                href={generateGoogleCalendarUrl(
-                  `${akad.title} - ${weddingData.couple.groom.shortName} & ${weddingData.couple.bride.shortName}`,
-                  `Acara ${akad.title} di ${akad.venue}`,
-                  akad.address,
-                  akad.calendarDate?.start || '20271024T080000',
-                  akad.calendarDate?.end || '20271024T100000'
-                )}
-                target="_blank"
-                rel="noopener noreferrer"
-                className={`min-h-[44px] w-full sm:w-auto inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-full border text-xs font-medium transition-all cursor-pointer active:scale-95 ${
-                  isDark
-                    ? 'bg-white/10 hover:bg-white/20 border-white/20 text-stone-200'
-                    : 'bg-stone-100 hover:bg-stone-200 border-stone-300 text-stone-700'
-                }`}
-              >
-                <CalendarPlus className="w-3.5 h-3.5 text-amber-400" />
-                <span>Simpan Kalender</span>
-              </a>
-            </div>
-          </Reveal3D>
+                  <a
+                    href={`https://waze.com/ul?q=${encodeURIComponent(akad.venue + ' ' + akad.address)}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className={`min-h-[40px] inline-flex items-center justify-center gap-1 px-3.5 py-2 rounded-full border text-xs font-medium transition-all cursor-pointer active:scale-95 ${
+                      isDark
+                        ? 'bg-sky-500/15 hover:bg-sky-500/25 border-sky-400/30 text-sky-200'
+                        : 'bg-sky-50 hover:bg-sky-100 border-sky-300 text-sky-800'
+                    }`}
+                    title="Buka rute langsung di aplikasi Waze"
+                  >
+                    <span>🚙 Waze</span>
+                  </a>
+
+                  <a
+                    href={generateGoogleCalendarUrl(
+                      `${akad.title} - ${weddingData.couple.groom.shortName} & ${weddingData.couple.bride.shortName}`,
+                      `Acara ${akad.title} di ${akad.venue}`,
+                      akad.address,
+                      akad.calendarDate?.start || '20271024T080000',
+                      akad.calendarDate?.end || '20271024T100000'
+                    )}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className={`min-h-[40px] inline-flex items-center justify-center gap-1.5 px-3.5 py-2 rounded-full border text-xs font-medium transition-all cursor-pointer active:scale-95 ${
+                      isDark
+                        ? 'bg-white/10 hover:bg-white/20 border-white/20 text-stone-200'
+                        : 'bg-stone-100 hover:bg-stone-200 border-stone-300 text-stone-700'
+                    }`}
+                  >
+                    <CalendarPlus className="w-3.5 h-3.5 text-amber-400" />
+                    <span>Google</span>
+                  </a>
+
+                  <button
+                    type="button"
+                    onClick={() =>
+                      handleDownloadIcs(
+                        `${akad.title} - ${weddingData.couple.groom.shortName} & ${weddingData.couple.bride.shortName}`,
+                        `Acara ${akad.title} di ${akad.venue}. Alamat: ${akad.address}`,
+                        akad.address,
+                        akad.calendarDate?.start || '20271024T080000',
+                        akad.calendarDate?.end || '20271024T100000',
+                        `Akad-${weddingData.couple.groom.shortName}-${weddingData.couple.bride.shortName}.ics`
+                      )
+                    }
+                    className={`min-h-[40px] inline-flex items-center justify-center gap-1.5 px-3.5 py-2 rounded-full border text-xs font-medium transition-all cursor-pointer active:scale-95 ${
+                      isDark
+                        ? 'bg-white/10 hover:bg-white/20 border-white/20 text-stone-200'
+                        : 'bg-stone-100 hover:bg-stone-200 border-stone-300 text-stone-700'
+                    }`}
+                  >
+                    <Download className="w-3.5 h-3.5 text-amber-300" />
+                    <span>Apple (.ics)</span>
+                  </button>
+                </div>
+              </MotionItem>
+            </StaggerContainer>
+          </ScrollReveal>
 
           {/* Card 2: Resepsi / Acara Kedua */}
-          <Reveal3D
-            delay={300}
+          <ScrollReveal
+            variant="slideRight"
+            delay={0.15}
             interactive
             className={`relative p-6 sm:p-8 rounded-3xl backdrop-blur-md shadow-xl flex flex-col justify-between ${
               isDark
@@ -196,67 +285,114 @@ export const EventSection: React.FC = () => {
           >
             <BotanicalCorner position="top-right" />
 
-            <div>
-              <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-amber-500/20 text-amber-300 text-xs font-serif font-bold uppercase tracking-wider mb-4 border border-amber-500/30">
-                <Calendar className="w-3.5 h-3.5" />
-                <span>{resepsi.title}</span>
-              </div>
-
-              <h3 className={`font-serif text-2xl sm:text-3xl font-bold mb-3 ${isDark ? 'text-white' : 'text-stone-800'}`}>
-                {resepsi.title}
-              </h3>
-
-              <div className="space-y-3 my-5 text-xs sm:text-sm">
-                <div className="flex items-center justify-center gap-2">
-                  <Calendar className="w-4 h-4 text-amber-400" />
-                  <span className="font-semibold">{resepsi.date}</span>
-                </div>
-                <div className="flex items-center justify-center gap-2">
-                  <Clock className="w-4 h-4 text-amber-400" />
-                  <span>{resepsi.time}</span>
-                </div>
-                <div className="flex items-start justify-center gap-2 pt-2">
-                  <MapPin className="w-4 h-4 text-amber-400 shrink-0 mt-0.5" />
-                  <div>
-                    <p className="font-bold">{resepsi.venue}</p>
-                    <p className={`text-xs mt-1 ${isDark ? 'text-stone-400' : 'text-stone-500'}`}>{resepsi.address}</p>
+            <StaggerContainer stagger={0.09} delayChildren={0.15} className="flex-1 flex flex-col justify-between">
+              <div>
+                <MotionItem variant="pop">
+                  <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-amber-500/20 text-amber-300 text-xs font-serif font-bold uppercase tracking-wider mb-4 border border-amber-500/30">
+                    <Calendar className="w-3.5 h-3.5" />
+                    <span>{resepsi.title}</span>
                   </div>
-                </div>
+                </MotionItem>
+
+                <MotionItem variant="fadeUp">
+                  <h3 className={`font-serif text-2xl sm:text-3xl font-bold mb-3 ${isDark ? 'text-white' : 'text-stone-800'}`}>
+                    {resepsi.title}
+                  </h3>
+                </MotionItem>
+
+                <MotionItem variant="fadeUp">
+                  <div className="space-y-3 my-5 text-xs sm:text-sm">
+                    <div className="flex items-center justify-center gap-2">
+                      <Calendar className="w-4 h-4 text-amber-400" />
+                      <span className="font-semibold">{resepsi.date}</span>
+                    </div>
+                    <div className="flex items-center justify-center gap-2">
+                      <Clock className="w-4 h-4 text-amber-400" />
+                      <span>{resepsi.time}</span>
+                    </div>
+                    <div className="flex items-start justify-center gap-2 pt-2">
+                      <MapPin className="w-4 h-4 text-amber-400 shrink-0 mt-0.5" />
+                      <div>
+                        <p className="font-bold">{resepsi.venue}</p>
+                        <p className={`text-xs mt-1 ${isDark ? 'text-stone-400' : 'text-stone-500'}`}>{resepsi.address}</p>
+                      </div>
+                    </div>
+                  </div>
+                </MotionItem>
               </div>
-            </div>
 
-            <div className="pt-4 border-t border-white/10 flex flex-col sm:flex-row items-center justify-center gap-2.5">
-              <a
-                href={resepsi.mapsUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="min-h-[44px] w-full sm:w-auto inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-full bg-amber-500 hover:bg-amber-400 text-stone-950 font-bold text-xs shadow-md transition-all cursor-pointer active:scale-95"
-              >
-                <Navigation className="w-3.5 h-3.5" />
-                <span>Petunjuk Arah (Maps)</span>
-              </a>
+              {/* Action Buttons Stagger */}
+              <MotionItem variant="pop">
+                <div className="pt-4 border-t border-white/10 flex flex-wrap items-center justify-center gap-2">
+                  <a
+                    href={resepsi.mapsUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="min-h-[40px] inline-flex items-center justify-center gap-1.5 px-4 py-2 rounded-full bg-amber-500 hover:bg-amber-400 text-stone-950 font-bold text-xs shadow-md transition-all cursor-pointer active:scale-95"
+                  >
+                    <Navigation className="w-3.5 h-3.5" />
+                    <span>Google Maps</span>
+                  </a>
 
-              <a
-                href={generateGoogleCalendarUrl(
-                  `${resepsi.title} - ${weddingData.couple.groom.shortName} & ${weddingData.couple.bride.shortName}`,
-                  `Acara ${resepsi.title} di ${resepsi.venue}`,
-                  resepsi.address,
-                  resepsi.calendarDate?.start || '20271024T110000',
-                  resepsi.calendarDate?.end || '20271024T140000'
-                )}
-                target="_blank"
-                rel="noopener noreferrer"
-                className={`min-h-[44px] w-full sm:w-auto inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-full border text-xs font-medium transition-all cursor-pointer active:scale-95 ${
-                  isDark
-                    ? 'bg-white/10 hover:bg-white/20 border-white/20 text-stone-200'
-                    : 'bg-stone-100 hover:bg-stone-200 border-stone-300 text-stone-700'
-                }`}
-              >
-                <CalendarPlus className="w-3.5 h-3.5 text-amber-400" />
-                <span>Simpan Kalender</span>
-              </a>
-            </div>
-          </Reveal3D>
+                  <a
+                    href={`https://waze.com/ul?q=${encodeURIComponent(resepsi.venue + ' ' + resepsi.address)}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className={`min-h-[40px] inline-flex items-center justify-center gap-1 px-3.5 py-2 rounded-full border text-xs font-medium transition-all cursor-pointer active:scale-95 ${
+                      isDark
+                        ? 'bg-sky-500/15 hover:bg-sky-500/25 border-sky-400/30 text-sky-200'
+                        : 'bg-sky-50 hover:bg-sky-100 border-sky-300 text-sky-800'
+                    }`}
+                    title="Buka rute langsung di aplikasi Waze"
+                  >
+                    <span>🚙 Waze</span>
+                  </a>
+
+                  <a
+                    href={generateGoogleCalendarUrl(
+                      `${resepsi.title} - ${weddingData.couple.groom.shortName} & ${weddingData.couple.bride.shortName}`,
+                      `Acara ${resepsi.title} di ${resepsi.venue}`,
+                      resepsi.address,
+                      resepsi.calendarDate?.start || '20271024T110000',
+                      resepsi.calendarDate?.end || '20271024T140000'
+                    )}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className={`min-h-[40px] inline-flex items-center justify-center gap-1.5 px-3.5 py-2 rounded-full border text-xs font-medium transition-all cursor-pointer active:scale-95 ${
+                      isDark
+                        ? 'bg-white/10 hover:bg-white/20 border-white/20 text-stone-200'
+                        : 'bg-stone-100 hover:bg-stone-200 border-stone-300 text-stone-700'
+                    }`}
+                  >
+                    <CalendarPlus className="w-3.5 h-3.5 text-amber-400" />
+                    <span>Google</span>
+                  </a>
+
+                  <button
+                    type="button"
+                    onClick={() =>
+                      handleDownloadIcs(
+                        `${resepsi.title} - ${weddingData.couple.groom.shortName} & ${weddingData.couple.bride.shortName}`,
+                        `Acara ${resepsi.title} di ${resepsi.venue}. Alamat: ${resepsi.address}`,
+                        resepsi.address,
+                        resepsi.calendarDate?.start || '20271024T110000',
+                        resepsi.calendarDate?.end || '20271024T140000',
+                        `Resepsi-${weddingData.couple.groom.shortName}-${weddingData.couple.bride.shortName}.ics`
+                      )
+                    }
+                    className={`min-h-[40px] inline-flex items-center justify-center gap-1.5 px-3.5 py-2 rounded-full border text-xs font-medium transition-all cursor-pointer active:scale-95 ${
+                      isDark
+                        ? 'bg-white/10 hover:bg-white/20 border-white/20 text-stone-200'
+                        : 'bg-stone-100 hover:bg-stone-200 border-stone-300 text-stone-700'
+                    }`}
+                  >
+                    <Download className="w-3.5 h-3.5 text-amber-300" />
+                    <span>Apple (.ics)</span>
+                  </button>
+                </div>
+              </MotionItem>
+            </StaggerContainer>
+          </ScrollReveal>
         </div>
       </div>
     </section>

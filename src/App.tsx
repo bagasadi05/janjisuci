@@ -14,11 +14,18 @@ import { PreviewFloatingBar } from './components/store/PreviewFloatingBar'
 import { OrderModal } from './components/store/OrderModal'
 import { ClientPortalModal } from './components/store/ClientPortalModal'
 import { TemplateRenderer } from './templates/TemplateRenderer'
+import { updateDynamicMetaTags, safeDecodeUri } from './utils/seo'
+import { track } from './lib/analytics'
 
-export const AppContent: React.FC = () => {
+interface AppProps {
+  /** Template slug from a path route such as /demo/royal-java (query ?template= still wins). */
+  initialTemplateSlug?: string
+}
+
+export const AppContent: React.FC<AppProps> = ({ initialTemplateSlug }) => {
   // Check URL parameters on initial load (?template=royal-java&to=Nama+Tamu)
   const urlParams = new URLSearchParams(window.location.search)
-  const initialTemplateParam = urlParams.get('template')
+  const initialTemplateParam = urlParams.get('template') || initialTemplateSlug || null
   const hasGuestParam = Boolean(urlParams.get('to') || urlParams.get('u') || urlParams.get('guest'))
   const hasPortalParam = Boolean(urlParams.get('portal') || urlParams.get('manage') || urlParams.get('invoice'))
 
@@ -81,10 +88,33 @@ export const AppContent: React.FC = () => {
     }
   }, [viewMode])
 
+  // Sync Dynamic SEO, Open Graph & WhatsApp metadata in DOM & title
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search)
+    const guestParam = params.get('to') || params.get('u') || params.get('guest')
+    const guestName = guestParam ? safeDecodeUri(guestParam) : undefined
+
+    if (viewMode === 'storefront') {
+      updateDynamicMetaTags({ isStorefront: true })
+    } else {
+      updateDynamicMetaTags({
+        template: selectedTemplate,
+        guestName,
+        customData: customPreviewData,
+        isStorefront: false
+      })
+    }
+  }, [viewMode, selectedTemplate, customPreviewData])
+
   // CRITICAL: Trigger audio playback directly during user gesture click
   const handleOpenInvitationWithAudio = () => {
     setIsOpened(true)
     setIsPlayingAudio(true)
+    track('open_gate', {
+      template: selectedTemplate.slug,
+      has_guest: hasGuestParam,
+      custom_preview: Boolean(customPreviewData)
+    })
 
     if (audioRef.current) {
       audioRef.current.volume = 1.0
@@ -175,7 +205,7 @@ export const AppContent: React.FC = () => {
           onOpenClientPortal={() => setIsPortalModalOpen(true)}
         />
       ) : (
-        <InvitationProvider template={selectedTemplate} customOrder={customPreviewData}>
+        <InvitationProvider template={selectedTemplate} customOrder={customPreviewData} isOpened={isOpened}>
           {/* Top Bar for Buyers in Preview Mode */}
           <PreviewFloatingBar
             activeTemplate={selectedTemplate}
@@ -219,10 +249,10 @@ export const AppContent: React.FC = () => {
   )
 }
 
-export const App: React.FC = () => {
+export const App: React.FC<AppProps> = ({ initialTemplateSlug }) => {
   return (
     <ToastProvider>
-      <AppContent />
+      <AppContent initialTemplateSlug={initialTemplateSlug} />
     </ToastProvider>
   )
 }

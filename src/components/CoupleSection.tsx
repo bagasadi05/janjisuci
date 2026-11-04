@@ -1,8 +1,9 @@
 import React from 'react'
-import { Heart, Sparkles } from 'lucide-react'
+import { Sparkles } from 'lucide-react'
 import { useInvitationData } from '../context/InvitationContext'
 import { FloralDivider, BotanicalCorner } from './Ornament'
-import { Reveal3D } from './common/Reveal3D'
+import { CalligraphyReveal } from './common/CalligraphyReveal'
+import { StaggerContainer, MotionItem, ScrollReveal } from './common/MotionReveal'
 
 const InstagramIcon: React.FC<{ className?: string }> = ({ className = 'w-3.5 h-3.5' }) => (
   <svg className={className} viewBox="0 0 24 24" fill="currentColor">
@@ -24,30 +25,43 @@ export const CoupleSection: React.FC = () => {
   return (
     <section id="couple" className="relative py-12 px-4 scroll-mt-6">
       <div className="max-w-4xl mx-auto text-center">
-        <div
-          className={`inline-flex items-center gap-1.5 px-3.5 py-1 rounded-full text-xs uppercase tracking-widest font-sans font-medium mb-3 transition-colors ${
-            isDark
-              ? 'bg-amber-500/15 border border-amber-400/30 text-amber-300'
-              : 'bg-amber-900/10 border border-amber-700/20 text-amber-900'
-          }`}
-        >
-          <Sparkles className={`w-3.5 h-3.5 ${isDark ? 'text-amber-400' : 'text-amber-700'}`} />
-          <span>Sang Mempelai</span>
-        </div>
+        {/* Header Staggered Sequence */}
+        <StaggerContainer stagger={0.12} delayChildren={0.05} className="mb-10">
+          <MotionItem variant="pop" className="flex justify-center">
+            <div
+              className={`inline-flex items-center gap-1.5 px-3.5 py-1 rounded-full text-xs uppercase tracking-widest font-sans font-medium mb-3 transition-colors ${
+                isDark
+                  ? 'bg-amber-500/15 border border-amber-400/30 text-amber-300'
+                  : 'bg-amber-900/10 border border-amber-700/20 text-amber-900'
+              }`}
+            >
+              <Sparkles className={`w-3.5 h-3.5 ${isDark ? 'text-amber-400' : 'text-amber-700'}`} />
+              <span>Sang Mempelai</span>
+            </div>
+          </MotionItem>
 
-        <h2 className={`font-serif text-3xl sm:text-4xl font-bold tracking-tight ${isDark ? 'text-white' : 'text-stone-800'}`}>
-          {title}
-        </h2>
-        <FloralDivider className="my-3" />
-        <p className={`font-sans text-xs sm:text-sm leading-relaxed px-4 max-w-xl mx-auto mb-10 ${isDark ? 'text-stone-300' : 'text-stone-600'}`}>
-          {subtitle}
-        </p>
+          <MotionItem variant="fadeUp">
+            <h2 className={`font-serif text-3xl sm:text-4xl font-bold tracking-tight ${isDark ? 'text-white' : 'text-stone-800'}`}>
+              {title}
+            </h2>
+          </MotionItem>
 
-        {/* Responsive Grid */}
+          <MotionItem variant="expand">
+            <FloralDivider className="my-3" />
+          </MotionItem>
+
+          <MotionItem variant="fadeUp">
+            <p className={`font-sans text-xs sm:text-sm leading-relaxed px-4 max-w-xl mx-auto ${isDark ? 'text-stone-300' : 'text-stone-600'}`}>
+              {subtitle}
+            </p>
+          </MotionItem>
+        </StaggerContainer>
+
+        {/* Responsive Grid with Alternating Slide-In Entrances */}
         <div className="relative grid grid-cols-1 md:grid-cols-2 gap-8 lg:gap-10 items-stretch">
           {/* Groom Card */}
-          <Reveal3D
-            delay={100}
+          <ScrollReveal
+            variant="slideLeft"
             interactive
             className={`relative p-6 sm:p-9 rounded-3xl backdrop-blur-md shadow-xl transition-all duration-300 hover:shadow-2xl flex flex-col items-center ${
               isDark
@@ -57,67 +71,83 @@ export const CoupleSection: React.FC = () => {
           >
             <BotanicalCorner position="top-left" />
 
-            {/* Double Arch Frame with Gold Rim */}
-            <div className="relative p-1.5 rounded-t-[84px] rounded-b-3xl bg-gradient-to-b from-amber-300 via-amber-500 to-amber-700 shadow-lg mb-5">
-              <div className="w-36 h-48 sm:w-44 sm:h-56 rounded-t-[80px] rounded-b-[22px] overflow-hidden bg-stone-100">
-                <img
-                  src={groom.photo}
-                  alt={groom.fullName}
-                  loading="lazy"
-                  decoding="async"
-                  className="w-full h-full object-cover object-top hover:scale-105 transition-transform duration-500 aspect-[3/4]"
-                />
-              </div>
-            </div>
+            <StaggerContainer stagger={0.09} delayChildren={0.15} className="w-full flex flex-col items-center">
+              {/* Double Arch Frame with Gold Rim */}
+              <MotionItem variant="zoomIn">
+                <div className="relative p-1.5 rounded-t-[84px] rounded-b-3xl bg-gradient-to-b from-amber-300 via-amber-500 to-amber-700 shadow-lg mb-5">
+                  <div className="w-36 h-48 sm:w-44 sm:h-56 rounded-t-[80px] rounded-b-[22px] overflow-hidden bg-stone-100">
+                    <img
+                      src={groom.photo}
+                      alt={groom.fullName}
+                      loading="lazy"
+                      decoding="async"
+                      className="w-full h-full object-cover object-top hover:scale-105 transition-transform duration-500 aspect-[3/4]"
+                    />
+                  </div>
+                </div>
+              </MotionItem>
 
-            <h3 className={`font-script text-4xl sm:text-5xl font-bold ${isDark ? 'text-amber-300' : 'text-amber-900'}`}>
-              {groom.shortName}
-            </h3>
-            <p className={`font-serif text-base sm:text-lg font-bold mt-1 ${isDark ? 'text-white' : 'text-stone-800'}`}>
-              {groom.fullName}
-            </p>
+              <MotionItem variant="fadeUp">
+                <h3 className={`font-script text-4xl sm:text-5xl font-bold ${isDark ? 'text-amber-300' : 'text-amber-900'}`}>
+                  <CalligraphyReveal text={groom.shortName} delay={0.15} shimmer />
+                </h3>
+              </MotionItem>
 
-            <p className={`text-xs font-sans mt-2 ${isDark ? 'text-stone-400' : 'text-stone-500'}`}>
-              {groom.childOrder}
-            </p>
-            <p className={`text-xs sm:text-sm font-serif font-semibold ${isDark ? 'text-stone-200' : 'text-stone-700'}`}>
-              {groom.fatherName} &amp; {groom.motherName}
-            </p>
+              <MotionItem variant="fadeUp">
+                <p className={`font-serif text-base sm:text-lg font-bold mt-1 ${isDark ? 'text-white' : 'text-stone-800'}`}>
+                  {groom.fullName}
+                </p>
+              </MotionItem>
 
-            {/* Personal Quote */}
-            <p
-              className={`font-serif italic text-xs mt-4 px-2 leading-relaxed p-3 rounded-2xl border ${
-                isDark
-                  ? 'bg-stone-950/60 border-amber-500/20 text-stone-300'
-                  : 'bg-amber-50/60 border-amber-600/10 text-stone-600'
-              }`}
-            >
-              "{groom.quote}"
-            </p>
+              <MotionItem variant="fadeUp">
+                <p className={`text-xs font-sans mt-2 ${isDark ? 'text-stone-400' : 'text-stone-500'}`}>
+                  {groom.childOrder}
+                </p>
+                <p className={`text-xs sm:text-sm font-serif font-semibold ${isDark ? 'text-stone-200' : 'text-stone-700'}`}>
+                  {groom.fatherName} &amp; {groom.motherName}
+                </p>
+              </MotionItem>
 
-            {groom.instagram && (
-              <div className="mt-5 pt-3 border-t border-white/10 w-full flex justify-center">
-                <a
-                  href={`https://instagram.com/${groom.instagram}`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className={`min-h-[44px] inline-flex items-center gap-1.5 px-4 py-2 rounded-full border text-xs font-sans transition-colors cursor-pointer shadow-sm active:scale-95 ${
+              {/* Personal Quote */}
+              <MotionItem variant="fadeUp" className="w-full">
+                <p
+                  className={`font-serif italic text-xs mt-4 px-2 leading-relaxed p-3 rounded-2xl border ${
                     isDark
-                      ? 'bg-white/10 hover:bg-white/20 border-white/20 text-stone-200'
-                      : 'bg-stone-100 hover:bg-stone-200 border-stone-300 text-stone-700 hover:text-amber-800'
+                      ? 'bg-stone-950/60 border-amber-500/20 text-stone-300'
+                      : 'bg-amber-50/60 border-amber-600/10 text-stone-600'
                   }`}
                 >
-                  <InstagramIcon className="w-3.5 h-3.5 text-pink-500" />
-                  <span>@{groom.instagram}</span>
-                </a>
-              </div>
-            )}
-          </Reveal3D>
+                  "{groom.quote}"
+                </p>
+              </MotionItem>
+
+              {groom.instagram && (
+                <MotionItem variant="pop" className="w-full">
+                  <div className="mt-5 pt-3 border-t border-white/10 w-full flex justify-center">
+                    <a
+                      href={`https://instagram.com/${groom.instagram}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className={`min-h-[44px] inline-flex items-center gap-1.5 px-4 py-2 rounded-full border text-xs font-sans transition-colors cursor-pointer shadow-sm active:scale-95 ${
+                        isDark
+                          ? 'bg-white/10 hover:bg-white/20 border-white/20 text-stone-200'
+                          : 'bg-stone-100 hover:bg-stone-200 border-stone-300 text-stone-700 hover:text-amber-800'
+                      }`}
+                    >
+                      <InstagramIcon className="w-3.5 h-3.5 text-pink-500" />
+                      <span>@{groom.instagram}</span>
+                    </a>
+                  </div>
+                </MotionItem>
+              )}
+            </StaggerContainer>
+          </ScrollReveal>
 
           {/* Bride Card (if present) */}
           {bride.shortName && (
-            <Reveal3D
-              delay={200}
+            <ScrollReveal
+              variant="slideRight"
+              delay={0.15}
               interactive
               className={`relative p-6 sm:p-9 rounded-3xl backdrop-blur-md shadow-xl transition-all duration-300 hover:shadow-2xl flex flex-col items-center ${
                 isDark
@@ -127,62 +157,77 @@ export const CoupleSection: React.FC = () => {
             >
               <BotanicalCorner position="top-right" />
 
-              {/* Double Arch Frame with Gold Rim */}
-              <div className="relative p-1.5 rounded-t-[84px] rounded-b-3xl bg-gradient-to-b from-amber-300 via-amber-500 to-amber-700 shadow-lg mb-5">
-                <div className="w-36 h-48 sm:w-44 sm:h-56 rounded-t-[80px] rounded-b-[22px] overflow-hidden bg-stone-100">
-                  <img
-                    src={bride.photo}
-                    alt={bride.fullName}
-                    loading="lazy"
-                    decoding="async"
-                    className="w-full h-full object-cover object-top hover:scale-105 transition-transform duration-500 aspect-[3/4]"
-                  />
-                </div>
-              </div>
+              <StaggerContainer stagger={0.09} delayChildren={0.2} className="w-full flex flex-col items-center">
+                {/* Double Arch Frame with Gold Rim */}
+                <MotionItem variant="zoomIn">
+                  <div className="relative p-1.5 rounded-t-[84px] rounded-b-3xl bg-gradient-to-b from-amber-300 via-amber-500 to-amber-700 shadow-lg mb-5">
+                    <div className="w-36 h-48 sm:w-44 sm:h-56 rounded-t-[80px] rounded-b-[22px] overflow-hidden bg-stone-100">
+                      <img
+                        src={bride.photo}
+                        alt={bride.fullName}
+                        loading="lazy"
+                        decoding="async"
+                        className="w-full h-full object-cover object-top hover:scale-105 transition-transform duration-500 aspect-[3/4]"
+                      />
+                    </div>
+                  </div>
+                </MotionItem>
 
-              <h3 className={`font-script text-4xl sm:text-5xl font-bold ${isDark ? 'text-amber-300' : 'text-amber-900'}`}>
-                {bride.shortName}
-              </h3>
-              <p className={`font-serif text-base sm:text-lg font-bold mt-1 ${isDark ? 'text-white' : 'text-stone-800'}`}>
-                {bride.fullName}
-              </p>
+                <MotionItem variant="fadeUp">
+                  <h3 className={`font-script text-4xl sm:text-5xl font-bold ${isDark ? 'text-amber-300' : 'text-amber-900'}`}>
+                    <CalligraphyReveal text={bride.shortName} delay={0.25} shimmer />
+                  </h3>
+                </MotionItem>
 
-              <p className={`text-xs font-sans mt-2 ${isDark ? 'text-stone-400' : 'text-stone-500'}`}>
-                {bride.childOrder}
-              </p>
-              <p className={`text-xs sm:text-sm font-serif font-semibold ${isDark ? 'text-stone-200' : 'text-stone-700'}`}>
-                {bride.fatherName} &amp; {bride.motherName}
-              </p>
+                <MotionItem variant="fadeUp">
+                  <p className={`font-serif text-base sm:text-lg font-bold mt-1 ${isDark ? 'text-white' : 'text-stone-800'}`}>
+                    {bride.fullName}
+                  </p>
+                </MotionItem>
 
-              {/* Personal Quote */}
-              <p
-                className={`font-serif italic text-xs mt-4 px-2 leading-relaxed p-3 rounded-2xl border ${
-                  isDark
-                    ? 'bg-stone-950/60 border-amber-500/20 text-stone-300'
-                    : 'bg-amber-50/60 border-amber-600/10 text-stone-600'
-                }`}
-              >
-                "{bride.quote}"
-              </p>
+                <MotionItem variant="fadeUp">
+                  <p className={`text-xs font-sans mt-2 ${isDark ? 'text-stone-400' : 'text-stone-500'}`}>
+                    {bride.childOrder}
+                  </p>
+                  <p className={`text-xs sm:text-sm font-serif font-semibold ${isDark ? 'text-stone-200' : 'text-stone-700'}`}>
+                    {bride.fatherName} &amp; {bride.motherName}
+                  </p>
+                </MotionItem>
 
-              {bride.instagram && (
-                <div className="mt-5 pt-3 border-t border-white/10 w-full flex justify-center">
-                  <a
-                    href={`https://instagram.com/${bride.instagram}`}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className={`min-h-[44px] inline-flex items-center gap-1.5 px-4 py-2 rounded-full border text-xs font-sans transition-colors cursor-pointer shadow-sm active:scale-95 ${
+                {/* Personal Quote */}
+                <MotionItem variant="fadeUp" className="w-full">
+                  <p
+                    className={`font-serif italic text-xs mt-4 px-2 leading-relaxed p-3 rounded-2xl border ${
                       isDark
-                        ? 'bg-white/10 hover:bg-white/20 border-white/20 text-stone-200'
-                        : 'bg-stone-100 hover:bg-stone-200 border-stone-300 text-stone-700 hover:text-amber-800'
+                        ? 'bg-stone-950/60 border-amber-500/20 text-stone-300'
+                        : 'bg-amber-50/60 border-amber-600/10 text-stone-600'
                     }`}
                   >
-                    <InstagramIcon className="w-3.5 h-3.5 text-pink-500" />
-                    <span>@{bride.instagram}</span>
-                  </a>
-                </div>
-              )}
-            </Reveal3D>
+                    "{bride.quote}"
+                  </p>
+                </MotionItem>
+
+                {bride.instagram && (
+                  <MotionItem variant="pop" className="w-full">
+                    <div className="mt-5 pt-3 border-t border-white/10 w-full flex justify-center">
+                      <a
+                        href={`https://instagram.com/${bride.instagram}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className={`min-h-[44px] inline-flex items-center gap-1.5 px-4 py-2 rounded-full border text-xs font-sans transition-colors cursor-pointer shadow-sm active:scale-95 ${
+                          isDark
+                            ? 'bg-white/10 hover:bg-white/20 border-white/20 text-stone-200'
+                            : 'bg-stone-100 hover:bg-stone-200 border-stone-300 text-stone-700 hover:text-amber-800'
+                        }`}
+                      >
+                        <InstagramIcon className="w-3.5 h-3.5 text-pink-500" />
+                        <span>@{bride.instagram}</span>
+                      </a>
+                    </div>
+                  </MotionItem>
+                )}
+              </StaggerContainer>
+            </ScrollReveal>
           )}
         </div>
       </div>

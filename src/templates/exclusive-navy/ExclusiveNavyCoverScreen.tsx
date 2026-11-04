@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { MailOpen, Sparkles, Crown } from 'lucide-react'
+import { Sparkles, Crown, Calendar } from 'lucide-react'
 import confetti from 'canvas-confetti'
 import { useInvitationData } from '../../context/InvitationContext'
 
@@ -20,7 +20,8 @@ export const ExclusiveNavyCoverScreen: React.FC<ExclusiveNavyCoverScreenProps> =
 }) => {
   const { activeTemplate } = useInvitationData()
   const [guestName, setGuestName] = useState<string>(propGuestName || 'Tamu Undangan')
-  const [isAnimating, setIsAnimating] = useState(false)
+  const [isOpening, setIsOpening] = useState(false)
+  const [isFullyDismissed, setIsFullyDismissed] = useState(false)
 
   useEffect(() => {
     const urlParams = new URLSearchParams(window.location.search)
@@ -34,7 +35,7 @@ export const ExclusiveNavyCoverScreen: React.FC<ExclusiveNavyCoverScreenProps> =
 
   const handleOpenInvitation = () => {
     onOpenWithAudio()
-    setIsAnimating(true)
+    setIsOpening(true)
 
     try {
       confetti({
@@ -62,14 +63,18 @@ export const ExclusiveNavyCoverScreen: React.FC<ExclusiveNavyCoverScreenProps> =
     } catch {
       // ignore
     }
+
+    setTimeout(() => {
+      setIsFullyDismissed(true)
+    }, 1150)
   }
 
-  if (isOpen && !isAnimating) return null
+  if (isOpen && (isFullyDismissed || !isOpening)) return null
 
   return (
     <div
-      className={`fixed inset-0 z-50 flex items-center justify-center bg-[#050C15] transition-all duration-1000 ease-in-out px-4 min-h-[100dvh] overflow-hidden ${
-        isAnimating ? 'opacity-0 pointer-events-none' : 'opacity-100'
+      className={`fixed inset-0 z-50 flex items-center justify-center bg-[#050C15] px-4 min-h-[100dvh] overflow-hidden perspective-1200 transition-opacity duration-500 ${
+        isFullyDismissed ? 'opacity-0 pointer-events-none' : 'opacity-100'
       }`}
     >
       {/* Background gradients */}
@@ -79,107 +84,97 @@ export const ExclusiveNavyCoverScreen: React.FC<ExclusiveNavyCoverScreenProps> =
       <div className="absolute -top-32 w-80 h-80 rounded-full bg-amber-500/10 blur-[90px] pointer-events-none" />
       <div className="absolute -bottom-32 w-80 h-80 rounded-full bg-blue-600/15 blur-[100px] pointer-events-none" />
 
-      {/* LUXURY LEFT ROYAL NAVY SLIDING GATE */}
+      {/* 3D LEFT ROYAL NAVY DOOR */}
       <div
-        className={`absolute top-0 bottom-0 left-0 w-1/2 z-10 pointer-events-none transition-transform duration-1000 ease-in-out border-r border-amber-400/40 bg-gradient-to-r from-[#050C15] via-[#09182B]/95 to-[#0E2440]/90 backdrop-blur-md ${
-          isAnimating ? '-translate-x-full -rotate-2' : 'translate-x-0 rotate-0'
-        }`}
+        className={`absolute top-0 bottom-0 left-0 w-1/2 z-20 pointer-events-none transition-all duration-1000 ease-[cubic-bezier(0.25,1,0.5,1)] transform-style-3d origin-left ${
+          isOpening
+            ? '-translate-x-[110%] -rotate-y-[70deg] opacity-70'
+            : 'translate-x-0 rotate-y-0 opacity-100'
+        } bg-gradient-to-r from-[#050C15] via-[#0B192C] to-[#142944] border-r-2 border-amber-400/50 shadow-[20px_0_40px_rgba(0,0,0,0.9)] flex items-center justify-end overflow-hidden`}
       >
-        <div className="absolute inset-y-10 right-4 w-[1px] bg-gradient-to-b from-transparent via-amber-400/60 to-transparent" />
-        <div className="absolute top-1/2 -translate-y-1/2 right-3 text-amber-300/30 font-serif text-5xl select-none rotate-90">
-          ⚜
+        <div className="absolute inset-y-10 right-6 w-[1.5px] bg-gradient-to-b from-transparent via-amber-400/60 to-transparent" />
+        <div className="absolute top-1/2 -translate-y-1/2 right-4 text-amber-300/30 font-serif text-5xl select-none rotate-90">
+          👑
         </div>
       </div>
 
-      {/* LUXURY RIGHT ROYAL NAVY SLIDING GATE */}
+      {/* 3D RIGHT ROYAL NAVY DOOR */}
       <div
-        className={`absolute top-0 bottom-0 right-0 w-1/2 z-10 pointer-events-none transition-transform duration-1000 ease-in-out border-l border-amber-400/40 bg-gradient-to-l from-[#050C15] via-[#09182B]/95 to-[#0E2440]/90 backdrop-blur-md ${
-          isAnimating ? 'translate-x-full rotate-2' : 'translate-x-0 rotate-0'
-        }`}
+        className={`absolute top-0 bottom-0 right-0 w-1/2 z-20 pointer-events-none transition-all duration-1000 ease-[cubic-bezier(0.25,1,0.5,1)] transform-style-3d origin-right ${
+          isOpening
+            ? 'translate-x-[110%] rotate-y-[70deg] opacity-70'
+            : 'translate-x-0 rotate-y-0 opacity-100'
+        } bg-gradient-to-l from-[#050C15] via-[#0B192C] to-[#142944] border-l-2 border-amber-400/50 shadow-[-20px_0_40px_rgba(0,0,0,0.9)] flex items-center justify-start overflow-hidden`}
       >
-        <div className="absolute inset-y-10 left-4 w-[1px] bg-gradient-to-b from-transparent via-amber-400/60 to-transparent" />
-        <div className="absolute top-1/2 -translate-y-1/2 left-3 text-amber-300/30 font-serif text-5xl select-none -rotate-90">
-          ⚜
+        <div className="absolute inset-y-10 left-6 w-[1.5px] bg-gradient-to-b from-transparent via-amber-400/60 to-transparent" />
+        <div className="absolute top-1/2 -translate-y-1/2 left-4 text-amber-300/30 font-serif text-5xl select-none -rotate-90">
+          👑
         </div>
       </div>
 
-      {/* Center Royal Arch Card */}
+      {/* CENTER GOLDEN LENS AURA (Triggers on Click) */}
+      {isOpening && (
+        <div className="absolute z-25 pointer-events-none w-80 h-80 rounded-full bg-gradient-to-r from-amber-400/40 via-blue-400/40 to-yellow-300/40 blur-3xl animate-lens-flare" />
+      )}
+
+      {/* Royal Arch Frame Card Container */}
       <div
-        className={`relative z-20 w-full max-w-sm sm:max-w-md mx-auto p-6 sm:p-9 rounded-3xl bg-[#0B1A2E]/85 backdrop-blur-2xl border border-amber-400/50 shadow-[0_30px_70px_rgba(0,0,0,0.9)] text-center text-white overflow-hidden transition-all duration-700 ${
-          isAnimating ? 'scale-105 opacity-0' : 'scale-100 opacity-100'
+        className={`relative z-30 w-full max-w-sm sm:max-w-md mx-auto p-7 sm:p-9 rounded-[2.5rem] bg-[#0B192C]/90 backdrop-blur-2xl border-2 border-amber-400/40 shadow-[0_30px_70px_rgba(0,0,0,0.95)] text-center text-white overflow-hidden transition-all duration-700 ${
+          isOpening ? 'scale-105 opacity-0 pointer-events-none' : 'scale-100 opacity-100'
         }`}
       >
-        {/* Corner decorative accents */}
-        <div className="absolute top-3 left-3 w-5 h-5 border-t-2 border-l-2 border-amber-400/60 rounded-tl-lg pointer-events-none" />
-        <div className="absolute top-3 right-3 w-5 h-5 border-t-2 border-r-2 border-amber-400/60 rounded-tr-lg pointer-events-none" />
-        <div className="absolute bottom-3 left-3 w-5 h-5 border-b-2 border-l-2 border-amber-400/60 rounded-bl-lg pointer-events-none" />
-        <div className="absolute bottom-3 right-3 w-5 h-5 border-b-2 border-r-2 border-amber-400/60 rounded-br-lg pointer-events-none" />
-
-        {/* Top Header Badge */}
-        <div className="space-y-1 mb-4">
-          <div className="inline-flex items-center gap-1.5 px-3.5 py-1 rounded-full bg-white/10 border border-amber-300/30 text-amber-200 text-[10px] sm:text-xs uppercase tracking-[0.25em] font-serif font-medium">
-            <Crown className="w-3.5 h-3.5 text-amber-300" />
-            <span>Royal Sapphire Wedding</span>
+        {/* Crown & Royal Header */}
+        <div className="flex justify-center mb-3">
+          <div className="w-14 h-14 rounded-full bg-amber-500/10 border border-amber-400/40 flex items-center justify-center shadow-[0_0_15px_rgba(212,175,55,0.25)]">
+            <Crown className="w-7 h-7 text-amber-300" />
           </div>
+        </div>
+
+        <div className="space-y-1 mb-2">
+          <p className="text-[10px] uppercase tracking-[0.35em] font-sans text-amber-300 font-semibold">
+            ROYAL WEDDING INVITATION
+          </p>
         </div>
 
         {/* Couple Names */}
-        <div className="my-3 sm:my-4 space-y-1">
-          <h1 className="font-serif text-3xl sm:text-4xl text-transparent bg-clip-text bg-gradient-to-r from-amber-100 via-amber-200 to-amber-300 font-normal tracking-wide drop-shadow-sm">
+        <div className="my-4">
+          <h1 className="font-serif text-4xl sm:text-5xl font-bold tracking-tight text-transparent bg-clip-text bg-gradient-to-r from-[#FFF2B2] via-[#E5C058] to-[#996515] drop-shadow-md">
             {coupleNames}
           </h1>
-          <p className="text-xs text-blue-200/80 tracking-widest font-mono font-medium">
-            {dateText}
+          <p className="text-xs text-amber-200/90 font-serif italic mt-2 flex items-center justify-center gap-1.5">
+            <Calendar className="w-3.5 h-3.5 text-amber-400" />
+            <span>{dateText}</span>
           </p>
         </div>
 
-        {/* Center Royal Arch Image Frame */}
-        <div className="relative my-3 flex justify-center">
-          <div className="w-32 h-44 sm:w-36 sm:h-48 rounded-t-full rounded-b-xl overflow-hidden p-1 bg-gradient-to-b from-amber-300/40 via-amber-400/20 to-transparent shadow-2xl shadow-black/80">
-            <div className="w-full h-full rounded-t-full rounded-b-lg overflow-hidden relative">
-              <img
-                src={activeTemplate?.heroImage || "https://images.unsplash.com/photo-1519225421980-715cb0215aed?auto=format&fit=crop&w=800&q=85"}
-                alt="Pengantin Nabilah & Yoga"
-                loading="eager"
-                fetchPriority="high"
-                decoding="async"
-                className="w-full h-full object-cover object-top filter brightness-95 contrast-105"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-[#0B192C]/80 via-transparent to-transparent" />
-            </div>
-          </div>
-        </div>
-
-        {/* Guest Card */}
-        <div className="my-4 py-3.5 px-4 rounded-xl bg-[#071322]/80 border border-blue-400/25 shadow-inner text-center">
-          <p className="text-[10px] uppercase tracking-wider text-blue-200/70 font-sans font-medium">
+        {/* Personalized Guest Badge */}
+        <div className="my-5 p-4 rounded-2xl bg-[#050C15]/80 border border-amber-400/30 text-center shadow-inner">
+          <p className="text-[10px] text-stone-400 font-sans tracking-widest uppercase mb-1">
             Kepada Yth. Bapak/Ibu/Saudara/i:
           </p>
-          <h2 className="text-lg sm:text-xl font-serif text-amber-200 font-semibold mt-0.5 tracking-wide">
+          <p className="font-serif font-bold text-xl text-amber-200 capitalize">
             {guestName}
-          </h2>
-          <p className="text-[10px] text-blue-300/60 mt-0.5 italic font-sans">
+          </p>
+          <p className="text-[10px] text-stone-400 mt-1 italic font-sans">
             di Tempat
           </p>
         </div>
 
-        {/* Open Button with Pulsing Gold Glow */}
-        <div className="relative inline-block mt-1">
-          <span className="absolute -inset-1 rounded-full bg-gradient-to-r from-amber-400 via-amber-300 to-amber-500 opacity-75 blur-md animate-pulse" aria-hidden="true" />
+        {/* Open Button */}
+        <div className="pt-2">
           <button
             type="button"
             onClick={handleOpenInvitation}
-            aria-label="Buka undangan dan nyalakan musik"
-            className="group relative inline-flex items-center justify-center gap-2.5 px-8 sm:px-10 py-3.5 rounded-full bg-gradient-to-r from-amber-400 via-amber-300 to-amber-500 text-slate-950 font-sans font-bold text-xs sm:text-sm tracking-wide shadow-2xl hover:brightness-110 active:scale-95 transition-all duration-300 cursor-pointer min-h-[48px] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-300"
+            aria-label="Buka pintu istana dan putar musik pernikahan"
+            className="w-full py-3.5 px-6 rounded-full bg-gradient-to-r from-amber-500 via-amber-300 to-amber-600 hover:brightness-110 text-stone-950 font-sans font-bold text-xs sm:text-sm tracking-widest uppercase shadow-[0_10px_30px_rgba(212,175,55,0.4)] transition-all duration-300 hover:scale-[1.03] active:scale-95 cursor-pointer flex items-center justify-center gap-2 group min-h-[48px] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-300"
           >
-            <MailOpen className="w-4 h-4 text-slate-900 transition-transform group-hover:-translate-y-0.5"  aria-hidden="true"/>
-            <span className="tracking-wider uppercase font-semibold">Buka Undangan</span>
+            <Sparkles className="w-4 h-4 text-stone-900 group-hover:rotate-45 transition-transform" aria-hidden="true" />
+            <span>Buka Undangan (Buka Pintu Istana)</span>
           </button>
+          <p className="text-[10px] text-stone-400 font-sans mt-3">
+            *Sentuh untuk membuka gerbang istana emas 3D & memutar lagu
+          </p>
         </div>
-
-        <p className="text-[10px] text-blue-200/50 mt-3 font-sans">
-          *Ketuk tombol untuk membuka gerbang & menyalakan musik
-        </p>
       </div>
     </div>
   )

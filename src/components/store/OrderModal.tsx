@@ -26,8 +26,11 @@ import {
   Info,
   Gift,
   MapPin,
-  Camera
+  Camera,
+  Download
 } from 'lucide-react'
+import { QRCodeSVG } from 'qrcode.react'
+import { toPng } from 'html-to-image'
 import {
   storeConfig,
   TemplateItem,
@@ -36,6 +39,7 @@ import {
   formatRupiah
 } from '../../config/storeConfig'
 import { useToast } from '../Toast'
+import { track, getAttribution } from '../../lib/analytics'
 
 interface OrderModalProps {
   isOpen: boolean
@@ -269,6 +273,31 @@ export const OrderModal: React.FC<OrderModalProps> = ({
     setTimeout(() => setCopiedPrice(false), 2500)
   }
 
+  const qrisCaptureRef = useRef<HTMLDivElement>(null)
+  const [isDownloadingQris, setIsDownloadingQris] = useState(false)
+
+  const handleDownloadOrderQris = async () => {
+    if (!qrisCaptureRef.current) return
+    setIsDownloadingQris(true)
+    try {
+      const dataUrl = await toPng(qrisCaptureRef.current, {
+        quality: 0.98,
+        pixelRatio: 2.5,
+        backgroundColor: '#ffffff'
+      })
+      const link = document.createElement('a')
+      link.download = `QRIS-JanjiSuci-${invoiceCode}.png`
+      link.href = dataUrl
+      link.click()
+      showToast('QRIS pembayaran berhasil diunduh ke galeri!', 'success')
+    } catch (err) {
+      console.error('Failed to download QRIS:', err)
+      showToast('Gagal mengunduh QRIS, silakan screenshot layar', 'error')
+    } finally {
+      setIsDownloadingQris(false)
+    }
+  }
+
   const handlePreviewWithMyData = () => {
     onApplyCustomPreview(selectedTemplate, formData)
     showToast('Data Anda berhasil diterapkan ke Pratinjau!', 'success')
@@ -334,9 +363,32 @@ export const OrderModal: React.FC<OrderModalProps> = ({
       )
     }
 
+    const attribution = getAttribution()
+    if (attribution.ref || attribution.source) {
+      lines.push(
+        `🔗 *Info Rujukan:* ${[
+          attribution.ref ? `Kode ${attribution.ref}` : '',
+          attribution.source ? `Sumber ${attribution.source}` : '',
+          attribution.campaign ? `Tema ${attribution.campaign}` : ''
+        ]
+          .filter(Boolean)
+          .join(' • ')}`
+      )
+    }
+
     lines.push(
       `Saya lampirkan bukti transfer pembayarannya. Mohon segera diproses ya Admin. Terima kasih banyak! 🙏`
     )
+
+    track('submit_order_wa', {
+      template: selectedTemplate.slug,
+      package: selectedPackage.id,
+      value: finalPrice,
+      payment_method: selectedPayment.id,
+      data_mode: dataMode,
+      ref: attribution.ref,
+      source: attribution.source
+    })
 
     const waUrl = `https://wa.me/${storeConfig.brand.whatsappNumber}?text=${encodeURIComponent(
       lines.join('\n')
@@ -915,25 +967,46 @@ export const OrderModal: React.FC<OrderModalProps> = ({
                 </div>
 
                 {/* QRIS Code Box */}
-                <div className="w-48 h-48 sm:w-56 sm:h-56 mx-auto bg-white p-3.5 rounded-2xl shadow-xl flex flex-col items-center justify-between border-4 border-amber-400/50">
-                  <div className="flex items-center justify-between w-full px-1">
-                    <span className="text-[10px] font-black text-rose-600 tracking-tighter">QRIS</span>
+                <div
+                  ref={qrisCaptureRef}
+                  className="w-52 sm:w-60 mx-auto bg-white p-3.5 rounded-2xl shadow-xl flex flex-col items-center justify-between border-4 border-amber-400/50"
+                >
+                  <div className="flex items-center justify-between w-full px-1 mb-2">
+                    <span className="text-[11px] font-black text-rose-600 tracking-tighter">QRIS</span>
                     <span className="text-[8px] font-bold text-stone-500 uppercase tracking-widest">NSP INDONESIA</span>
                   </div>
 
-                  {/* QR Pattern Representation */}
-                  <div className="w-full flex-1 flex items-center justify-center relative p-1">
-                    <div className="w-full h-full bg-stone-900 rounded-lg flex flex-col items-center justify-center p-2 text-amber-400">
-                      <QrCode className="w-24 h-24 sm:w-28 sm:h-28 text-white" />
-                      <span className="text-[9px] text-amber-300 font-mono mt-1 font-bold">
-                        JANJISUCI STUDIOS
-                      </span>
-                    </div>
+                  {/* Real Sharp QR Code */}
+                  <div className="p-2 rounded-xl bg-white border border-stone-200 shadow-inner flex items-center justify-center">
+                    <QRCodeSVG
+                      value={`https://janjisuci.web.id/pay?invoice=${invoiceCode}&amount=${finalPrice}&method=${selectedPayment.id}`}
+                      size={148}
+                      level="H"
+                      fgColor="#0c0a09"
+                      bgColor="#ffffff"
+                    />
                   </div>
 
-                  <p className="text-[9px] text-stone-600 font-bold">
-                    Scan via BCA, Mandiri, GoPay, OVO, ShopeePay &amp; DANA
-                  </p>
+                  <div className="mt-2 text-center">
+                    <p className="text-[10px] font-bold text-stone-800 font-mono">
+                      JANJISUCI DIGITAL STUDIO
+                    </p>
+                    <p className="text-[8px] text-stone-500 font-bold">
+                      Scan via BCA, Mandiri, GoPay, OVO, ShopeePay &amp; DANA
+                    </p>
+                  </div>
+                </div>
+
+                <div className="mt-3 flex justify-center">
+                  <button
+                    type="button"
+                    onClick={handleDownloadOrderQris}
+                    disabled={isDownloadingQris}
+                    className="inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full bg-white/10 hover:bg-white/20 border border-amber-400/30 text-amber-300 text-xs font-semibold transition-all cursor-pointer"
+                  >
+                    <Download className="w-3.5 h-3.5" />
+                    <span>📥 Unduh Kode QRIS (PNG)</span>
+                  </button>
                 </div>
 
                 {/* Total Payment Details */}

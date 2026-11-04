@@ -5,11 +5,13 @@ import { storeConfig, TemplateItem, CustomOrderData } from '../config/storeConfi
 interface InvitationContextValue {
   data: WeddingConfig
   activeTemplate: TemplateItem
+  isOpened?: boolean
 }
 
 const InvitationContext = createContext<InvitationContextValue>({
   data: weddingData,
-  activeTemplate: storeConfig.templates[0]
+  activeTemplate: storeConfig.templates[0],
+  isOpened: false
 })
 
 export const useInvitationData = () => useContext(InvitationContext)
@@ -165,12 +167,13 @@ export const buildMergedWeddingData = (
 export const InvitationProvider: React.FC<{
   template: TemplateItem
   customOrder?: Partial<CustomOrderData> | null
+  isOpened?: boolean
   children: React.ReactNode
-}> = ({ template, customOrder, children }) => {
+}> = ({ template, customOrder, isOpened = false, children }) => {
   const mergedData = buildMergedWeddingData(template, customOrder)
 
   return (
-    <InvitationContext.Provider value={{ data: mergedData, activeTemplate: template }}>
+    <InvitationContext.Provider value={{ data: mergedData, activeTemplate: template, isOpened }}>
       {children}
     </InvitationContext.Provider>
   )

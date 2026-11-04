@@ -1,20 +1,25 @@
 import React, { useEffect, useRef } from 'react'
 
-interface Reveal3DProps extends React.HTMLAttributes<HTMLElement> {
+export interface Reveal3DProps extends React.HTMLAttributes<HTMLElement> {
   children: React.ReactNode
   className?: string
-  delay?: 0 | 100 | 200 | 300 | 400 | 500
+  delay?: number
   interactive?: boolean
   as?: React.ElementType
   type?: 'button' | 'submit' | 'reset'
 }
 
+/**
+ * Reveal3D / RevealCascade Component
+ * Smooth floating entrance with de-blurring and staggered cascade delays
+ */
 export const Reveal3D: React.FC<Reveal3DProps> = ({
   children,
   className = '',
   delay = 0,
   interactive = false,
   as: Component = 'div',
+  style,
   ...rest
 }) => {
   const elementRef = useRef<HTMLElement | null>(null)
@@ -38,7 +43,7 @@ export const Reveal3D: React.FC<Reveal3DProps> = ({
         })
       },
       {
-        threshold: 0.1,
+        threshold: 0.08,
         rootMargin: '0px 0px -40px 0px'
       }
     )
@@ -52,11 +57,16 @@ export const Reveal3D: React.FC<Reveal3DProps> = ({
 
   const delayClass = delay > 0 ? `reveal-delay-${delay}` : ''
   const interactiveClass = interactive ? 'card-3d-interactive' : ''
+  const inlineStyle: React.CSSProperties = {
+    ...style,
+    ...(delay > 0 && !delayClass ? { transitionDelay: `${delay}ms` } : {})
+  }
 
   return (
     <Component
       ref={elementRef}
-      className={`reveal-3d ${delayClass} ${interactiveClass} ${className}`.trim()}
+      className={`reveal-cascade ${delayClass} ${interactiveClass} ${className}`.trim()}
+      style={inlineStyle}
       {...rest}
     >
       {children}
@@ -64,22 +74,23 @@ export const Reveal3D: React.FC<Reveal3DProps> = ({
   )
 }
 
+// Backward compatibility alias
+export const RevealCascade = Reveal3D
+
 /**
- * Hook to automatically observe all cards across any of the 16 invitation templates
- * Gives every content card a smooth 3D perspective scroll reveal and tilt effect!
+ * Hook to automatically orchestrate sequential "muncul satu-satu" (cascading stagger)
+ * across headings, cards, and grid items in every invitation template!
  */
 export function useAutoScrollReveal3D(containerRef?: React.RefObject<HTMLElement | null>) {
   useEffect(() => {
     if (typeof IntersectionObserver === 'undefined') return
 
-    // Small timeout to allow DOM elements from template rendering to mount
+    // Small delay to ensure template DOM nodes have mounted
     const timer = setTimeout(() => {
       const root = containerRef?.current || document
 
-      // Find all elements marked .reveal-3d or main content cards inside sections
-      const cardElements = root.querySelectorAll<HTMLElement>(
-        '.reveal-3d, section .rounded-2xl, section .rounded-3xl, section .glass-card, section .glass-card-dark'
-      )
+      // Find all thematic sections
+      const sections = root.querySelectorAll<HTMLElement>('section, main > div, #main-content section')
 
       const observer = new IntersectionObserver(
         (entries) => {
@@ -91,38 +102,60 @@ export function useAutoScrollReveal3D(containerRef?: React.RefObject<HTMLElement
           })
         },
         {
-          threshold: 0.08,
+          threshold: 0.06,
           rootMargin: '0px 0px -30px 0px'
         }
       )
 
-      cardElements.forEach((el) => {
-        // Skip floating buttons, modals, absolute decorative glows, navbars, and cover screens
-        const isAbsolute = window.getComputedStyle(el).position === 'absolute'
-        const isFixed = window.getComputedStyle(el).position === 'fixed'
-        const isExcluded =
-          isFixed ||
-          isAbsolute ||
-          el.closest('nav') ||
-          el.closest('#bottom-nav') ||
-          el.closest('[role="dialog"]') ||
-          el.closest('.fixed') ||
-          el.classList.contains('no-3d')
+      sections.forEach((section) => {
+        // Collect key sequential elements within this section
+        const candidates = section.querySelectorAll<HTMLElement>(
+          'h1, h2, h3, .section-title, p.leading-relaxed, .rounded-2xl, .rounded-3xl, .glass-card, .glass-card-dark, .grid > div, .grid > button, .reveal-3d, .reveal-cascade'
+        )
 
-        if (!isAbsolute && !isFixed && !isExcluded) {
-          if (!el.classList.contains('reveal-3d')) {
-            el.classList.add('reveal-3d', 'card-3d-interactive')
+        let staggerIndex = 0
+
+        candidates.forEach((el) => {
+          // Exclude absolute decorative graphics, floating navigation, and modals
+          const computed = window.getComputedStyle(el)
+          const isAbsolute = computed.position === 'absolute'
+          const isFixed = computed.position === 'fixed'
+          const isExcluded =
+            isAbsolute ||
+            isFixed ||
+            el.closest('nav') ||
+            el.closest('#bottom-nav') ||
+            el.closest('[role="dialog"]') ||
+            el.closest('.fixed') ||
+            el.classList.contains('no-reveal')
+
+          if (!isExcluded) {
+            // Apply cascade class
+            if (!el.classList.contains('reveal-cascade') && !el.classList.contains('reveal-3d')) {
+              el.classList.add('reveal-cascade')
+            }
+
+            // Assign smart incremental cascade delay (0ms, 120ms, 240ms, 360ms...)
+            // so elements enter sequentially ("muncul satu-satu") as user scrolls
+            const existingDelay = el.style.transitionDelay
+            if (!existingDelay && !el.className.includes('reveal-delay-')) {
+              const calculatedDelay = Math.min(staggerIndex * 120, 600)
+              el.style.transitionDelay = `${calculatedDelay}ms`
+            }
+
+            staggerIndex++
+
+            if (!el.classList.contains('is-visible')) {
+              observer.observe(el)
+            }
           }
-          if (!el.classList.contains('is-visible')) {
-            observer.observe(el)
-          }
-        }
+        })
       })
 
       return () => {
         observer.disconnect()
       }
-    }, 150)
+    }, 180)
 
     return () => clearTimeout(timer)
   }, [containerRef])

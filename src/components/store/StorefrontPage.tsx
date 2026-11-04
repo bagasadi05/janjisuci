@@ -38,21 +38,15 @@ import {
   PricingTier,
   formatRupiah
 } from '../../config/storeConfig'
+import { track } from '../../lib/analytics'
 import { GuestLinkGenerator } from './GuestLinkGenerator'
 import { useToast } from '../Toast'
+import { CalligraphyReveal } from '../common/CalligraphyReveal'
 
 interface StorefrontPageProps {
   onPreviewTemplate: (template: TemplateItem) => void
   onOrderTemplate: (template: TemplateItem, pkg?: PricingTier) => void
   onOpenClientPortal?: () => void
-}
-
-interface SocialNotification {
-  id: number
-  couple: string
-  city: string
-  templateName: string
-  timeAgo: string
 }
 
 type DesignVibe = 'royal' | 'modern' | 'romantic'
@@ -81,26 +75,6 @@ export const StorefrontPage: React.FC<StorefrontPageProps> = ({
   // Catalog Card Mini Audio Preview State
   const [playingAudioId, setPlayingAudioId] = useState<string | null>(null)
   const cardAudioRef = useRef<HTMLAudioElement | null>(null)
-
-  // Social Proof Toast Notification state
-  const [socialIndex, setSocialIndex] = useState(0)
-  const [showSocialProof, setShowSocialProof] = useState(true)
-
-  const recentOrders: SocialNotification[] = [
-    { id: 1, couple: 'Dimas & Bella', city: 'Jakarta Selatan', templateName: 'Royal Midnight Gold', timeAgo: '3 menit yang lalu' },
-    { id: 2, couple: 'Fajar & Anisa', city: 'Bandung', templateName: 'Exclusive Royal Navy', timeAgo: '7 menit yang lalu' },
-    { id: 3, couple: 'Raden & Sekar', city: 'Yogyakarta', templateName: 'Royal Javanese Heritage', timeAgo: '12 menit yang lalu' },
-    { id: 4, couple: 'Syahril & Rahma', city: 'Banjarmasin', templateName: 'Adat Banjar Sasirangan', timeAgo: '18 menit yang lalu' },
-    { id: 5, couple: 'Kevin & Jessica', city: 'Surabaya', templateName: 'Modern Luxury Champagne', timeAgo: '24 menit yang lalu' }
-  ]
-
-  // Rotate social notifications
-  useEffect(() => {
-    const timer = setInterval(() => {
-      setSocialIndex((prev) => (prev + 1) % recentOrders.length)
-    }, 9000)
-    return () => clearInterval(timer)
-  }, [recentOrders.length])
 
   // Stop card audio on unmount
   useEffect(() => {
@@ -141,6 +115,7 @@ export const StorefrontPage: React.FC<StorefrontPageProps> = ({
       audio
         .play()
         .then(() => {
+          track('play_audio_preview', { template: tpl.slug })
           cardAudioRef.current = audio
           setPlayingAudioId(tpl.id)
           showToast(`Memutar: ${tpl.defaultSongTitle}`, 'success')
@@ -186,8 +161,6 @@ export const StorefrontPage: React.FC<StorefrontPageProps> = ({
     const el = document.getElementById(id)
     if (el) el.scrollIntoView({ behavior: 'smooth' })
   }
-
-  const currentNotification = recentOrders[socialIndex]
 
   // Dynamic Theme Styling Variables based on designVibe
   const vibeConfig = {
@@ -281,10 +254,10 @@ export const StorefrontPage: React.FC<StorefrontPageProps> = ({
             </button>
             <button
               type="button"
-              onClick={() => scrollTo('testimoni')}
+              onClick={() => scrollTo('garansi')}
               className="hover:text-amber-300 transition-colors cursor-pointer py-1.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-400 rounded-lg"
             >
-              Testimoni
+              Garansi
             </button>
             <button
               type="button"
@@ -312,7 +285,10 @@ export const StorefrontPage: React.FC<StorefrontPageProps> = ({
 
             <button
               type="button"
-              onClick={() => onOrderTemplate(storeConfig.templates[0])}
+              onClick={() => {
+                track('start_order', { template: storeConfig.templates[0].slug, source: 'navbar' })
+                onOrderTemplate(storeConfig.templates[0])
+              }}
               aria-label="Pesan template undangan pernikahan sekarang"
               className={`min-h-[40px] inline-flex items-center gap-1.5 px-4 py-2 rounded-full bg-gradient-to-r ${vibeConfig.buttonGradient} text-stone-950 font-bold text-xs shadow-lg hover:brightness-110 active:scale-95 transition-all cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-300`}
             >
@@ -386,7 +362,7 @@ export const StorefrontPage: React.FC<StorefrontPageProps> = ({
             <div className="text-center mb-6">
               <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-amber-500/10 border border-amber-400/30 text-amber-300 text-xs font-semibold shadow-sm">
                 <Sparkles className="w-3.5 h-3.5" />
-                <span>Promo Spesial: Diskon Kilat hingga 55% • Paket Mulai Rp 39.000!</span>
+                <span>Harga Perkenalan Studio Baru • Paket Mulai Rp 39.000</span>
               </div>
             </div>
 
@@ -517,10 +493,13 @@ export const StorefrontPage: React.FC<StorefrontPageProps> = ({
                 </div>
               </div>
 
-              {/* Central Premium Smartphone Mockup */}
+              {/* Central Premium Smartphone Mockup (iPhone 16 Pro Style) */}
               <div
-                onClick={() => onPreviewTemplate(currentHeroTemplate)}
-                className={`group relative w-64 sm:w-72 rounded-[42px] p-3 bg-gradient-to-b from-stone-700 via-stone-800 to-stone-950 border-4 border-stone-700/80 shadow-[0_25px_60px_rgba(212,175,55,0.25)] hover:shadow-[0_30px_70px_rgba(212,175,55,0.4)] transition-all duration-500 cursor-pointer hover:scale-[1.02] ${
+                onClick={() => {
+                  track('view_template_demo', { template: currentHeroTemplate.slug, source: 'hero_mockup' })
+                  onPreviewTemplate(currentHeroTemplate)
+                }}
+                className={`group relative w-64 sm:w-72 rounded-[44px] p-3.5 bg-gradient-to-b from-stone-600 via-stone-850 to-stone-950 border-4 border-stone-600/70 shadow-[0_30px_70px_rgba(0,0,0,0.85),0_0_30px_rgba(212,175,55,0.22)] hover:shadow-[0_35px_80px_rgba(0,0,0,0.9),0_0_40px_rgba(212,175,55,0.35)] transition-all duration-500 cursor-pointer hover:scale-[1.02] ring-1 ring-amber-400/30 ${
                   isHeroSimulating ? 'scale-95 brightness-125' : ''
                 }`}
               >
@@ -539,9 +518,12 @@ export const StorefrontPage: React.FC<StorefrontPageProps> = ({
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-stone-950 via-stone-950/30 to-transparent" />
 
+                  {/* Glass Glare Sheen */}
+                  <div className="pointer-events-none absolute inset-0 bg-gradient-to-tr from-transparent via-white/8 to-transparent opacity-60 group-hover:opacity-100 transition-opacity" />
+
                   {/* Top Live Badge */}
                   <div className="absolute top-7 left-4 right-4 flex items-center justify-between z-20">
-                    <span className="px-2.5 py-1 rounded-full bg-black/60 backdrop-blur-md text-[10px] font-bold text-amber-300 border border-amber-500/30 flex items-center gap-1">
+                    <span className="px-2.5 py-1 rounded-full bg-black/65 backdrop-blur-md text-[10px] font-bold text-amber-300 border border-amber-500/40 flex items-center gap-1.5 shadow-md">
                       <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-ping" />
                       Live Preview
                     </span>
@@ -550,13 +532,17 @@ export const StorefrontPage: React.FC<StorefrontPageProps> = ({
                     </span>
                   </div>
 
-                  {/* Dynamic Couple Name Overlay */}
+                  {/* Dynamic Couple Name Overlay with Calligraphy Reveal */}
                   <div className="absolute bottom-5 inset-x-4 text-center z-20">
-                    <p className="text-[10px] text-amber-300 uppercase tracking-widest font-mono">
+                    <p className="text-[10px] text-amber-300 uppercase tracking-widest font-mono font-semibold">
                       The Wedding Celebration
                     </p>
                     <p className="font-serif text-xl sm:text-2xl font-bold text-white drop-shadow my-0.5 line-clamp-1">
-                      {heroGroomName.trim() || 'Rian'} &amp; {heroBrideName.trim() || 'Sarah'}
+                      <CalligraphyReveal
+                        key={`${heroGroomName}-${heroBrideName}`}
+                        text={`${heroGroomName.trim() || 'Rian'} & ${heroBrideName.trim() || 'Sarah'}`}
+                        shimmer
+                      />
                     </p>
                     <p className="text-[10px] text-stone-300 font-sans">
                       {heroEventDate}
@@ -601,7 +587,10 @@ export const StorefrontPage: React.FC<StorefrontPageProps> = ({
 
               <button
                 type="button"
-                onClick={() => onPreviewTemplate(currentHeroTemplate)}
+                onClick={() => {
+                  track('view_template_demo', { template: currentHeroTemplate.slug, source: 'hero_button' })
+                  onPreviewTemplate(currentHeroTemplate)
+                }}
                 aria-label="Coba demo template undangan pernikahan"
                 className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-8 py-4 rounded-full bg-white/10 hover:bg-white/15 border border-amber-400/30 text-amber-200 font-semibold text-sm transition-all cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white"
               >
@@ -737,7 +726,7 @@ export const StorefrontPage: React.FC<StorefrontPageProps> = ({
                   return (
                     <div
                       key={tpl.id}
-                      className="group rounded-3xl bg-stone-900 border border-white/10 hover:border-amber-500/50 overflow-hidden shadow-xl hover:shadow-2xl transition-all duration-300 flex flex-col justify-between"
+                      className="group rounded-3xl bg-stone-900/95 border border-white/10 hover:border-amber-400/60 overflow-hidden shadow-xl hover:shadow-[0_20px_50px_rgba(245,158,11,0.18)] transition-all duration-500 flex flex-col justify-between"
                     >
                       <div>
                         {/* Smartphone Mockup Preview Frame */}
@@ -794,7 +783,10 @@ export const StorefrontPage: React.FC<StorefrontPageProps> = ({
 
                               <button
                                 type="button"
-                                onClick={() => onPreviewTemplate(tpl)}
+                                onClick={() => {
+                                  track('view_template_demo', { template: tpl.slug, source: 'catalog_card' })
+                                  onPreviewTemplate(tpl)
+                                }}
                                 aria-label={`Lihat demo template ${tpl.name}`}
                                 className="min-h-[44px] px-3.5 py-2 rounded-full bg-white/20 hover:bg-white/30 backdrop-blur-md border border-white/30 text-white text-xs font-semibold flex items-center gap-1.5 transition-all cursor-pointer shrink-0 ml-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white"
                               >
@@ -880,7 +872,10 @@ export const StorefrontPage: React.FC<StorefrontPageProps> = ({
                         <div className="flex items-center gap-2">
                           <button
                             type="button"
-                            onClick={() => onPreviewTemplate(tpl)}
+                            onClick={() => {
+                              track('view_template_demo', { template: tpl.slug, source: 'catalog_card' })
+                              onPreviewTemplate(tpl)
+                            }}
                             aria-label={`Lihat demo template ${tpl.name}`}
                             className="min-h-[44px] px-3.5 py-2.5 rounded-xl bg-stone-800 hover:bg-stone-700 text-stone-200 text-xs font-semibold transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-400"
                           >
@@ -888,7 +883,10 @@ export const StorefrontPage: React.FC<StorefrontPageProps> = ({
                           </button>
                           <button
                             type="button"
-                            onClick={() => onOrderTemplate(tpl)}
+                            onClick={() => {
+                              track('start_order', { template: tpl.slug, source: 'catalog_card' })
+                              onOrderTemplate(tpl)
+                            }}
                             aria-label={`Pilih dan pesan template ${tpl.name}`}
                             className={`min-h-[44px] inline-flex items-center gap-1.5 px-4 py-2.5 rounded-xl bg-gradient-to-r ${vibeConfig.buttonGradient} text-stone-950 text-xs font-bold shadow-md transition-all cursor-pointer active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-300`}
                           >
@@ -966,8 +964,8 @@ export const StorefrontPage: React.FC<StorefrontPageProps> = ({
                     key={pkg.id}
                     className={`relative rounded-3xl p-6 sm:p-8 flex flex-col justify-between transition-all ${
                       pkg.isPopular
-                        ? `bg-gradient-to-b from-amber-950/60 via-stone-900 to-stone-900 border-2 ${vibeConfig.borderAccent} shadow-[0_15px_40px_rgba(212,175,55,0.2)] scale-[1.02]`
-                        : 'bg-stone-900 border border-white/10'
+                        ? `bg-gradient-to-b from-amber-950/70 via-stone-900 to-stone-900 border-2 ${vibeConfig.borderAccent} popular-package-shimmer scale-[1.02] z-10`
+                        : 'bg-stone-900/90 border border-white/10 hover:border-white/20'
                     }`}
                   >
                     <div>
@@ -1014,7 +1012,10 @@ export const StorefrontPage: React.FC<StorefrontPageProps> = ({
 
                     <button
                       type="button"
-                      onClick={() => onOrderTemplate(defaultTemplate, pkg)}
+                      onClick={() => {
+                        track('start_order', { template: defaultTemplate.slug, package: pkg.id, source: 'pricing_tier' })
+                        onOrderTemplate(defaultTemplate, pkg)
+                      }}
                       aria-label={`Pilih ${pkg.name} seharga ${formatRupiah(pkg.price)}`}
                       className={`min-h-[48px] w-full py-3.5 px-6 rounded-2xl font-bold text-xs sm:text-sm transition-all cursor-pointer active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-300 ${
                         pkg.isPopular
@@ -1091,60 +1092,202 @@ export const StorefrontPage: React.FC<StorefrontPageProps> = ({
         {/* GENERATOR LINK TAMU SECTION */}
         <GuestLinkGenerator />
 
-        {/* TESTIMONIALS SECTION */}
-        <section id="testimoni" className="py-16 sm:py-20 px-4 bg-stone-900/60 border-t border-white/10 scroll-mt-14 defer-render">
+        {/* GARANSI & PROGRAM PELANGGAN PERDANA SECTION */}
+        <section id="garansi" className="py-16 sm:py-20 px-4 bg-stone-900/60 border-t border-white/10 scroll-mt-14 defer-render relative">
+          <span id="testimoni" className="sr-only" aria-hidden="true" />
           <div className="max-w-6xl mx-auto">
+            {/* Real Testimonials Grid (only rendered if authentic customer reviews exist) */}
+            {storeConfig.testimonials && storeConfig.testimonials.length > 0 && (
+              <div className="mb-14">
+                <div className="text-center mb-8">
+                  <div className="inline-flex items-center gap-1.5 px-3.5 py-1 rounded-full bg-amber-500/10 border border-amber-500/30 text-amber-300 text-xs uppercase tracking-widest font-semibold mb-3">
+                    <Star className="w-3.5 h-3.5 fill-amber-300" />
+                    <span>Ulasan Nyata Pelanggan</span>
+                  </div>
+                  <h3 className="font-serif text-2xl sm:text-3xl font-bold text-white">
+                    Cerita Kebahagiaan Pasangan
+                  </h3>
+                  <p className="text-stone-400 text-xs sm:text-sm max-w-xl mx-auto mt-1">
+                    Ulasan jujur dari mempelai yang telah merayakan momen istimewa mereka bersama JanjiSuci.id:
+                  </p>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                  {storeConfig.testimonials.map((t) => (
+                    <div
+                      key={t.id}
+                      className="p-6 rounded-3xl bg-stone-900/90 border border-white/10 flex flex-col justify-between hover:border-amber-500/40 transition-all duration-300 shadow-xl"
+                    >
+                      <div>
+                        <div className="flex items-center justify-between gap-2 mb-4">
+                          <div className="flex text-amber-400 gap-0.5">
+                            {[...Array(t.rating)].map((_, i) => (
+                              <Star key={i} className="w-4 h-4 fill-amber-400" />
+                            ))}
+                          </div>
+                          <span className="text-[11px] text-stone-500 font-mono">{t.date}</span>
+                        </div>
+
+                        <p className="text-xs sm:text-sm text-stone-300 leading-relaxed italic mb-6">
+                          "{t.comment}"
+                        </p>
+                      </div>
+
+                      <div className="flex items-center gap-3 pt-4 border-t border-white/10">
+                        <img
+                          src={t.avatar}
+                          alt={t.coupleName}
+                          className="w-11 h-11 rounded-full object-cover border border-amber-400/40"
+                        />
+                        <div>
+                          <h4 className="font-serif font-bold text-sm text-white">
+                            {t.coupleName}
+                          </h4>
+                          <p className="text-[11px] text-amber-300/80">
+                            Tema: {t.templateName} • {t.city}
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* Main Header: Kenapa Aman Pesan di JanjiSuci.id? */}
             <div className="text-center mb-12">
-              <div className="inline-flex items-center gap-1.5 px-3.5 py-1 rounded-full bg-amber-500/10 border border-amber-500/30 text-amber-300 text-xs uppercase tracking-widest font-semibold mb-3">
-                <Star className="w-3.5 h-3.5 fill-amber-300" />
-                <span>Cerita Kebahagiaan Klien</span>
+              <div className="inline-flex items-center gap-1.5 px-3.5 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/30 text-emerald-300 text-xs uppercase tracking-widest font-semibold mb-3">
+                <ShieldCheck className="w-3.5 h-3.5" />
+                <span>Jaminan Kualitas &amp; Keamanan</span>
               </div>
               <h2 className="font-serif text-3xl sm:text-5xl font-bold text-white">
-                Dipercaya Ratusan Pasangan Pengantin
+                Kenapa Aman Pesan di JanjiSuci.id?
               </h2>
-              <p className="text-stone-400 text-xs sm:text-sm max-w-xl mx-auto mt-2">
-                Kisah nyata dari mempelai yang telah merayakan momen istimewa mereka bersama JanjiSuci.id:
+              <p className="text-stone-400 text-xs sm:text-sm max-w-xl mx-auto mt-2 leading-relaxed">
+                Kami berkomitmen memberikan kepastian dan ketenangan pikiran di setiap tahapan pembuatan undangan tanpa rasa was-was:
               </p>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              {storeConfig.testimonials.map((t) => (
-                <div
-                  key={t.id}
-                  className="p-6 rounded-3xl bg-stone-900/90 border border-white/10 flex flex-col justify-between hover:border-amber-500/40 transition-all duration-300 shadow-xl"
-                >
-                  <div>
-                    <div className="flex items-center justify-between gap-2 mb-4">
-                      <div className="flex text-amber-400 gap-0.5">
-                        {[...Array(t.rating)].map((_, i) => (
-                          <Star key={i} className="w-4 h-4 fill-amber-400" />
-                        ))}
-                      </div>
-                      <span className="text-[11px] text-stone-500 font-mono">{t.date}</span>
-                    </div>
+            {/* 4 Guarantee Cards */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 mb-10">
+              <div className="p-6 rounded-3xl bg-stone-900/90 border border-white/10 hover:border-amber-400/40 transition-all duration-300 flex flex-col justify-between shadow-xl">
+                <div>
+                  <div className="w-11 h-11 rounded-2xl bg-amber-500/15 border border-amber-500/30 text-amber-300 flex items-center justify-center mb-4">
+                    <CheckCircle2 className="w-5 h-5 text-amber-300" />
+                  </div>
+                  <span className="text-[10px] uppercase font-mono tracking-wider text-amber-400 font-semibold block mb-1">
+                    Garansi Revisi
+                  </span>
+                  <h3 className="font-serif text-lg font-bold text-white mb-2">
+                    Revisi Gratis Sampai Puas
+                  </h3>
+                  <p className="text-xs text-stone-400 leading-relaxed">
+                    Perubahan jadwal, penulisan nama, denah, atau rute acara kami bantu revisi tanpa biaya hingga H-1 acara.
+                  </p>
+                </div>
+              </div>
 
-                    <p className="text-xs sm:text-sm text-stone-300 leading-relaxed italic mb-6">
-                      "{t.comment}"
-                    </p>
+              <div className="p-6 rounded-3xl bg-stone-900/90 border border-white/10 hover:border-amber-400/40 transition-all duration-300 flex flex-col justify-between shadow-xl">
+                <div>
+                  <div className="w-11 h-11 rounded-2xl bg-sky-500/15 border border-sky-500/30 text-sky-300 flex items-center justify-center mb-4">
+                    <Eye className="w-5 h-5 text-sky-300" />
+                  </div>
+                  <span className="text-[10px] uppercase font-mono tracking-wider text-sky-400 font-semibold block mb-1">
+                    Coba Interaktif
+                  </span>
+                  <h3 className="font-serif text-lg font-bold text-white mb-2">
+                    Lihat Dulu, Bayar Kemudian
+                  </h3>
+                  <p className="text-xs text-stone-400 leading-relaxed">
+                    Coba simulator demo lengkap dengan nama Anda sendiri di website sebelum memutuskan untuk melakukan transfer pembayaran.
+                  </p>
+                </div>
+              </div>
+
+              <div className="p-6 rounded-3xl bg-stone-900/90 border border-white/10 hover:border-amber-400/40 transition-all duration-300 flex flex-col justify-between shadow-xl">
+                <div>
+                  <div className="w-11 h-11 rounded-2xl bg-emerald-500/15 border border-emerald-500/30 text-emerald-300 flex items-center justify-center mb-4">
+                    <MessageCircle className="w-5 h-5 text-emerald-300" />
+                  </div>
+                  <span className="text-[10px] uppercase font-mono tracking-wider text-emerald-400 font-semibold block mb-1">
+                    Layanan Ramah
+                  </span>
+                  <h3 className="font-serif text-lg font-bold text-white mb-2">
+                    Admin Responsif via WhatsApp
+                  </h3>
+                  <p className="text-xs text-stone-400 leading-relaxed">
+                    Didampingi admin ramah yang siap membantu konsultasi setiap {storeConfig.brand.workingHours}. Respons cepat &amp; transparan.
+                  </p>
+                </div>
+              </div>
+
+              <div className="p-6 rounded-3xl bg-stone-900/90 border border-white/10 hover:border-amber-400/40 transition-all duration-300 flex flex-col justify-between shadow-xl">
+                <div>
+                  <div className="w-11 h-11 rounded-2xl bg-rose-500/15 border border-rose-500/30 text-rose-300 flex items-center justify-center mb-4">
+                    <ShieldCheck className="w-5 h-5 text-rose-300" />
+                  </div>
+                  <span className="text-[10px] uppercase font-mono tracking-wider text-rose-400 font-semibold block mb-1">
+                    Jaminan Refund
+                  </span>
+                  <h3 className="font-serif text-lg font-bold text-white mb-2">
+                    Uang Kembali 100%
+                  </h3>
+                  <p className="text-xs text-stone-400 leading-relaxed">
+                    Jika pesanan belum mulai dikerjakan dan Anda membatalkan, uang kembali utuh 100% tanpa potongan berbelit.
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            {/* Highlighted "Program Pelanggan Perdana" Card */}
+            <div className="rounded-3xl p-6 sm:p-8 bg-gradient-to-br from-amber-950/40 via-stone-900 to-stone-950 border-2 border-amber-500/30 shadow-[0_20px_50px_rgba(212,175,55,0.12)] relative overflow-hidden">
+              <div className="absolute -top-24 -right-24 w-64 h-64 bg-amber-500/10 rounded-full blur-3xl pointer-events-none" />
+
+              <div className="relative z-10 flex flex-col lg:flex-row items-start lg:items-center justify-between gap-8">
+                <div className="max-w-2xl">
+                  <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-amber-500/20 text-amber-300 text-xs font-bold uppercase tracking-wider border border-amber-500/30 mb-3">
+                    <Gift className="w-3.5 h-3.5" />
+                    <span>Program Pelanggan Perdana</span>
                   </div>
 
-                  <div className="flex items-center gap-3 pt-4 border-t border-white/10">
-                    <img
-                      src={t.avatar}
-                      alt={t.coupleName}
-                      className="w-11 h-11 rounded-full object-cover border border-amber-400/40"
-                    />
-                    <div>
-                      <h4 className="font-serif font-bold text-sm text-white">
-                        {t.coupleName}
-                      </h4>
-                      <p className="text-[11px] text-amber-300/80">
-                        Tema: {t.templateName} • {t.city}
-                      </p>
+                  <h3 className="font-serif text-2xl sm:text-3xl font-bold text-white mb-2.5">
+                    Studio Baru, Dedikasi Penuh untuk Hari Bahagia Anda
+                  </h3>
+
+                  <p className="text-xs sm:text-sm text-stone-300 leading-relaxed mb-4">
+                    JanjiSuci.id adalah studio kreatif yang baru hadir untuk menghadirkan standar baru undangan digital di Indonesia. Untuk 20 pasangan pengantin pertama yang bersedia memberikan masukan dan ulasan jujur setelah acara, kami memberikan apresiasi istimewa:
+                  </p>
+
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 text-xs text-stone-300">
+                    <div className="flex items-start gap-2">
+                      <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0 mt-0.5" />
+                      <span><strong>Gratis Upgrade Fitur</strong> (Amplop Digital &amp; Generator Tamu)</span>
+                    </div>
+                    <div className="flex items-start gap-2">
+                      <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0 mt-0.5" />
+                      <span><strong>Prioritas Pengerjaan Kilat</strong> langsung oleh lead desainer</span>
                     </div>
                   </div>
                 </div>
-              ))}
+
+                <div className="shrink-0 w-full lg:w-auto flex flex-col sm:flex-row lg:flex-col gap-2.5">
+                  <a
+                    href={`https://wa.me/${storeConfig.brand.whatsappNumber}?text=${encodeURIComponent(
+                      'Halo Admin JanjiSuci.id, saya tertarik dengan Program Pelanggan Perdana. Apakah kuota bonus upgrade masih tersedia untuk tanggal acara saya?'
+                    )}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    onClick={() => track('contact_wa', { source: 'program_pelanggan_perdana' })}
+                    className={`min-h-[48px] inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-2xl bg-gradient-to-r ${vibeConfig.buttonGradient} text-stone-950 font-bold text-xs sm:text-sm shadow-lg hover:brightness-110 active:scale-95 transition-all text-center focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-300`}
+                  >
+                    <MessageCircle className="w-4 h-4" />
+                    <span>Tanya Program Perdana via WA</span>
+                  </a>
+                  <span className="text-[11px] text-stone-400 text-center lg:text-left">
+                    Konsultasi santai • Tanpa komitmen order di awal
+                  </span>
+                </div>
+              </div>
             </div>
           </div>
         </section>
@@ -1205,37 +1348,6 @@ export const StorefrontPage: React.FC<StorefrontPageProps> = ({
         </section>
       </main>
 
-      {/* FLOATING RECENT ORDER TOAST (FOMO Social Proof) */}
-      {showSocialProof && currentNotification && (
-        <aside
-          aria-label="Aktivitas pesanan terkini"
-          className="fixed bottom-20 sm:bottom-6 left-4 z-40 max-w-xs sm:max-w-sm p-3 rounded-2xl bg-stone-900/95 backdrop-blur-md border border-amber-500/30 shadow-[0_15px_35px_rgba(0,0,0,0.7)] flex items-center gap-3 animate-fade-in"
-        >
-          <div className="w-9 h-9 rounded-xl bg-amber-500/20 text-amber-300 flex items-center justify-center shrink-0 border border-amber-500/30">
-            💍
-          </div>
-          <div className="text-left flex-1 min-w-0">
-            <p className="text-[10px] text-amber-300/90 uppercase tracking-widest font-mono font-semibold">
-              Baru Saja Dipesan
-            </p>
-            <p className="text-xs font-bold text-white truncate">
-              {currentNotification.couple} • {currentNotification.city}
-            </p>
-            <p className="text-[10px] text-stone-400 truncate">
-              {currentNotification.templateName} ({currentNotification.timeAgo})
-            </p>
-          </div>
-          <button
-            type="button"
-            onClick={() => setShowSocialProof(false)}
-            aria-label="Tutup notifikasi pesanan"
-            className="p-1 rounded-lg text-stone-500 hover:text-white transition-colors cursor-pointer shrink-0"
-          >
-            <X className="w-3.5 h-3.5" />
-          </button>
-        </aside>
-      )}
-
       {/* FLOATING WHATSAPP BUTTON */}
       <a
         href={`https://wa.me/${storeConfig.brand.whatsappNumber}?text=${encodeURIComponent(
@@ -1243,6 +1355,7 @@ export const StorefrontPage: React.FC<StorefrontPageProps> = ({
         )}`}
         target="_blank"
         rel="noopener noreferrer"
+        onClick={() => track('contact_wa', { source: 'floating_button' })}
         aria-label={`Konsultasi via WhatsApp Admin (${storeConfig.brand.whatsappDisplay})`}
         className="fixed bottom-20 sm:bottom-6 right-4 sm:right-6 z-40 flex items-center gap-2 px-4 py-3 rounded-full bg-emerald-600 hover:bg-emerald-500 text-white shadow-[0_10px_25px_rgba(16,185,129,0.4)] transition-all duration-300 active:scale-95 border border-emerald-400/30 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white min-h-[44px]"
       >
@@ -1292,7 +1405,10 @@ export const StorefrontPage: React.FC<StorefrontPageProps> = ({
 
         <button
           type="button"
-          onClick={() => onOrderTemplate(storeConfig.templates[0])}
+          onClick={() => {
+            track('start_order', { template: storeConfig.templates[0].slug, source: 'mobile_nav' })
+            onOrderTemplate(storeConfig.templates[0])
+          }}
           className="flex flex-col items-center gap-1 text-[10px] text-amber-300 font-bold cursor-pointer py-1"
         >
           <ShoppingBag className="w-4 h-4 text-amber-400" />
@@ -1316,6 +1432,7 @@ export const StorefrontPage: React.FC<StorefrontPageProps> = ({
           )}`}
           target="_blank"
           rel="noopener noreferrer"
+          onClick={() => track('contact_wa', { source: 'mobile_nav' })}
           className="flex flex-col items-center gap-1 text-[10px] text-emerald-400 font-semibold cursor-pointer py-1"
         >
           <MessageCircle className="w-4 h-4 fill-emerald-500 text-emerald-500" />

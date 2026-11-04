@@ -1,6 +1,8 @@
 import React from 'react'
 import { CoverScreen } from '../../components/CoverScreen'
-import { FallingPetals } from '../../components/FallingPetals'
+import { BotanicalSageAmbiance } from './BotanicalSageAmbiance'
+import { BotanicalScrollVine } from './BotanicalScrollVine'
+import { BotanicalWatermark } from './BotanicalWatermark'
 import { BottomNav } from '../../components/BottomNav'
 import { DesktopShowcase } from '../../components/DesktopShowcase'
 import { HeroSection } from '../../components/HeroSection'
@@ -40,8 +42,11 @@ export const BotanicalSageTemplate: React.FC<TemplateViewProps> = ({
       {/* Cover Gate: 3D Wax Seal with Classic Sage Envelope */}
       <CoverScreen isOpen={isOpened} onOpenWithAudio={onOpenWithAudio} />
 
-      {/* Floating Flower Petals Ambiance */}
-      <FallingPetals active={isOpened} />
+      {/* Signature Floating Sage & Golden Olive Fluttering Leaves Ambiance */}
+      <BotanicalSageAmbiance active={isOpened} />
+
+      {/* Living Interactive Botanical Vine Scroll Progress Indicator */}
+      {isOpened && <BotanicalScrollVine />}
 
       {/* Floating Bottom Navigation Bar */}
       {isOpened && <BottomNav />}
@@ -61,7 +66,10 @@ export const BotanicalSageTemplate: React.FC<TemplateViewProps> = ({
           className="w-full lg:w-[58%] xl:w-[62%] min-h-screen shadow-2xl relative border-l border-amber-600/15 transition-colors duration-500"
           style={{ backgroundColor: template.themeColors.primaryBg }}
         >
-          <main className="w-full max-w-4xl mx-auto px-2 sm:px-6 lg:px-8 py-4 sm:py-8 outline-none">
+          {/* Subtle Organic Parallax Foliage Watermark */}
+          <BotanicalWatermark />
+
+          <main className="relative z-10 w-full max-w-4xl mx-auto px-2 sm:px-6 lg:px-8 py-4 sm:py-8 outline-none">
             <HeroSection />
             <QuoteSection />
             <CoupleSection />

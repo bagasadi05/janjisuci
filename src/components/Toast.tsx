@@ -1,14 +1,14 @@
 import React, { createContext, useContext, useState, ReactNode } from 'react'
-import { CheckCircle2, Info, X } from 'lucide-react'
+import { CheckCircle2, Info, X, AlertCircle } from 'lucide-react'
 
 interface Toast {
   id: string
   message: string
-  type?: 'success' | 'info'
+  type?: 'success' | 'info' | 'error'
 }
 
 interface ToastContextType {
-  showToast: (message: string, type?: 'success' | 'info') => void
+  showToast: (message: string, type?: 'success' | 'info' | 'error') => void
 }
 
 const ToastContext = createContext<ToastContextType | undefined>(undefined)
@@ -21,7 +21,7 @@ export const ToastProvider: React.FC<{ children: ReactNode }> = ({ children }) =
 
   const [toasts, setToasts] = useState<Toast[]>([])
 
-  const showToast = (message: string, type: 'success' | 'info' = 'success') => {
+  const showToast = (message: string, type: 'success' | 'info' | 'error' = 'success') => {
     const id = Math.random().toString(36).substring(2, 9)
     setToasts((prev) => [...prev, { id, message, type }])
 
@@ -52,6 +52,8 @@ export const ToastProvider: React.FC<{ children: ReactNode }> = ({ children }) =
           >
             {toast.type === 'success' ? (
               <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0" aria-hidden="true" />
+            ) : toast.type === 'error' ? (
+              <AlertCircle className="w-4 h-4 text-rose-400 shrink-0" aria-hidden="true" />
             ) : (
               <Info className="w-4 h-4 text-amber-400 shrink-0" aria-hidden="true" />
             )}
@@ -75,7 +77,7 @@ export const useToast = () => {
   const context = useContext(ToastContext)
   if (!context) {
     return {
-      showToast: (message: string, type: 'success' | 'info' = 'success') => {
+      showToast: (message: string, type: 'success' | 'info' | 'error' = 'success') => {
         console.warn(`[Toast ${type} (fallback)]:`, message)
       }
     }

@@ -1,6 +1,8 @@
-import React from 'react'
-import { ArrowLeft, ShoppingBag, Sparkles, RotateCcw, ChevronDown } from 'lucide-react'
+import React, { useState } from 'react'
+import { ArrowLeft, ShoppingBag, Sparkles, RotateCcw, ChevronDown, Copy, Check, Link2 } from 'lucide-react'
 import { storeConfig, TemplateItem, formatRupiah } from '../../config/storeConfig'
+import { useToast } from '../Toast'
+import { track } from '../../lib/analytics'
 
 interface PreviewFloatingBarProps {
   activeTemplate: TemplateItem
@@ -19,25 +21,59 @@ export const PreviewFloatingBar: React.FC<PreviewFloatingBarProps> = ({
   hasCustomPreviewData,
   onResetCustomData
 }) => {
+  const { showToast } = useToast()
+  const [isCopied, setIsCopied] = useState(false)
+
+  const handleCopyLink = () => {
+    if (typeof window !== 'undefined') {
+      navigator.clipboard.writeText(window.location.href)
+      setIsCopied(true)
+      track('copy_demo_link', { template: activeTemplate.slug })
+      showToast(`Link demo ${activeTemplate.name} berhasil disalin! Siap dicoba di WhatsApp.`, 'success')
+      setTimeout(() => setIsCopied(false), 2500)
+    }
+  }
+
   return (
-    <header className="fixed top-0 left-0 right-0 z-[60] bg-stone-950/90 backdrop-blur-md border-b border-amber-500/30 text-white shadow-xl h-14">
+    <header className="fixed top-0 left-0 right-0 z-[60] bg-stone-950/92 backdrop-blur-xl border-b border-amber-500/30 text-white shadow-2xl h-14 transition-all">
       <div className="max-w-7xl mx-auto h-full px-2.5 sm:px-4 flex items-center justify-between gap-1.5 sm:gap-3">
-        {/* Left: Back to Storefront Catalog */}
-        <div className="flex items-center gap-2 shrink-0">
+        {/* Left: Back to Catalog & Copy Link */}
+        <div className="flex items-center gap-1.5 sm:gap-2 shrink-0">
           <button
             type="button"
             onClick={onBackToCatalog}
             aria-label="Kembali ke katalog template utama"
-            className="min-h-[40px] h-10 inline-flex items-center gap-1.5 px-3 rounded-full bg-stone-900/90 hover:bg-stone-800 border border-white/15 text-xs font-sans font-medium text-stone-100 transition-all cursor-pointer active:scale-95 shrink-0 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-400"
+            className="min-h-[40px] h-10 inline-flex items-center gap-1.5 px-3 rounded-full bg-stone-900/90 hover:bg-stone-850 border border-white/15 text-xs font-sans font-medium text-stone-100 transition-all cursor-pointer active:scale-95 shrink-0 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-400"
           >
             <ArrowLeft className="w-3.5 h-3.5 text-amber-400 shrink-0" aria-hidden="true" />
             <span className="text-xs">Katalog</span>
           </button>
 
+          <button
+            type="button"
+            onClick={handleCopyLink}
+            aria-label="Salin tautan preview demo ini"
+            title="Salin Link Demo Undangan"
+            className="min-h-[40px] h-10 hidden sm:inline-flex items-center gap-1.5 px-3 rounded-full bg-amber-500/10 hover:bg-amber-500/20 border border-amber-400/30 text-amber-200 text-xs font-sans font-medium transition-all cursor-pointer active:scale-95 shrink-0"
+          >
+            {isCopied ? (
+              <>
+                <Check className="w-3.5 h-3.5 text-emerald-400" />
+                <span className="text-emerald-400 font-semibold">Tersalin!</span>
+              </>
+            ) : (
+              <>
+                <Link2 className="w-3.5 h-3.5 text-amber-300" />
+                <span>Salin Link</span>
+              </>
+            )}
+          </button>
+
           <div className="hidden xl:flex items-center gap-1.5 text-xs text-stone-300 font-sans ml-1">
-            <Sparkles className="w-3.5 h-3.5 text-amber-400 shrink-0" aria-hidden="true" />
-            <span className="text-stone-400">Demo:</span>
-            <strong className="text-amber-200 font-serif text-xs">{activeTemplate.name}</strong>
+            <span className="px-2 py-0.5 rounded-full bg-amber-400/10 border border-amber-400/30 text-amber-300 text-[10px] font-mono uppercase tracking-wider">
+              {activeTemplate.categoryLabel}
+            </span>
+            <strong className="text-amber-100 font-serif text-xs">{activeTemplate.name}</strong>
           </div>
         </div>
 
@@ -90,7 +126,10 @@ export const PreviewFloatingBar: React.FC<PreviewFloatingBarProps> = ({
 
           <button
             type="button"
-            onClick={() => onOpenOrderModal(activeTemplate)}
+            onClick={() => {
+              track('start_order', { template: activeTemplate.slug, source: 'preview_floating_bar' })
+              onOpenOrderModal(activeTemplate)
+            }}
             aria-label={`Pakai template ${activeTemplate.name} seharga ${formatRupiah(activeTemplate.price)}`}
             className="min-h-[40px] h-10 inline-flex items-center gap-1.5 px-3.5 sm:px-4 py-1.5 rounded-full bg-gradient-to-r from-amber-500 via-amber-400 to-amber-500 text-stone-950 font-sans font-bold text-xs shadow-md hover:brightness-110 active:scale-95 transition-all cursor-pointer shrink-0 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-300"
           >

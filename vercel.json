@@ -1,0 +1,56 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "framework": "vite",
+  "rewrites": [
+    {
+      "source": "/demo/:slug",
+      "destination": "/api/meta?slug=:slug"
+    },
+    {
+      "source": "/u/:slug",
+      "destination": "/api/meta?slug=:slug"
+    },
+    {
+      "source": "/",
+      "has": [
+        {
+          "type": "query",
+          "key": "template"
+        }
+      ],
+      "destination": "/api/meta"
+    },
+    {
+      "source": "/",
+      "has": [
+        {
+          "type": "query",
+          "key": "to"
+        }
+      ],
+      "destination": "/api/meta"
+    },
+    {
+      "source": "/",
+      "has": [
+        {
+          "type": "query",
+          "key": "kpd"
+        }
+      ],
+      "destination": "/api/meta"
+    }
+  ],
+  "headers": [
+    {
+      "source": "/assets/(.*)",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=31536000, immutable"
+        }
+      ]
+    }
+  ]
+}
+
